@@ -1,7 +1,7 @@
 # Initial Staffing Plan
 
 
-## **1.       **
+## **1. ......**
 + **Team Members**:
 + **Focus**:
 
