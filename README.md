@@ -25,7 +25,7 @@ Following this process is critical to earning your assessment mark at each deliv
 
 ## Documentation
 
-+ `[docs](docs/README.md)`
++ [docs](docs/README.md)
     + [Customer Interview Document](docs/notes/customer_interview_document.md)
     + [Initial Staffing Plan](docs/notes/initial_staffing_plan.md)
     + [Contribution Statement](docs/contributions)
