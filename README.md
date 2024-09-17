@@ -25,10 +25,14 @@ Following this process is critical to earning your assessment mark at each deliv
 
 ## Documentation
 
-This project will have a bunch of documentation, and your team will write all of it in Markdown in this repository.
-For starters, this `README.md` will evolve to become the landing page of your project.
-Thus, make sure that you update it with each sprint to include new developments for design and users.
- 
++ [docs](docs/README.md)
+    + [Customer Interview Document](docs/notes/customer_interview_document.md)
+    + [Initial Staffing Plan](docs/notes/initial_staffing_plan.md)
+    + [Contribution Statements](docs/contributions)
+        1. [Sprint0 Contribution Adelina Gutic](docs/contributions/Sprint0_Contribution_AdelinaGutic.md)
+        2. [Sprint0 Contribution Brett Barnes](docs/contributions/Sprint0_Contribution_BrettBarnes.md)
+        3. [Sprint0 Contribution Dhruvam Desai](docs/contributions/Sprint0_Contribution_DhruvamDesai.md)
+        4. [Sprint0 Contribution Skyler He](docs/contributions/Sprint0_Contribution_SkylerHe.md)
 ---
 
 # (Our Awesome Product) Overview
