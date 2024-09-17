@@ -28,7 +28,7 @@ Following this process is critical to earning your assessment mark at each deliv
 + [docs](docs/README.md)
     + [Customer Interview Document](docs/notes/customer_interview_document.md)
     + [Initial Staffing Plan](docs/notes/initial_staffing_plan.md)
-    + [Contribution Statement](docs/contributions)
+    + [Contribution Statements](docs/contributions)
         1. [Sprint0 Contribution Adelina Gutic](docs/contributions/Sprint0_Contribution_AdelinaGutic.md)
         2. [Sprint0 Contribution Brett Barnes](docs/contributions/Sprint0_Contribution_BrettBarnes.md)
         3. [Sprint0 Contribution Dhruvam Desai](docs/contributions/Sprint0_Contribution_DhruvamDesai.md)
