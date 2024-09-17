@@ -4,3 +4,5 @@ Contributions:
 + Created every User Story for Building Manager and Field Engineer roles
 + Created every PBI for Building Manager and Field Engineer roles
 + Helped edit others' PBIs
++ Reviewed and selected appropriate PBIs to be added to the Project Backlog (primarily as large-scope epics) (as P.O.)
++ Determined final acceptance criteria for each PBI 
