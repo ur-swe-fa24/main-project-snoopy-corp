@@ -1,0 +1,36 @@
+@startuml Senior_Manager_Use_View
+
+actor Senior_Manager
+entity Dashboard
+database Storage
+
+Senior_Manager -> Dashboard: Start Dashboard
+activate Dashboard
+loop while Dashboard open and no request
+    Dashboard -> Storage: Get robot use data
+    activate Storage
+    return Robot use data
+    Dashboard -> Dashboard: Make use data charts
+    Dashboard -> Dashboard: Make error rate charts
+    Dashboard -> Dashboard: Make robot locations presentable
+    Dashboard -> Senior_Manager: Robot Utilization Charts
+    ... 2s delay ...
+else request historical data
+    Senior_Manager -> Dashboard: Get historical data with certain\ncriteria
+    Dashboard -> Storage: Get historical robot data
+    activate Storage
+    return Historical robot data
+    Dashboard -> Dashboard: Make data charts
+    Dashboard -> Senior_Manager: Historical data charts
+
+else close dashboard
+    Dashboard -> Senior_Manager: Thanks for using:\nDo you have any feedback?
+    alt yes_feedback
+        Dashboard -> Senior_Manager: Rating and feedback form
+        activate Senior_Manager
+        return Filled forms
+    end
+    return Close thank you message
+end
+
+@enduml
