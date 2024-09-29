@@ -1,21 +1,26 @@
 @startuml Robot_Cleaning_Task
-
+skinparam sequenceMessageAlign center
+skinparam NoteTextAlignment center
 actor Building_Staff
 entity Dashboard
 database Storage
 entity Robot
 activate Dashboard
+== Task Origination ==
 alt Manual Task
     Building_Staff -> Dashboard: Start a Task for Robot
-else Scheduled Task
+else Scheduled Task from Building \nManager or Field Engineer
     Dashboard -> Dashboard: Begin Robot Task
 end
+
+== Task Exectution ==
 Dashboard -> Robot: Begin task
 activate Robot
 loop while Ongoing task
 'If-else for task updates
 alt No task updates
     'Normal cleaning procedure on parallel
+    note across: Normal Cleaning with Dashboard Data Pulls in Parallel to Check\nfor Errors or to Update Displayed Data
     par Normal cleaning
         Robot -> Robot: Do Cleaning\ntask
         Robot -> Robot: Check for\nTask Updates\nor Issues
@@ -31,25 +36,30 @@ alt No task updates
         ... 30s wait ...
         end
         Dashboard -> Storage: Get Last Recorded \nRobot Data
-        Dashboard -> Building_Staff: Robot Connection Error
+        Dashboard -> Building_Staff: Robot Connection\nError Notification
+        loop Until Response \nfrom Robot or Staff
+            Dashboard -> Robot: Get Robot Data
+            Dashboard -> Building_Staff: Request Task Update\non Dashboard
+
     end 
     end
+note across: Alternative Flows for Critical Robot Status (low water, full trash, etc.),\nTask Updates, and Task Completion
+else Robot Status Issue
+    Robot -> Dashboard: Critical Robot Status
+    Robot -> Robot: Go to Docking \nStation
+    Dashboard -> Building_Staff: Status Notification
 
 else Task update from Building_Staff
-Building_Staff -> Dashboard: Update Task
-Dashboard -> Robot: Add Higher Priority Task
-
-else Robot Status Issue
-Robot -> Dashboard: Critical Robot Status
-Robot -> Robot: Go to Docking \nStation
-Dashboard -> Building_Staff: Robot Needs Attention
+    Building_Staff -> Dashboard: Update Task
+    Dashboard -> Robot: Add Higher Priority Task
 
 else All Tasks Completed
-Robot -> Dashboard: Tasks Completed
-Robot -> Dashboard: Robot Status
-Robot -> Robot: Go to Docking \nStation
-Dashboard -> Building_Staff: Cleaning Task Completed \nand Robot Status
+    Robot -> Dashboard: Tasks Completed
+    Robot -> Dashboard: Robot Status
+    Robot -> Robot: Go to Docking \nStation
+    Dashboard -> Building_Staff: Completion Notification \nand Robot Status
 deactivate Robot
+end
 end
 end
 deactivate Robot
