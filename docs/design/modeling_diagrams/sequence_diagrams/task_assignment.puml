@@ -1,0 +1,37 @@
+@startuml Task_Assignment
+skinparam sequenceMessageAlign center
+
+actor Building_Staff
+actor Manager_or_Engineer as "Building Manager or\n Field Engineer"
+entity Dashboard
+
+activate Dashboard
+alt Immediate Simple Task for a Single Robot/Place
+    alt Task from Manager or Engineer
+        Manager_or_Engineer -> Dashboard: Robot: Clean a Place
+    else Task from Building_Staff
+        Building_Staff -> Dashboard: Robot: Clean a Place
+    end
+    note over Building_Staff, Dashboard: Cleaning Task Sequence
+else Complex or Scheduled Task
+    Manager_or_Engineer -> Dashboard: Setup a Cleaning Task
+    Dashboard -> Manager_or_Engineer: Ask for Places to Clean
+    Manager_or_Engineer -> Dashboard: Select Places to Clean
+    Dashboard -> Manager_or_Engineer: Automated or Manual Scheduling?
+    alt Manual Scheduling
+        Dashboard -> Manager_or_Engineer: Task Scheduling Prompts
+        Manager_or_Engineer -> Dashboard: Task Time, Recurrence\n and Robot Assignment
+    else Automated Scheduling
+        Dashboard -> Manager_or_Engineer: Task Scheduling Prompts
+        Manager_or_Engineer -> Dashboard: Task Time and Recurrence
+        Dashboard -> Dashboard: Algorithmic Assignment
+    end
+    Dashboard -> Manager_or_Engineer: Updated Task Schedule
+    alt Scheduled Task
+        Dashboard -> Dashboard: Set Wakeup Call \nat Task Time
+    else Immediate Task
+        note over Manager_or_Engineer, Dashboard: Cleaning Task Sequences for All Assigned Robots
+    end
+end
+deactivate Dashboard
+@enduml
