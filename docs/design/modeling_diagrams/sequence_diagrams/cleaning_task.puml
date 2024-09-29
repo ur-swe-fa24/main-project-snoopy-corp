@@ -1,0 +1,57 @@
+@startuml Robot_Cleaning_Task
+
+actor Building_Staff
+entity Dashboard
+database Storage
+entity Robot
+activate Dashboard
+alt Manual Task
+    Building_Staff -> Dashboard: Start a Task for Robot
+else Scheduled Task
+    Dashboard -> Dashboard: Begin Robot Task
+end
+Dashboard -> Robot: Begin task
+activate Robot
+loop while Ongoing task
+'If-else for task updates
+alt No task updates
+    'Normal cleaning procedure on parallel
+    par Normal cleaning
+        Robot -> Robot: Do Cleaning\ntask
+        Robot -> Robot: Check for\nTask Updates\nor Issues
+    else Sharing robot data
+    alt Normal Robot Data\nRecieved in 30s
+        Dashboard -> Robot: Get Robot Data
+        Dashboard -> Storage: Send Updated Robot\nand Task Data
+        Dashboard -> Dashboard: Update Task Data\non Display
+    else Faulty or No Robot Data
+        alt Error Message \nRecieved
+        Robot -> Dashboard: Error Message
+        else No \nData
+        ... 30s wait ...
+        end
+        Dashboard -> Storage: Get Last Recorded \nRobot Data
+        Dashboard -> Building_Staff: Robot Connection Error
+    end 
+    end
+
+else Task update from Building_Staff
+Building_Staff -> Dashboard: Update Task
+Dashboard -> Robot: Add Higher Priority Task
+
+else Robot Status Issue
+Robot -> Dashboard: Critical Robot Status
+Robot -> Robot: Go to Docking \nStation
+Dashboard -> Building_Staff: Robot Needs Attention
+
+else All Tasks Completed
+Robot -> Dashboard: Tasks Completed
+Robot -> Dashboard: Robot Status
+Robot -> Robot: Go to Docking \nStation
+Dashboard -> Building_Staff: Cleaning Task Completed \nand Robot Status
+deactivate Robot
+end
+end
+deactivate Robot
+deactivate Dashboard
+@enduml
