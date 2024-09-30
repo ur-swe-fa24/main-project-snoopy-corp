@@ -1,0 +1,34 @@
+@startuml Robot_Status
+
+skinparam sequenceMessageAlign center
+actor User as "Building Manager,\nBuilding Staff, or\nField Engineer"
+entity Dashboard
+database Storage
+entity Robot
+
+User -> Dashboard: Start Dashboard
+activate Dashboard
+loop While Dashboard not Closed
+alt Viewing a Robot
+    alt Robot Reachable
+        Dashboard -> Robot: Get Robot Data
+        activate Robot
+        return Robot Data
+    else Robot Dead
+        Dashboard -> Storage: Get Last Robot Data
+        Storage --> Dashboard: Latest Robot Data
+        Dashboard -> Dashboard: Display "Robot is Dead"
+    end
+    Dashboard -> Dashboard: Display Robot Data
+    ... 2s delay ...
+else Viewing a Task
+    Dashboard -> Storage: Get Task Data
+    Storage --> Dashboard: Latest Task Data
+    Dashboard -> Dashboard: Display Task Data
+    ... 2s delay ...
+else Close Dashboard
+    return Closing Thank You Message
+end
+end
+
+@enduml
