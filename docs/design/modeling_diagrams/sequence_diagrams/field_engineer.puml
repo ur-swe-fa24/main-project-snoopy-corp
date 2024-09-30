@@ -1,4 +1,4 @@
-@startuml Robot_Status
+@startuml field_engineer
 
 skinparam sequenceMessageAlign center
 skinparam NoteTextAlignment center

@@ -1,4 +1,4 @@
-@startuml Task_Assignment
+@startuml task_assignment
 skinparam sequenceMessageAlign center
 
 actor Building_Staff

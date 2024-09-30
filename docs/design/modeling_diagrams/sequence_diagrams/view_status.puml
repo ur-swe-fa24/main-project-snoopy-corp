@@ -1,4 +1,4 @@
-@startuml Robot_Status
+@startuml view_status
 
 skinparam sequenceMessageAlign center
 actor User as "Building Manager,\nBuilding Staff, or\nField Engineer"

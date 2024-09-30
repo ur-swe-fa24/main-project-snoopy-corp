@@ -1,4 +1,4 @@
-@startuml Robot_Cleaning_Task
+@startuml cleaning_task
 skinparam sequenceMessageAlign center
 skinparam NoteTextAlignment center
 actor Building_Staff

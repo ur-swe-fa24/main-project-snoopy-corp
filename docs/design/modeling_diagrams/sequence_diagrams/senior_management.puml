@@ -1,4 +1,4 @@
-@startuml Senior_Manager_Use_View
+@startuml senior_management
 
 skinparam sequenceMessageAlign center
 actor Senior_Manager as "Senior Management"
