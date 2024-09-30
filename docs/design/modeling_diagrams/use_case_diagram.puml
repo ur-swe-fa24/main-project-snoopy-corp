@@ -1,0 +1,48 @@
+@startuml UseCaseDiagram
+' Visual Parameters
+skinparam dpi 200
+skinparam DefaultFontName TimesNewRoman
+skinparam actorStyle Hollow
+skinparam ActorBackgroundColor DarkSeaGreen
+skinparam UsecaseBackgroundColor LightGray
+
+' Actors
+actor :Senior Management: as SeniorManagement
+actor :Building Manager: as BuildingManager
+actor :Building Staff: as BuildingStaff
+actor :Field Engineer: as FieldEngineer
+
+' Use Cases
+(View Robot Status: \nBattery, Water Level, \nLocation, Task Status) as robotStatus
+(View Historical Data) as historicalData
+(Assign Tasks) as assignTasks
+(Add & Remove Robots) as manageFleet
+
+(Dashboard Display) as dashboard
+(View Live Utilization Metrics) as utilMetrics
+(Provide Feedback) as feedback
+(Customize KPIs) as customize
+(View Error Logs) as errorLogs
+
+' View Robot Status:
+BuildingManager --- robotStatus : Manage Fleet
+FieldEngineer --- robotStatus : Debug
+BuildingStaff --- robotStatus : Fix Issues
+
+SeniorManagement -- historicalData
+
+' Dashboard Display
+SeniorManagement -- dashboard
+dashboard -- utilMetrics
+dashboard -- feedback
+dashboard -- customize
+
+' Assign Tasks to Robots / Fleets
+BuildingStaff -- assignTasks
+FieldEngineer -- assignTasks
+BuildingManager -- assignTasks
+
+FieldEngineer -- manageFleet
+FieldEngineer -- errorLogs
+
+@enduml
