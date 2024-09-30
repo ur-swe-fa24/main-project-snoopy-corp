@@ -24,7 +24,7 @@ else Complex or Scheduled Task
     else Automated Scheduling
         Dashboard -> Manager_or_Engineer: Task Scheduling Prompts
         Manager_or_Engineer -> Dashboard: Task Time and Recurrence
-        Dashboard -> Dashboard: Algorithmic Assignment
+        Dashboard -> Dashboard: Algorithmic\nAssignment
     end
     Dashboard -> Manager_or_Engineer: Updated Task Schedule
     alt Scheduled Task
