@@ -33,6 +33,7 @@ alt No task updates
         Dashboard -> Dashboard: Update Task Data
         Dashboard -> Storage: Store Task Data\t\t\t\t
         Dashboard -> Dashboard: Update Task Data\non Display
+        ... 2s Delay ...
     else Faulty or No Robot Data
         alt Error Message \nRecieved
         Robot -> Dashboard: Error Message
@@ -42,13 +43,14 @@ alt No task updates
         Dashboard -> Storage: Get Last Recorded\t\t\t\nRobot Data\t\t
         Storage --> Dashboard: Last Robot Data\t\t\t
         Dashboard -> Building_Staff: Robot Connection\nError Notification
+        note over Building_Staff, Dashboard: Also Send Error to Building Manager\nand/or Field Engineer if Relevant 
         loop Until Response \nfrom Robot or Staff
             Dashboard -> Robot: Get Robot Data
             Dashboard -> Building_Staff: Request Task Update\non Dashboard
 
     end 
     end
-note across: Alternative Flows for Critical Robot Status (low water, full trash, etc.),\nTask Updates, and Task Completion
+note across: Alternative Flows for Critical Robot Status like Low Water or Full Trash,\nTask Updates, and Task Completion
 else Robot Status Issue
     Robot -> Dashboard: Critical Robot Status
     Robot -> Robot: Go to Docking \nStation
