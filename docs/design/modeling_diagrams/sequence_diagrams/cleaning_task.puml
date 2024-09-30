@@ -3,8 +3,9 @@ skinparam sequenceMessageAlign center
 skinparam NoteTextAlignment center
 actor Building_Staff
 entity Dashboard
-database Storage
 entity Robot
+database Storage
+
 activate Dashboard
 == Task Origination ==
 alt Manual Task
@@ -23,11 +24,14 @@ alt No task updates
     note across: Normal Cleaning with Dashboard Data Pulls in Parallel to Check\nfor Errors or to Update Displayed Data
     par Normal cleaning
         Robot -> Robot: Do Cleaning\ntask
-        Robot -> Robot: Check for\nTask Updates\nor Issues
+        Robot -> Robot: Check for Task\nUpdates or Issues
+        Robot -> Storage: Send Robot Data
     else Sharing robot data
     alt Normal Robot Data\nRecieved in 30s
         Dashboard -> Robot: Get Robot Data
-        Dashboard -> Storage: Send Updated Robot\nand Task Data
+        Robot --> Dashboard: Updated Data
+        Dashboard -> Dashboard: Update Task Data
+        Dashboard -> Storage: Store Task Data\t\t\t\t
         Dashboard -> Dashboard: Update Task Data\non Display
     else Faulty or No Robot Data
         alt Error Message \nRecieved
@@ -35,7 +39,8 @@ alt No task updates
         else No \nData
         ... 30s wait ...
         end
-        Dashboard -> Storage: Get Last Recorded \nRobot Data
+        Dashboard -> Storage: Get Last Recorded\t\t\t\nRobot Data\t\t
+        Storage --> Dashboard: Last Robot Data\t\t\t
         Dashboard -> Building_Staff: Robot Connection\nError Notification
         loop Until Response \nfrom Robot or Staff
             Dashboard -> Robot: Get Robot Data
@@ -54,8 +59,7 @@ else Task update from Building_Staff
     Dashboard -> Robot: Add Higher Priority Task
 
 else All Tasks Completed
-    Robot -> Dashboard: Tasks Completed
-    Robot -> Dashboard: Robot Status
+    Robot -> Dashboard: Tasks Completed Message \nand Robot Status
     Robot -> Robot: Go to Docking \nStation
     Dashboard -> Building_Staff: Completion Notification \nand Robot Status
 deactivate Robot
