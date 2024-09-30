@@ -64,10 +64,12 @@ else All Tasks Completed
     Robot -> Dashboard: Tasks Completed Message \nand Robot Status
     Robot -> Robot: Go to Docking \nStation
     Dashboard -> Building_Staff: Completion Notification \nand Robot Status
-deactivate Robot
-end
-end
-end
+
 deactivate Robot
 deactivate Dashboard
+
+end
+end
+end
+
 @enduml
