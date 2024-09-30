@@ -25,3 +25,8 @@ The Field Engineer use cases focus on the nitty-gritty robot needs.
 2. View status of live robots to debug and ensure proper operation.
 3. Add and remove robots to a system so customers can purchase new robots.
 4. View detailed error logs to debug properly.
+
+
+### Class Diagram
+
+[Class Diagram](CLASSES.md) - The class diagram shows the various objects that will be present in our project. 
