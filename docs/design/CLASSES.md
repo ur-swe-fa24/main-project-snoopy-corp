@@ -9,7 +9,7 @@ The Module class has two children, the Building Staff's Simple Assignment Module
 
 There is also a related class which will allow the Field Engineer to Add/Drop Robots to the Module's fleet via an interface.
 
-The Dashboard class has two children, the Live Robot Dashboard and Metrics Dashboard which have information for their relevant staff.
+The Dashboard class has three children; the Live Robot Dashboard and Metrics Dashboard have information for their relevant staff, while the Error Log tracks Robot errors with the relevant info and time.
 
 The Map class contains the JSON map of the room as well as the status of each room by index.
 
