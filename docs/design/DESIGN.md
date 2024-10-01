@@ -10,3 +10,8 @@ You will also store your PlantUML source files in this directory.
 ### Class Diagram
 
 [Class Diagram](CLASSES.md) - The class diagram shows the various objects that will be present in our project. 
+
+
+### Wireframe Dashboards
+
+[Wireframe Dashboards](WIREFRAMES.md) - These are wireframe dashboards for the project, highlighting key interfaces with data visualization and dataset links.
