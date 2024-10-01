@@ -39,7 +39,7 @@ The following image on the right depicts how a task is assigned to a Robot and e
     + **Task Update**: If a task update is given to Robot on task, then that update is passed to the Robot and Dashboard
     + **All Task Completed**: If the tasks have been completed for a Robot, the Robot informs the Dashboard, Task Module, and stores its data in Storage. It then proceeds to dock if there are no queued task and if there are, the robot proceeds to the queued tasks. The Dashboard finishes by notifying User of the completion of the Task by the Robot.
 
-<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br>
 
 ## Field Engineer
 <img align="right" width="400" height="900" src="../design/png_files/SequenceDiagrams/field_engineer.png">
