@@ -30,7 +30,7 @@ alt Add a Robot
     Manage_Robots -> Storage: Record Robot Creation
     return Robot Added
 else Delete a Robot
-    Field_Engineer -> Manage_Robots: Manage Robots - Add
+    Field_Engineer -> Manage_Robots: Manage Robots - Delete
     activate Manage_Robots
     Manage_Robots -> Field_Engineer: Select Robot to Delete
     activate Field_Engineer

@@ -1,27 +1,34 @@
 @startuml task_assignment
 skinparam sequenceMessageAlign center
+skinparam NoteTextAlignment center
+!pragma teoz true
 
-actor Building_Staff as "Building Staff"
 actor Manager_or_Engineer as "Building Manager or\n Field Engineer"
 entity Task_Module as "Task Module"
+actor Building_Staff as "Building Staff"
+entity Robot
 
+activate Task_Module
+Task_Module -> Robot: Get Robot Status
+activate Robot
+return Robot Status
+
+Task_Module -> Task_Module: Display Robot Status\n and Schedules
 alt Immediate Simple Task for a Single Robot/Place
-    alt Task from Manager or Engineer
         Manager_or_Engineer -> Task_Module: Clean Place with Robot
-        activate Task_Module
-    else Task from Building_Staff
-        Building_Staff -> Task_Module: Clean Place with Robot
-    end
-    note over Building_Staff, Task_Module: Cleaning Task Sequence
+        & Building_Staff -> Task_Module: Clean Place with Robot
+    note over Task_Module: Simple Task can Originate from Either Type of User\nand Triggers the Cleaning Task Sequence
 else Complex or Scheduled Task
     Manager_or_Engineer -> Task_Module: Setup a Cleaning Task
     Task_Module -> Manager_or_Engineer: Ask for Places to Clean
     Manager_or_Engineer -> Task_Module: Select Places to Clean
     Task_Module -> Manager_or_Engineer: Automated or Manual Scheduling?
     alt Manual Scheduling
+        Manager_or_Engineer -> Task_Module: Manual Task
         Task_Module -> Manager_or_Engineer: Task Scheduling Prompts
         Manager_or_Engineer -> Task_Module: Task Time, Recurrence\n and Robot Assignment
     else Automated Scheduling
+        Manager_or_Engineer -> Task_Module: Automated Task Schedule
         Task_Module -> Manager_or_Engineer: Task Scheduling Prompts
         Manager_or_Engineer -> Task_Module: Task Time and Recurrence
         Task_Module -> Task_Module: Algorithmic\nAssignment

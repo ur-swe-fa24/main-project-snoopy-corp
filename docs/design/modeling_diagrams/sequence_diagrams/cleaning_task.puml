@@ -40,7 +40,7 @@ alt No task updates
         Robot --> Dashboard: Updated Data
         Dashboard -> Dashboard: Update Task Data
         Dashboard -> Storage: Store Task Data\t\t\t\t
-        Dashboard -> Dashboard: Update Task Data\non Display
+        Dashboard -> Dashboard: Update Data on Display
         ... 2s Delay ...
     else Faulty or No Robot Data
         alt Error Message \nRecieved
@@ -72,8 +72,8 @@ else Task update from Building_Staff
     Robot -> Dashboard: Task Update
     return Task Updated
 
-else All Tasks Completed
-    Robot -> Dashboard: Tasks Completed Message \nand Robot Status
+else Task Completed
+    Robot -> Dashboard: Task Completed Message \nand Robot Status
     Robot -> Scheduling_Module: \tTask Completed
     Robot -> Storage: Send Data
     alt Queued Task
