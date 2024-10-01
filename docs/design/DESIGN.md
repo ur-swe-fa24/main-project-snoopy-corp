@@ -14,3 +14,8 @@ You will also store your PlantUML source files in this directory.
 ### Architecture Diagram
 
 [Architecture Diagram](ARCHITECTURE.md) - The architecture diagram shows the high-level structure of our project.
+
+### Wireframe Dashboards
+
+[Wireframe Dashboards](WIREFRAMES.md) - These are wireframe dashboards for the project, highlighting key interfaces with data visualization and dataset links.
+
