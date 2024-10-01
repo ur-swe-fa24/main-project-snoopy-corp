@@ -2,7 +2,7 @@
 
 skinparam sequenceMessageAlign center
 actor Senior_Manager as "Senior Management"
-entity Dashboard
+entity Dashboard as "Metrics Dashboard"
 database Storage
 
 Senior_Manager -> Dashboard: Start Dashboard
@@ -15,6 +15,7 @@ alt No Request
     Dashboard -> Dashboard: Update Displayed\nUtilization Charts
     ... 2s delay ...
 else Customize KPI
+    Senior_Manager -> Dashboard: Edit KPIs
     Dashboard -> Senior_Manager: Select Metrics from Given List
     activate Senior_Manager
     return Selected Metrics
@@ -27,10 +28,12 @@ else Request Historical Data
     Dashboard -> Dashboard: Display Data Charts
     Dashboard -> Senior_Manager: Historical Data Charts
 else Provide Feedback
+    Senior_Manager -> Dashboard: Give Feedback
     Dashboard -> Senior_Manager: Rating and Feedback Form
     activate Senior_Manager
     return Filled Forms
 else Close Dashboard
+    Senior_Manager -> Dashboard: Close Dashboard
     return Closing Thank You Message
 end
 end

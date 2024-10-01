@@ -1,22 +1,30 @@
 @startuml cleaning_task
 skinparam sequenceMessageAlign center
 skinparam NoteTextAlignment center
-actor Building_Staff
-entity Dashboard
+actor Building_Staff as "Building Staff"
+entity Scheduling_Module as "Task\nModule"
+entity Dashboard as "Live Robot\nDashboard"
 entity Robot
 database Storage
 
-activate Dashboard
+
 == Task Origination ==
 alt Manual Task
-    Building_Staff -> Dashboard: Start a Task for Robot
+    Building_Staff -> Scheduling_Module: Start a Task for Robot
+    activate Scheduling_Module
 else Scheduled Task from Building \nManager or Field Engineer
-    Dashboard -> Dashboard: Begin Robot Task
+    Scheduling_Module -> Scheduling_Module: Begin Robot\nTask
+    activate Scheduling_Module
 end
 
 == Task Exectution ==
-Dashboard -> Robot: Begin task
+Scheduling_Module -> Robot: Begin Task
+deactivate Scheduling_Module
+deactivate Scheduling_Module
 activate Robot
+Robot -> Dashboard: Task Started
+activate Dashboard
+
 loop while Ongoing task
 'If-else for task updates
 alt No task updates
@@ -40,8 +48,9 @@ alt No task updates
         else No \nData
         ... 30s wait ...
         end
-        Dashboard -> Storage: Get Last Recorded\t\t\t\nRobot Data\t\t
+        Dashboard -> Storage: Get Last Recorded \t\t\t\n  Robot Data\t\t\t
         Storage --> Dashboard: Last Robot Data\t\t\t
+        Dashboard -> Storage: Store Error Data\t\t\t\t\nfor Error Log\t\t\t
         Dashboard -> Building_Staff: Robot Connection\nError Notification
         note over Building_Staff, Dashboard: Also Send Error to Building Manager\nand/or Field Engineer if Relevant 
         loop Until Response \nfrom Robot or Staff
@@ -57,15 +66,24 @@ else Robot Status Issue
     Dashboard -> Building_Staff: Status Notification
 
 else Task update from Building_Staff
-    Building_Staff -> Dashboard: Update Task
-    Dashboard -> Robot: Add Higher Priority Task
+    Building_Staff -> Scheduling_Module: Update Task
+    activate Scheduling_Module
+    Scheduling_Module -> Robot: \t \t \t Add Higher Priority Task
+    Robot -> Dashboard: Task Update
+    return Task Updated
 
 else All Tasks Completed
     Robot -> Dashboard: Tasks Completed Message \nand Robot Status
-    Robot -> Robot: Go to Docking \nStation
+    Robot -> Scheduling_Module: \tTask Completed
+    Robot -> Storage: Send Data
+    alt Queued Task
+        note over Robot: Task Execution Sequence
+    else No Queued Task
+        Robot -> Robot: Go to Docking \nStation
+    end
+    deactivate Robot
     Dashboard -> Building_Staff: Completion Notification \nand Robot Status
 
-deactivate Robot
 deactivate Dashboard
 
 end

@@ -1,37 +1,37 @@
 @startuml task_assignment
 skinparam sequenceMessageAlign center
 
-actor Building_Staff
+actor Building_Staff as "Building Staff"
 actor Manager_or_Engineer as "Building Manager or\n Field Engineer"
-entity Dashboard
+entity Task_Module as "Task Module"
 
-activate Dashboard
 alt Immediate Simple Task for a Single Robot/Place
     alt Task from Manager or Engineer
-        Manager_or_Engineer -> Dashboard: Robot: Clean a Place
+        Manager_or_Engineer -> Task_Module: Clean Place with Robot
+        activate Task_Module
     else Task from Building_Staff
-        Building_Staff -> Dashboard: Robot: Clean a Place
+        Building_Staff -> Task_Module: Clean Place with Robot
     end
-    note over Building_Staff, Dashboard: Cleaning Task Sequence
+    note over Building_Staff, Task_Module: Cleaning Task Sequence
 else Complex or Scheduled Task
-    Manager_or_Engineer -> Dashboard: Setup a Cleaning Task
-    Dashboard -> Manager_or_Engineer: Ask for Places to Clean
-    Manager_or_Engineer -> Dashboard: Select Places to Clean
-    Dashboard -> Manager_or_Engineer: Automated or Manual Scheduling?
+    Manager_or_Engineer -> Task_Module: Setup a Cleaning Task
+    Task_Module -> Manager_or_Engineer: Ask for Places to Clean
+    Manager_or_Engineer -> Task_Module: Select Places to Clean
+    Task_Module -> Manager_or_Engineer: Automated or Manual Scheduling?
     alt Manual Scheduling
-        Dashboard -> Manager_or_Engineer: Task Scheduling Prompts
-        Manager_or_Engineer -> Dashboard: Task Time, Recurrence\n and Robot Assignment
+        Task_Module -> Manager_or_Engineer: Task Scheduling Prompts
+        Manager_or_Engineer -> Task_Module: Task Time, Recurrence\n and Robot Assignment
     else Automated Scheduling
-        Dashboard -> Manager_or_Engineer: Task Scheduling Prompts
-        Manager_or_Engineer -> Dashboard: Task Time and Recurrence
-        Dashboard -> Dashboard: Algorithmic\nAssignment
+        Task_Module -> Manager_or_Engineer: Task Scheduling Prompts
+        Manager_or_Engineer -> Task_Module: Task Time and Recurrence
+        Task_Module -> Task_Module: Algorithmic\nAssignment
     end
-    Dashboard -> Manager_or_Engineer: Updated Task Schedule
+    Task_Module -> Manager_or_Engineer: Updated Task Schedule
     alt Scheduled Task
-        Dashboard -> Dashboard: Set Wakeup Call \nat Task Time
+        Task_Module -> Task_Module: Set Wakeup Call \nat Task Time
     else Immediate Task
-        note over Manager_or_Engineer, Dashboard: Cleaning Task Sequences for All Assigned Robots
+        note over Manager_or_Engineer, Task_Module: Cleaning Task Sequences for All Assigned Robots
     end
+deactivate Task_Module
 end
-deactivate Dashboard
 @enduml

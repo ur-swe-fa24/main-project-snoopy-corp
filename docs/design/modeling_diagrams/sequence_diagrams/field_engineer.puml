@@ -3,49 +3,62 @@
 skinparam sequenceMessageAlign center
 skinparam NoteTextAlignment center
 actor Field_Engineer as "Field Engineer"
-entity Error_Dashboard
+entity Manage_Robots as "Robot Management \nModule"
+entity Dashboard as "Error Log\nDashboard"
 entity Robot
 database Storage
 
-Field_Engineer -> Error_Dashboard: Start Error_Dashboard
-activate Error_Dashboard
-loop While Error_Dashboard not Closed
-alt Viewing Robot or Task
-    note across: View Status Sequence
-else Add a Robot
-    Error_Dashboard -> Field_Engineer: Request Robot Connection \n Details
+== Add or Delete a Robot ==
+alt Add a Robot
+    Field_Engineer -> Manage_Robots: Manage Robots - Add
+    activate Manage_Robots
+    Manage_Robots -> Field_Engineer: Request Robot Connection \n Details
     activate Field_Engineer
     return Connection Details
-    Error_Dashboard -> Robot: Get Robot Data?
+    Manage_Robots -> Robot: Get Robot Data?
     activate Robot
     return Robot Data
-    Error_Dashboard -> Error_Dashboard: Display Robot Status
-    Error_Dashboard -> Field_Engineer: Select Robot Map
+    Manage_Robots -> Manage_Robots: Display Robot Status
+    Manage_Robots -> Field_Engineer: Select Robot Map
     activate Field_Engineer
     return Selected Map
-    Error_Dashboard -> Field_Engineer: Pick Robot Location
+    Manage_Robots -> Field_Engineer: Pick Robot Location
     activate Field_Engineer
     return Robot Location
-    note over Field_Engineer, Error_Dashboard: Map Creation not In-Scope of Project so \n a Map must Exist
-    Error_Dashboard -> Robot: Set Map and\nLocation
-    Error_Dashboard -> Field_Engineer: Robot Added
+    note over Field_Engineer, Manage_Robots: Map Creation not In-Scope of Project so \n a Map must Exist
+    Manage_Robots -> Robot: Set Map and\nLocation
+    Manage_Robots -> Storage: Record Robot Creation
+    return Robot Added
 else Delete a Robot
-    Error_Dashboard -> Field_Engineer: Select Robot to Delete
+    Field_Engineer -> Manage_Robots: Manage Robots - Add
+    activate Manage_Robots
+    Manage_Robots -> Field_Engineer: Select Robot to Delete
     activate Field_Engineer
     return Selected Robot
-    Error_Dashboard -> Robot: Deactivate Robot
-    Error_Dashboard -> Error_Dashboard: Remove Robot\nfrom System
-    Error_Dashboard -> Error_Dashboard: Reset any Scheduled \nTask with Robot
-    Error_Dashboard -> Field_Engineer: Robot Deleted Message and\n Details of Deleted Task Schedule
-    note over Field_Engineer, Error_Dashboard: Also Send Notifications to Other Users and \nDeleted Task Schedule if Relevant
+    Manage_Robots -> Robot: Deactivate Robot
+    Manage_Robots -> Manage_Robots: Remove Robot\nfrom System
+    Manage_Robots -> Manage_Robots: Reset any Scheduled \nTask with Robot
+    Manage_Robots -> Storage: Record Robot Deletion
+    Manage_Robots --> Field_Engineer: Robot Deleted Message and\n Details of Deleted Task Schedule
+    note over Field_Engineer, Manage_Robots: Also Send Notifications to Other Users and \nDeleted Task Schedule if Relevant
+    deactivate Manage_Robots
+end
+
+== View Error Logs ==
+Field_Engineer -> Dashboard: Open Dashboard
+activate Dashboard
+loop While Dashboard not Closed
+alt Viewing Robot or Task
+    note across: View Status Sequence
 else View Error Logs
-    Error_Dashboard -> Field_Engineer: Select Robots or Maps for Errors
+    Field_Engineer -> Dashboard: View Error Logs
+    Dashboard -> Field_Engineer: Select Robots or Maps for Errors
     activate Field_Engineer
     return Selected Robots or Maps
-    Error_Dashboard -> Storage: Get Error Data of Selected Robots
-    Error_Dashboard -> Error_Dashboard: Create Data Charts
-    Error_Dashboard -> Error_Dashboard: Display Data and Charts
-else Close Error_Dashboard
+    Dashboard -> Storage: Get Error Data\nof Selected Robots
+    Dashboard -> Dashboard: Create Data \nCharts
+    Dashboard -> Dashboard: Display Data \nand Charts
+else Close Dashboard
     return Closing Thank You Message
 end
 end
