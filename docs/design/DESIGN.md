@@ -19,3 +19,5 @@ You will also store your PlantUML source files in this directory.
 
 [Wireframe Dashboards](WIREFRAMES.md) - These are wireframe dashboards for the project, highlighting key interfaces with data visualization and dataset links.
 
+### Sequence Diagrams
+[Sequence Diagrams](SEQUENCE.md) - These are sequence diagrams of the project that showcase the interaction between different components of the program that occur to realize the user cases.
