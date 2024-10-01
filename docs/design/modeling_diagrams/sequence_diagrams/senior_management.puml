@@ -1,0 +1,41 @@
+@startuml senior_management
+
+skinparam sequenceMessageAlign center
+actor Senior_Manager as "Senior Management"
+entity Dashboard as "Metrics Dashboard"
+database Storage
+
+Senior_Manager -> Dashboard: Start Dashboard
+activate Dashboard
+loop While Dashboard not Closed
+alt No Request
+    Dashboard -> Storage: Get Robot Use Data
+    Storage --> Dashboard: Robot Use Data
+    Dashboard -> Dashboard: Make or Update Use Data\nand Error charts
+    Dashboard -> Dashboard: Update Displayed\nUtilization Charts
+    ... 2s delay ...
+else Customize KPI
+    Senior_Manager -> Dashboard: Edit KPIs
+    Dashboard -> Senior_Manager: Select Metrics from Given List
+    activate Senior_Manager
+    return Selected Metrics
+    Dashboard -> Dashboard: Update Charts to Show
+else Request Historical Data
+    Senior_Manager -> Dashboard: Get Historical Data with Certain\nCriteria
+    Dashboard -> Storage: Get Historical Robot Data
+    Storage --> Dashboard: Historical Robot Data
+    Dashboard -> Dashboard: Make Data Charts
+    Dashboard -> Dashboard: Display Data Charts
+    Dashboard -> Senior_Manager: Historical Data Charts
+else Provide Feedback
+    Senior_Manager -> Dashboard: Give Feedback
+    Dashboard -> Senior_Manager: Rating and Feedback Form
+    activate Senior_Manager
+    return Filled Forms
+else Close Dashboard
+    Senior_Manager -> Dashboard: Close Dashboard
+    return Closing Thank You Message
+end
+end
+
+@enduml
