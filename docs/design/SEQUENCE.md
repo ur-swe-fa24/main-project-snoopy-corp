@@ -24,7 +24,7 @@ There are two main branches here dependent on who the user is and if they want t
 + **Simple Task**: This task may be assigned by either Building Staff or Building Manager or Field Engineer users who can simply select the Robot and place that they wish to clean. This then triggers the Cleaning Task Sequence for a Robot
 + **Complicated or Scheduled Task**: This task is only assigned by users at Building Manager or Field Engineer level. The process begins by the user requesting to set up a task. Then, dependent on user choosing manual or automated scheduling, relevant scheduling questions are asked. If automated scheduling is chosen, the module autmatically fills the Robots for the task. The updated task schedule is then returned. A wake-up call at scheduled time is given if task was scheduled for later and otherwise cleaning task sequence is triggered for the assigned Robots in the task.
 
-<br><br><br>
+<br><br><br><br><br><br>
 
 ## Cleaning Task
 <img align="right" width="400" height="1200" src="../design/png_files/SequenceDiagrams/cleaning_task.png">
@@ -39,7 +39,7 @@ The following image on the right depicts how a task is assigned to a Robot and e
     + **Task Update**: If a task update is given to Robot on task, then that update is passed to the Robot and Dashboard
     + **All Task Completed**: If the tasks have been completed for a Robot, the Robot informs the Dashboard, Task Module, and stores its data in Storage. It then proceeds to dock if there are no queued task and if there are, the robot proceeds to the queued tasks. The Dashboard finishes by notifying User of the completion of the Task by the Robot.
 
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br>
 
 ## Field Engineer
 <img align="right" width="400" height="900" src="../design/png_files/SequenceDiagrams/field_engineer.png">
@@ -50,7 +50,7 @@ The following diagram showcase the use cases of the Field Engineer where they ma
 + **Deleting a Robot**: The Field Engineer can also request to delete a Robot where they select from a list of Robots to delete. The Robot is deactivated if it is still connected and then removed from the system. Any scheduled tasks of Robot are retrieved and reset. The deletion record is then saved in storage with the details of the process. Then, the Engineer is notified of successful deletion while also being sent the relevant task information if any scheduled tasks need to be rescheduled.
 + **View Error Logs**: The Engineer can also view error logs in addition to their other views on the Dashboard when they open the Dashboard. When they request the Log, they are asked for the requested maps or robots in question. The Dashboard then retrieves that data from the Storage and displays the data with charts.
 
-<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>
 
 ## Senior Management
 <img align="right" width="400" height="800" src="../design/png_files/SequenceDiagrams/senior_management.png">
