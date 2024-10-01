@@ -1,4 +1,4 @@
-### Class Diagram
+# Class Diagram
 ![class_diagram](../design/png_files/ClassDiagram.png)
 
 The class diagram shows the various objects that will be present in our project. 
