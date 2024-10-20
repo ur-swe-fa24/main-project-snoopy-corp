@@ -17,8 +17,8 @@ target_include_directories(
    
 )
 
-# Link spdlog to the adapters library
-target_link_libraries(adapters
+# Link spdlog 
+target_link_libraries(
     spdlog::spdlog
 )
 
