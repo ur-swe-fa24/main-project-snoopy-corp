@@ -13,7 +13,7 @@ class VacuumRobot : public Robot{
 
     private:
         int TrashbagLevel;
-        bool clean() override;        
+        bool clean();        
 };
 
 #endif

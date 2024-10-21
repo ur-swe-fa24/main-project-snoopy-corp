@@ -2,7 +2,7 @@
 #include <iostream>
 
     // Default constructor 
-    // Robot::Robot() : type(RobotType::Generic), id(0), currentMap(0) {}
+    Robot::Robot() : type(RobotType::Scrubber), id(-1), currentMap(0) {}
 
     // Overloaded constructor with type and id parameters
     Robot::Robot(RobotType type, int id, int currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10) {}
@@ -87,6 +87,10 @@
         }
     }
 
+
+    bool Robot::clean(){
+        return true;
+    }
     std::string Robot::toString(){
         std::cout << "ID: " << id << ", Type: " << typeToString(type) << ", Status: " << statusToString(status) << "\n";
         return "";

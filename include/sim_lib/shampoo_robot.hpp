@@ -13,7 +13,7 @@ class ShampooRobot : public Robot{
 
     private:
         int ShampooLevel;
-        bool clean() override;
+        bool clean();
 
 };
 

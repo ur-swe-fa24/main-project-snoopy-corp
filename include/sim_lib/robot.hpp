@@ -32,7 +32,7 @@ class Robot{
     protected:
         int id;
         RobotType type;
-        Status status;
+        Status status = Status::Active;
         int location;   // an index of where it is on the currently loaded map
         int tasks_completed; // lifetime counter 
         int tasks_attempted; // lifetime counter
@@ -42,7 +42,7 @@ class Robot{
         int battery_level;
         int currentMap;  //being implemented by Adelina - int is just a placeholder
 
-        virtual bool clean() = 0;    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
+        bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();     //triggered when clean() returns false
         void move(int room_num);
         
