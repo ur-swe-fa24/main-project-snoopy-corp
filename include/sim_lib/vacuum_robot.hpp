@@ -9,7 +9,8 @@ class VacuumRobot : public Robot{
 
     public: 
         VacuumRobot();
-        VacuumRobot(int id, int currentMap);
+        VacuumRobot(int id, Map currentMap);
+        VacuumRobot(int id);
 
     private:
         int TrashbagLevel;

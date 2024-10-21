@@ -2,10 +2,13 @@
 #include <iostream>
 
     // Default constructor 
-    Robot::Robot() : type(RobotType::Scrubber), id(-1), currentMap(0) {}
+    Robot::Robot() : type(RobotType::Scrubber), id(-1) {}
 
     // Overloaded constructor with type and id parameters
-    Robot::Robot(RobotType type, int id, int currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10) {}
+    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10) {}
+
+    // Overloaded constructor with type, id, and Map parameters
+    Robot::Robot(RobotType type, int id, Map currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10) {}
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
@@ -91,7 +94,11 @@
     bool Robot::clean(){
         return true;
     }
+
+    std::string Robot::getMapName(){
+        return currentMap.getName();
+    }
     std::string Robot::toString(){
-        std::cout << "ID: " << id << ", Type: " << typeToString(type) << ", Status: " << statusToString(status) << "\n";
+        std::cout << "ID: " << id << ", Type: " << typeToString(type) << ", Status: " << statusToString(status) << ", Map: " << this->getMapName() << "\n";
         return "";
     }

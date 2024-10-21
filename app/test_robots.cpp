@@ -6,6 +6,7 @@
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/vacuum_robot.hpp"
 #include "sim_lib/simulation_driver.hpp"
+#include "sim_lib/map.hpp"
 
 int main(){
     // std::cout << "compiles!";
@@ -21,26 +22,39 @@ int main(){
     // shampoo.toString();
     // vacuum.toString();
 
-    SimulationDriver s;
+ 
+
+    std::map<std::string, std::vector<std::string>> roomsEx1 = {
+        {"1" , {"kitchen", "1", "wood"}},
+        {"2", {"office", "5", "carpet"}},
+        {"3" , {"bathroom", "7", "tile"}}
+    };
+    Map m("map1", roomsEx1);
+    SimulationDriver s(m);
+
     std::string input;
-    int id_index;
     while (true) {
-        std::cout << "Add, Remove, or Exit: " << "\n";
+        std::cout << "Add, Remove, Move, Clean, or Exit: " << "\n";
         std::getline(std::cin, input); 
 
         if (input == "Exit") break; 
         else if(input == "Add"){
             std::cout << "Enter Type" << "\n";
             std::getline(std::cin, input); 
-            if(input == "Scrubber") s.addRobot(ScrubberRobot(id_index, 0));
-            else if(input == "Shampoo") s.addRobot(ShampooRobot(id_index, 0));
-            else s.addRobot(VacuumRobot(id_index, 0));
-            id_index++;
+            if(input == "Scrubber") s.addRobot(ScrubberRobot(s.assignRobotIndex(), s.getSelectedMap()));
+            else if(input == "Shampoo") s.addRobot(ShampooRobot(s.assignRobotIndex(), s.getSelectedMap()));
+            else s.addRobot(VacuumRobot(s.assignRobotIndex(), s.getSelectedMap()));
         }
         else if(input == "Remove"){
             std::cout << "Enter ID of Robot to be removed" << "\n";
             std::getline(std::cin, input); 
             s.removeRobot(stoi(input));
+        }
+        else if(input == "Move"){
+            /// TO BE
+        }
+        else if(input == "Clean"){
+            /// TO BE
         }
         else
             std::cout << "Invalid input, try again";
