@@ -3,18 +3,19 @@
 
 #include <vector>
 #include <string>
-// #include "include/robot/robot.hpp"
+#include "include/sim_lib/robot.hpp"
 
 class Dashboard {
     public:
-        // void create_chart(vector<Robot> robots, RobData data_name) const;
+        Dashboard();
+        Dashboard(int robotId);
+        // void create_chart(std::vector<Robot> robots, std::string data_name) const;
         std::string get_feedback(std::string feedback) const;
 
-    private:
+    protected:
+        Robot robot_;
         int id_;
-        // Robot robot_;
-        // Type type_;
-        long time_;
-}
+        RobotType type_;
+};
 
 #endif // DASHBOARD_HPP
