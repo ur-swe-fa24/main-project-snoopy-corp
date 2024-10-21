@@ -13,7 +13,7 @@ class ScrubberRobot : public Robot{
 
     private:
         int WaterLevel;
-        bool clean() override;
+        bool clean();
         
 };
 

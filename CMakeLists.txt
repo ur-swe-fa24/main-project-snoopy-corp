@@ -13,6 +13,7 @@ src/sim_src/robot.cpp
 src/sim_src/scrubber_robot.cpp
 src/sim_src/shampoo_robot.cpp
 src/sim_src/vacuum_robot.cpp
+src/sim_src/simulation_driver.cpp
 
 )
 
