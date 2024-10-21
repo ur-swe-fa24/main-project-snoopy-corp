@@ -7,7 +7,7 @@
 class LiveRobotDash : public Dashboard {
     public:
         LiveRobotDash();
-        LiveRobotDash(int robotId);
+        LiveRobotDash(Robot robot);
     private:
         Status status;
         Map curr_map;

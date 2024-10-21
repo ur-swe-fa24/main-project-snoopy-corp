@@ -6,7 +6,7 @@
 class ErrorLog : public Dashboard {
     public:
         ErrorLog();
-        ErrorLog(int robotId);
+        ErrorLog(Robot robot);
     private:
         std::string description;
         int timpestamp;

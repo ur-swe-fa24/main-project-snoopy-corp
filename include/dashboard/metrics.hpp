@@ -6,7 +6,7 @@
 class MetricsDash : public Dashboard {
     public:
         MetricsDash();
-        MetricsDash(int robotId);
+        MetricsDash(Robot robot);
     private:
         float efficiency;
         float error_rate;
