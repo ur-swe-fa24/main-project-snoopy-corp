@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "map.hpp"
 
 enum class RobotType{
     Shampoo, Scrubber, Vacuum
@@ -16,7 +17,8 @@ class Robot{
 
     public: 
         Robot();
-        Robot(RobotType type, int id, int currentMap);
+        Robot(RobotType type, int id);
+        Robot(RobotType type, int id, Map currentMap);
 
         float getEfficiency();
         int getId();
@@ -28,6 +30,8 @@ class Robot{
         int getBatteryLevel();
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         std::string toString();
+        std::string getMapName();
+        RobotType getType() { return type; }
 
     protected:
         int id;
@@ -40,7 +44,7 @@ class Robot{
         int progress_queue; // progress through current queue, can get length of the queue itself to see how much left
         std::vector<int> queue;
         int battery_level;
-        int currentMap;  //being implemented by Adelina - int is just a placeholder
+        Map currentMap;  
 
         bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();     //triggered when clean() returns false

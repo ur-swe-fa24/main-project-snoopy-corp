@@ -5,6 +5,9 @@
     // Overloaded constructor with type and id parameters
     SimulationDriver::SimulationDriver() {}
     SimulationDriver::SimulationDriver(std::vector<Robot> robots) : robots(robots){}
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap){}
+    SimulationDriver::SimulationDriver(std::vector<Robot> robots, Map selectedMap) : robots(robots), selectedMap(selectedMap){}
+
     void SimulationDriver::addRobot(Robot robot)
     {
         robots.push_back(robot);
@@ -24,7 +27,7 @@
             else index++;
         }   
         if(found) return removedRobot;
-        else return Robot(RobotType::Scrubber, -1, 0);
+        else return Robot(RobotType::Scrubber, -1);
     }
 
     void SimulationDriver::clear(){
@@ -35,4 +38,9 @@
         for (Robot r : robots){
             r.toString();
         }
+    }
+
+    int SimulationDriver::assignRobotIndex(){
+        robot_index++;
+        return robot_index-1;
     }

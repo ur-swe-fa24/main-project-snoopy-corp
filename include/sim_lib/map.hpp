@@ -20,16 +20,15 @@ class Map{
         //int cleaningStatus;
 
     public:
-        Map() {}
-        Map(std::string name, std::map<std::string, std::vector<std::string>> rooms)
-            : name(name), rooms(rooms) {}
-        std::string getName() { return name; }
-        void setName(std::string mapName) { name = mapName; }
+        Map();
+        Map(std::string name, std::map<std::string, std::vector<std::string>> rooms);
+        std::string getName() { return name; };
+        void setName(std::string mapName) { name = mapName; };
 
-        void updateRoomCleanliness(std::string roomId, std::string cleaningStatus) {} // Updates cleaning status of given room **string cleanliness -> int later
+        void updateRoomCleanliness(std::string roomId, std::string cleaningStatus); // Updates cleaning status of given room **string cleanliness -> int later
         std::string getRoomCleanliness(std::string roomId) { return rooms[roomId][1]; }
         
-        void updateRoomName(std::string roomId, std::string roomName) {} // Updates name of given room
+        void updateRoomName(std::string roomId, std::string roomName); // Updates name of given room
         std::string getRoomName(std::string roomId) { return rooms[roomId][0]; }
 
         // Note that there are no methods to update/set floorType.
