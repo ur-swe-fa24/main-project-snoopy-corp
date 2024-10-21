@@ -3,18 +3,26 @@
 
 #include <vector>
 #include "robot.hpp"
+#include "map.hpp"
 
 class SimulationDriver{
 
     public:
         SimulationDriver();
         explicit SimulationDriver(std::vector<Robot> robots);
+        explicit SimulationDriver(Map selectedMap);
+        explicit SimulationDriver(std::vector<Robot> robots, Map selectedMap);
         void addRobot(Robot robot);
         Robot removeRobot(int id);
         void clear();
         void toString();
+        int getRobotIndex() { return robot_index; }
+        int assignRobotIndex();
+        Map getSelectedMap() { return selectedMap; }
     private:
         std::vector<Robot> robots;
+        Map selectedMap;
+        int robot_index = 0;
         
 };
 

@@ -3,13 +3,14 @@
 
 #include <vector>
 #include "robot.hpp"
-
+#include <string>
 
 class ScrubberRobot : public Robot{
 
     public:  
         ScrubberRobot();
-        ScrubberRobot(int id, int currentMap);
+        ScrubberRobot(int id);
+        ScrubberRobot(int id, Map currentMap);
 
     private:
         int WaterLevel;
