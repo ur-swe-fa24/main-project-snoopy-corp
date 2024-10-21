@@ -14,10 +14,13 @@ int main() {
 
     Map map1 = Map("UFA476", roomsEx1);
     
-    map1.setName("new name");
+    map1.setName("Gateways1234");
     std::cout << "Map new name: " << map1.getName() << std::endl;
 
     map1.updateRoomCleanliness("2", "4");
-    std::cout << "Office new cleaning status: " << map1.getName() << std::endl;
+    std::cout << "Office new cleaning status: " << map1.getRoomCleanliness("2") << std::endl;
+
+    map1.updateRoomName("3", "downstairs bathroom");
+    std::cout << "Bathroom new name: " << map1.getRoomName("3") << std::endl;
 
 }
