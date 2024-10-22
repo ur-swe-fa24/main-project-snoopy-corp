@@ -25,6 +25,15 @@ repeat: User Choice Interaction
         endswitch
     case (View Robots)
     :Open Dashboard;
+    repeat: Robot Statuses printed
+    switch (user choice)
+        case (update Robot Status)
+        : Print Each\nRobot's Status;
+        case (Give Feedback)
+        : Get User Input\nas Feedback;
+    endswitch
+    repeat while (Exit?) is (no)
+    ->yes;
     :Exit Dashboard;
     case (Move)
     :Text 4;
