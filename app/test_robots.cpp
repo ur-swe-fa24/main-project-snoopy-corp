@@ -26,9 +26,10 @@ int main(){
  
 
     std::map<std::string, std::vector<std::string>> roomsEx1 = {
-        {"1" , {"kitchen", "1", "wood"}},
-        {"2", {"office", "5", "carpet"}},
-        {"3" , {"bathroom", "7", "tile"}}
+        {"0" , {"default", "default", "defaultA"}},
+        {"1" , {"kitchen", "Unclean", "wood"}},
+        {"2", {"office", "Unclean", "carpet"}},
+        {"3" , {"bathroom", "Unclean", "tile"}}
     };
     Map m("map1", roomsEx1);
     SimulationDriver s(m);
@@ -56,10 +57,29 @@ int main(){
             s.start_dashboard();
         }
         else if(input == "Move"){
-            /// TO BE
+            std::cout << "Enter ID of Robot to be moved" << "\n";
+            std::getline(std::cin, input); 
+            
+            int id = stoi(input);
+
+            std::cout << "Enter room number Robot should move to" << "\n";
+            std::getline(std::cin, input); 
+            
+            Robot* robot = s.getRobot(id);
+            robot->move(stoi(input));
+            // std::cout << robot->toString() << std::endl;
         }
         else if(input == "Clean"){
-            /// TO BE
+            std::cout << "Enter ID of Robot to clean" << "\n";
+            std::getline(std::cin, input); 
+            Robot* robot = s.getRobot(stoi(input));
+
+            if (robot->getLocation() == 0) {
+                std::cout << "Robot needs to be moved to a location first in order to clean" << std::endl;
+            } else {
+            robot->clean();
+            //std::cout << robot.toString() << std::endl;
+            }
         }
         else
             std::cout << "Invalid input, try again";

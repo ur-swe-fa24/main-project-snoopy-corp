@@ -21,6 +21,7 @@ class SimulationDriver{
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
         void start_dashboard();
+        Robot* getRobot(int id);
     private:
         std::vector<Robot> robots;
         Map selectedMap;

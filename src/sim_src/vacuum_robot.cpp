@@ -11,7 +11,7 @@
     {
         bool PLACEHOLDER = true;
         // generate random number for error
-        if(PLACEHOLDER)   //if error
+        if(!PLACEHOLDER)   //if error
         {
             return false;
         }

@@ -1,15 +1,16 @@
-add_executable(test_robots
+add_executable(myExe
     test_robots.cpp
-
+    #createMaps.cpp
 )
 
-target_include_directories(test_robots
+target_include_directories(myExe
     PRIVATE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
-target_link_libraries(test_robots
+target_link_libraries(myExe
     PRIVATE
         sim_lib)
 
-target_compile_features(test_robots PRIVATE cxx_std_17)
+
+target_compile_features(myExe PRIVATE cxx_std_17)
