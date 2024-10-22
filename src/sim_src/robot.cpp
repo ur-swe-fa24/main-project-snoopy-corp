@@ -92,13 +92,20 @@
 
 
     bool Robot::clean(){
+        currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // WILL BE OVERRIDDEN BY SUBCLASSES
         return true;
     }
 
     std::string Robot::getMapName(){
         return currentMap.getName();
     }
+
+    std::string Robot::getRoomStatus(){
+        return currentMap.getRoomCleanliness(std::to_string(location));
+    }
     std::string Robot::toString(){
-        std::cout << "ID: " << id << ", Type: " << typeToString(type) << ", Status: " << statusToString(status) << ", Map: " << this->getMapName() << "\n";
+        std::cout << "ID: " << id << ", Type: " << typeToString(type) 
+        << ", Status: " << statusToString(status) << ", Location: " << this->getLocation() 
+        << ", Map: " << this->getMapName() << ", Current Room Status: " << this->getRoomStatus() << "\n";
         return "";
     }

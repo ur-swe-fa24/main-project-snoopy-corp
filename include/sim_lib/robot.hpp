@@ -32,12 +32,18 @@ class Robot{
         std::string toString();
         std::string getMapName();
         RobotType getType() { return type; }
+        std::string getRoomStatus();
+
+        // Temporarily Public, will turn Private soon through update function
+        bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
+        void reportError();     //triggered when clean() returns false
+        void move(int room_num);
 
     protected:
         int id;
         RobotType type;
         Status status = Status::Active;
-        int location;   // an index of where it is on the currently loaded map
+        int location = 0;   // an index of where it is on the currently loaded map
         int tasks_completed; // lifetime counter 
         int tasks_attempted; // lifetime counter
         int progress_task;  // progresss through current task (out of 10)
@@ -45,10 +51,6 @@ class Robot{
         std::vector<int> queue;
         int battery_level;
         Map currentMap;  
-
-        bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
-        void reportError();     //triggered when clean() returns false
-        void move(int room_num);
         
 };
 

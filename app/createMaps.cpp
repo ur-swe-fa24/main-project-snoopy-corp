@@ -1,4 +1,4 @@
-#include "../include/map.hpp"
+#include "../include/sim_lib/map.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -23,4 +23,5 @@ int main() {
     map1.updateRoomName("3", "downstairs bathroom");
     std::cout << "Bathroom new name: " << map1.getRoomName("3") << std::endl;
 
+    return 0;
 }
