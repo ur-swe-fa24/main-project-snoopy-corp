@@ -1,0 +1,38 @@
+@startuml Simulator
+skinparam defaultTextAlignment center
+
+start
+:Simulation_Driver Begins;
+
+repeat: User Choice Interaction
+    switch (user_input) 
+    case (Add Robot)
+        switch (robot_type)
+            case(Scrubber)
+            :Create Scrubber\nRobot;
+            case(Shampoo)
+            :Create Shampoo\nRobot;
+            case(Vacuum)
+            :Create Vacuum\nRobot;
+        endswitch
+    :Add created robot to list;
+    case (Remove Robot) 
+        switch (robot found?)
+            case(Yes)
+            :Remove Robot;
+            case(No)
+            :Notify User;
+        endswitch
+    case (View Robots)
+    :Open Dashboard;
+    :Exit Dashboard;
+    case (Move)
+    :Text 4;
+    case (Clean)
+    :Text 5;
+    endswitch
+backward: Continue Again;
+repeat while (User inputted Exit) is (no)
+->yes;
+end
+@enduml
