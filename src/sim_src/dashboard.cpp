@@ -2,6 +2,7 @@
 #include "../../include/sim_lib/simulation_driver.hpp"
 #include <iostream>
 
+// The only constructor for the dashboard that gets a vector of robots and starts the dashboard
 Dashboard::Dashboard(std::vector<Robot> robots) : robots(robots) {
     // When fully implemented, will move to run on separate thread
     std::string choice = "U";
@@ -56,7 +57,11 @@ Dashboard::Dashboard(std::vector<Robot> robots) : robots(robots) {
     }
 }
 
+// Constructor for one robot
 Dashboard::Dashboard(Robot robot) {Dashboard({robot});}
+
+// Default Constructor with no robot
+Dashboard::Dashboard() {Dashboard(std::vector<Robot>{});}
 
 // TODO at a later sprint
 void Dashboard::create_chart(std::vector<Robot> robots, std::string data_name) const {
@@ -64,6 +69,7 @@ void Dashboard::create_chart(std::vector<Robot> robots, std::string data_name) c
     return;
 }
 
+// Basic function to provide feedback and capture it with input output
 std::string Dashboard::get_feedback() const {
     std::cout << "Thanks for giving us feedback! \nIf this is a concern, we will respond as soon as possible. Please type your feedback below and hit Enter." << std::endl;
     std::string feedback;

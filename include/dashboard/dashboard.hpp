@@ -7,6 +7,7 @@
 
 class Dashboard {
     public:
+        Dashboard();                    // Default constructor with no robots
         Dashboard(Robot robot);         // For a singular robot
         Dashboard(std::vector<Robot> robots);   // For multiple robots
         void create_chart(std::vector<Robot> robots, std::string data_name) const;
