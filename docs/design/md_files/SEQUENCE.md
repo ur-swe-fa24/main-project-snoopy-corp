@@ -2,7 +2,7 @@
 The following Sequence Diagrams showcase the interactions between different components of the program that occur to realize the use cases.
 
 ## Viewing Robot and Task Status
-<img align="right" width="400" height="650" src="docs/design/png_files/SequenceDiagrams/view_status.png">
+<img align="right" width="400" height="650" src="/docs/design/png_files/SequenceDiagrams/view_status.png">
 
 The following diagram on the right models how a regular user of the system, which includes Building Manager, Building Staff, and Field Engineer, may view the status of Robots or tasks at any given time.
 
@@ -15,7 +15,7 @@ Both diplays are updated and dynamically refreshed every two seconds to keep the
 <br><br><br><br><br><br><br>
 
 ## Task Assignment
-<img align="right" width="390" height="750" src="docs/design/png_files/SequenceDiagrams/task_assignment.png">
+<img align="right" width="390" height="750" src="/docs/design/png_files/SequenceDiagrams/task_assignment.png">
 
 The following diagram on the right models how a cleaning task is issued or scheduled.
 
@@ -27,7 +27,7 @@ There are two main branches here dependent on who the user is and if they want t
 <br><br><br><br><br><br>
 
 ## Cleaning Task
-<img align="right" width="400" height="1200" src="docs/design/png_files/SequenceDiagrams/cleaning_task.png">
+<img align="right" width="400" height="1200" src="/docs/design/png_files/SequenceDiagrams/cleaning_task.png">
 
 The following image on the right depicts how a task is assigned to a Robot and executed. The sequence diagram has following components:
 + **Task Origination**: Describes that the task can originate from a user or the task module from a scheduled task. Note that though the Building Staff is specified as the user, it can also be the Building Manager or Field Engineer if they iniate the task
@@ -42,7 +42,7 @@ The following image on the right depicts how a task is assigned to a Robot and e
 <br><br><br><br><br><br><br><br><br><br><br><br>
 
 ## Field Engineer
-<img align="right" width="400" height="900" src="docs/design/png_files/SequenceDiagrams/field_engineer.png">
+<img align="right" width="400" height="900" src="/docs/design/png_files/SequenceDiagrams/field_engineer.png">
 
 The following diagram showcase the use cases of the Field Engineer where they may add or delete a robot or they can access the error logs.
 
@@ -53,7 +53,7 @@ The following diagram showcase the use cases of the Field Engineer where they ma
 <br><br><br><br><br><br><br><br><br><br><br>
 
 ## Senior Management
-<img align="right" width="400" height="800" src="docs/design/png_files/SequenceDiagrams/senior_management.png">
+<img align="right" width="400" height="800" src="/docs/design/png_files/SequenceDiagrams/senior_management.png">
 
 The following diagram showcase the use cases of the Senior Management where they can see the data on Robot usage, customize available KPIs, get historical data, or provide feedback.
 
