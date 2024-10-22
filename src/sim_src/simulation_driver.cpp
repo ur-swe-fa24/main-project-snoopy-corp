@@ -44,3 +44,7 @@
         robot_index++;
         return robot_index-1;
     }
+
+    void SimulationDriver::start_dashboard(){
+        auto dash = Dashboard(robots);
+    }

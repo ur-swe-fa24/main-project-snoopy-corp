@@ -4,6 +4,7 @@
 #include <vector>
 #include "robot.hpp"
 #include "map.hpp"
+#include "../dashboard/dashboard.hpp"
 
 class SimulationDriver{
 
@@ -19,6 +20,7 @@ class SimulationDriver{
         int getRobotIndex() { return robot_index; }
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
+        void start_dashboard();
     private:
         std::vector<Robot> robots;
         Map selectedMap;

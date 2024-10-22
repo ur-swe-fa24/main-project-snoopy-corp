@@ -1,12 +1,11 @@
 #ifndef LIVE_ROBOT_DASH_HPP
 #define LIVE_ROBOT_DASH_HPP
 
-#include "include/dashboard/dashboard.hpp"
-#include "include/map.hpp"
+#include "../../include/dashboard/dashboard.hpp"
+#include "../../include/sim_lib/map.hpp"
 
 class LiveRobotDash : public Dashboard {
     public:
-        LiveRobotDash();
         LiveRobotDash(Robot robot);
     private:
         Status status;

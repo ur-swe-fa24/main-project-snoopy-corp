@@ -3,19 +3,20 @@
 
 #include <vector>
 #include <string>
-#include "include/sim_lib/robot.hpp"
+#include "../../include/sim_lib/robot.hpp"
 
 class Dashboard {
     public:
-        Dashboard();                    // For the metrics of the whole fleet (or default to first robot and message to create robot if no robots)
         Dashboard(Robot robot);         // For a singular robot
+        Dashboard(std::vector<Robot> robots);   // For multiple robots
         void create_chart(std::vector<Robot> robots, std::string data_name) const;
         std::string get_feedback() const;
 
     protected:
-        Robot robot;
-        int id;
-        RobotType type;
+        std::vector<Robot> robots;
+        // Unused and to be removed from framework upon discussion
+        // int id;
+        // RobotType type;
 };
 
 #endif // DASHBOARD_HPP
