@@ -23,4 +23,4 @@ You will also store your PlantUML source files in this directory.
 [Sequence Diagrams](/docs/design/md_files/SEQUENCE.md) - These are sequence diagrams of the project that showcase the interaction between different components of the program that occur to realize the user cases.
 
 ### Simulation Diagrams
-[Simulation Diagrams](/docs/design/md_files/SIMULATION.md) - The simulation diagram illustrates the flow and behavior of robots in the system, showing how different robot types interact with the environment and the simulation driver to perform tasks.
+[Simulation Diagrams](/docs/design/md_files/SIMULATION.md) - These simulation diagrams illustrate the flow and behavior of robots in the system, showing how different robot types interact with the environment and the simulation driver to perform tasks.
