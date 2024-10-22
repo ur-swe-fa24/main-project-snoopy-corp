@@ -47,6 +47,7 @@
 
     void SimulationDriver::start_dashboard(){
         auto dash = Dashboard(robots);
+    }
 
     Robot* SimulationDriver::getRobot(int id) {
         for(int i = 0; i < robots.size(); i++){
