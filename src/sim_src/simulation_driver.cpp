@@ -45,6 +45,9 @@
         return robot_index-1;
     }
 
+    void SimulationDriver::start_dashboard(){
+        auto dash = Dashboard(robots);
+
     Robot* SimulationDriver::getRobot(int id) {
         for(int i = 0; i < robots.size(); i++){
             if(robots[i].getId()==id){

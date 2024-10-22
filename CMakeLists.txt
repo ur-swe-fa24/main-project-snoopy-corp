@@ -15,7 +15,7 @@ src/sim_src/shampoo_robot.cpp
 src/sim_src/vacuum_robot.cpp
 src/sim_src/simulation_driver.cpp
 src/sim_src/map.cpp
-
+src/sim_src/dashboard.cpp
 )
 
 target_include_directories(sim_lib

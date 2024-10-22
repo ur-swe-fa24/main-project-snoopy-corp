@@ -6,6 +6,7 @@
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/vacuum_robot.hpp"
 #include "sim_lib/simulation_driver.hpp"
+#include "dashboard/dashboard.hpp"
 #include "sim_lib/map.hpp"
 
 int main(){
@@ -35,7 +36,7 @@ int main(){
 
     std::string input;
     while (true) {
-        std::cout << "Add, Remove, Move, Clean, or Exit: " << "\n";
+        std::cout << "Add, Remove, View, Move, Clean, or Exit: " << "\n";
         std::getline(std::cin, input); 
 
         if (input == "Exit") break; 
@@ -50,6 +51,10 @@ int main(){
             std::cout << "Enter ID of Robot to be removed" << "\n";
             std::getline(std::cin, input); 
             s.removeRobot(stoi(input));
+        }
+        else if(input == "View"){
+            std::cout << "Starting the dashboard" << "\n";
+            s.start_dashboard();
         }
         else if(input == "Move"){
             std::cout << "Enter ID of Robot to be moved" << "\n";
