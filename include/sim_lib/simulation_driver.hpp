@@ -19,6 +19,7 @@ class SimulationDriver{
         int getRobotIndex() { return robot_index; }
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
+        Robot* getRobot(int id);
     private:
         std::vector<Robot> robots;
         Map selectedMap;
