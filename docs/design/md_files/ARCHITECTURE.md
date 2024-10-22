@@ -1,5 +1,5 @@
 # Architecture Diagram
-![ArchitectureDiagram](png_files/ArchitectureDiagram.png)
+![ArchitectureDiagram](/docs/design/png_files/ArchitectureDiagram.png)
 
 This diagram shows the high-level structure of our project.
 
