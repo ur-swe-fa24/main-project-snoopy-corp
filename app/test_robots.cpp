@@ -45,12 +45,13 @@ int main() {
 
             Robot* robot = nullptr;
             int robotIndex = s.assignRobotIndex();  // Assign a unique robot index
+            std::string robotTypeName = Robot::getRobotTypeFullName(input[0]);
 
-            if (input == "S") {
+            if (robotTypeName == "Scrubber") {
                 robot = new ScrubberRobot(robotIndex, s.getSelectedMap());
-            } else if (input == "H") {
+            } else if (robotTypeName == "Shampoo") {
                 robot = new ShampooRobot(robotIndex, s.getSelectedMap());
-            } else if (input == "V") {
+            } else if (robotTypeName == "Vacuum") {
                 robot = new VacuumRobot(robotIndex, s.getSelectedMap());
             } else {
                 std::cout << "Invalid robot type. Please enter S, H, or V.\n";
@@ -58,7 +59,7 @@ int main() {
             }
 
             s.addRobot(*robot);  // Add robot to the simulation driver
-            mongo_wrapper.insertRobotData(robot->getId(), input, "Active", robot->getLocation(), m.getName(), "default");
+            mongo_wrapper.insertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
             std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
             delete robot;  // Clean up dynamically allocated robot after adding it to the vector
         }
