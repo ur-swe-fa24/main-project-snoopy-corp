@@ -16,14 +16,17 @@ include(dependencies/dependencies.cmake)
 
 # Add the sim_lib library with the necessary source files
 add_library(sim_lib
-    src/sim_src/robot.cpp
-    src/sim_src/scrubber_robot.cpp
-    src/sim_src/shampoo_robot.cpp
-    src/sim_src/vacuum_robot.cpp
-    src/sim_src/simulation_driver.cpp
-    src/sim_src/map.cpp
-    src/sim_src/dashboard.cpp
-    src/sim_src/mongoDBWrapper.cpp
+  src/sim_src/robot.cpp
+  src/sim_src/scrubber_robot.cpp
+  src/sim_src/shampoo_robot.cpp
+  src/sim_src/vacuum_robot.cpp
+  src/sim_src/simulation_driver.cpp
+  src/sim_src/map.cpp
+  src/sim_src/dashboard.cpp
+)
+
+add_library(database
+  src/database/mongoDBWrapper.cpp
 )
 
 # Find and link MongoDB C++ driver libraries

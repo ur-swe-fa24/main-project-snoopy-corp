@@ -7,7 +7,7 @@
 #include "sim_lib/simulation_driver.hpp"
 #include "dashboard/dashboard.hpp"
 #include "sim_lib/map.hpp"
-#include "sim_lib/mongoDBWrapper.hpp"  // Include the MongoDBWrapper
+#include "database/mongoDBWrapper.hpp"  // Include the MongoDBWrapper
 
 int main() {
     mongocxx::instance instance{};  // Initialize MongoDB instance for the entire application
