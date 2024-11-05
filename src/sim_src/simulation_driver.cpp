@@ -1,6 +1,5 @@
 #include "../../include/sim_lib/simulation_driver.hpp"
-
-
+#include <thread>
 
     // Overloaded constructor with type and id parameters
     SimulationDriver::SimulationDriver() {}
@@ -46,7 +45,10 @@
     }
 
     void SimulationDriver::start_dashboard(){
-        auto dash = Dashboard(robots);
+        std::thread dash {[this](){auto dash = Dashboard(robots);}};
+        // TODO: Once dashboard is on a separate screen, this thread can be detached instead
+        // TODO: After mongoDB integration, also switch dashboard to using mongoDB pulls to avoid race conditions
+        dash.join();
     }
 
     Robot* SimulationDriver::getRobot(int id) {

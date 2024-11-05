@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <stdexcept>
 
 #include "sim_lib/robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
@@ -29,17 +30,15 @@ int main() {
 
     // Thread to go each second and call the clean method
     // Each 'second', call the clean method on each robot that has status Active
-    // Need to lock the robots hash map with a mutex whenever getting it so delete robot doesn't affect the hash map
-    // std::thread update_stuff {[s](){for(Robot robo : s.getRobots()) {
-    //                                        robo.clean()}}};
-
-    // Thread to call the dashboard up - will be the start_dashboard() method of simulator s
-    // The thread will just start the dashboard and when the thread is done, it is done
-
-    //When is each thread joinable - 
-        // for the update, that has to be killed manually
-        // for the dashboard, keep going until it is killed aka joinable - so can pretty much detach it
-
+    // TODO: Need to lock the robots vector with a mutex whenever getting it so delete robot doesn't affect updates here
+    bool simulationThread = true;
+    std::thread update_stuff {[&s, &simulationThread](){
+        while (simulationThread){
+            for(Robot robo : *s.getRobots()) {
+                robo.update();
+            }
+            std::this_thread::sleep_for (std::chrono::seconds(1));
+        }}};
 
 
     std::string input;
@@ -51,7 +50,10 @@ int main() {
         input = std::toupper(input[0]);
 
         if (input == "E") {
+            // End simulation, join the threads, and finish
             std::cout << "Exiting the program. Goodbye!\n";
+            simulationThread = false;
+            update_stuff.join();
             break;
         }
 
