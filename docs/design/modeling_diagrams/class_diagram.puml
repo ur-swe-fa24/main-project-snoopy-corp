@@ -1,0 +1,88 @@
+@startuml class_diagram
+
+
+
+class Dashboard{
+    +Dashboard()                  
+    +Dashboard(Robot robot)
+    +Dashboard(std::vector<Robot> robots) 
+    +void create_chart(std::vector<Robot> robots, std::string data_name) const
+    +std::string get_feedback() const
+    -std::vector<Robot> robots
+}
+
+class ErrorLog {
+    +ErrorLog(Robot robot) 
+    +ErrorLog(std::vector<Robot> robots) 
+    -std::string description 
+    -int timpestamp 
+}
+
+class LiveRobotDash{
+    +LiveRobotDash(Robot robot)
+    -Status status;
+    -Map curr_map;
+    -int location;
+    -int progress_task;
+    -int progress_queue;
+    -int queue_length;
+}
+
+class MetricsDash{
+    +MetricsDash(Robot robot);
+    +MetricsDash(std::vector<Robot> robot);
+    -float efficiency;
+    -float erroWr_rate;
+    -int runtime;
+}
+
+enum FloorType{
+    WOOD
+    TILE
+    CARPET
+}
+
+enum RobotType{
+    SCRUBBER
+    SHAMPOO
+    VACUUM
+}
+
+enum Status{
+    ACTIVE
+    INACTIVE
+    ERROR
+}
+
+class Map{
+    !!!!!
+}
+
+class Robot{
+    +Robot();
+        +Robot(RobotType type, int id);
+        +Robot(RobotType type, int id, Map currentMap);
+
+        +float getEfficiency();
+        +int getId();
+        +Status getStatus();
+        +int getLocation();
+        +int getProgressTask();
+        +int getProgressQueue();
+        +std::vector<int> getQueue();
+        +int getBatteryLevel();
+        +void update(); 
+        +std::string toString();
+        +std::string getMapName();
+        +RobotType getType() { return type; }
+        +std::string getRoomStatus();
+
+        -bool clean();    
+        -void reportError();    
+        -void move(int room_num);
+}
+
+Dashboard <|-- ErrorLog
+Dashboard <|-- LiveRobotDash
+Dashboard <|-- MetricsDash
+
