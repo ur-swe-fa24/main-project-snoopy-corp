@@ -56,14 +56,24 @@ enum Status{
 }
 
 class Map{
-    !!!!!
+    +std::string name   
+    +std::map<std::string, JSON room>
+
+    - Map();
+    -Map(std::string name, std::map<std::string, JSON rooms)
+    -std::string getName() { return name; }
+    -void setName(std::string mapName) { name = mapName; }
+
+    -void updateRoomCleanliness(std::string roomId, std::string cleaningStatus)
+    -std::string getRoomCleanliness(std::string roomId) { return rooms[roomId][1]; }
+    -void updateRoomName(std::string roomId, std::string roomName)
+    -std::string getRoomName(std::string roomId) { return rooms[roomId][0]; }
 }
 
 class Robot{
     +Robot() 
         +Robot(RobotType type, int id) 
         +Robot(RobotType type, int id, Map currentMap) 
-
         +float getEfficiency() 
         +int getId() 
         +Status getStatus() 
@@ -77,10 +87,21 @@ class Robot{
         +std::string getMapName() 
         +RobotType getType() { return type  }
         +std::string getRoomStatus() 
-
         -bool clean()     
         -void reportError()     
         -void move(int room_num) 
+
+        #int id
+        #RobotType type
+        #Status status = Status::Active
+        #int location = 0
+        #int tasks_completed
+        #int tasks_attempted
+        #int progress_task
+        #int progress_queue
+        #std::vector<int> queue
+        #int battery_level
+        #Map currentMap
 }
 
 Robot ..> RobotType
@@ -122,13 +143,14 @@ Dashboard <|-- MetricsDash
 
 Dashboard ..> MongoDBWrapper
 Dashboard ..> Robot
+Robot ..> Map
 Map ..> FloorType
 class MongoDBWrapper{
-    +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name);
+    +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name)   
     +void insertRobotData(int id, const std::string& type, const std::string& status, 
-                         int location, const std::string& map, const std::string& currentRoomStatus);
+                         int location, const std::string& map, const std::string& currentRoomStatus)   
 
-    -mongocxx::client client_;
-    -mongocxx::database db_;
-    -mongocxx::collection collection_;
+    -mongocxx::client client_   
+    -mongocxx::database db_   
+    -mongocxx::collection collection_   
 }
