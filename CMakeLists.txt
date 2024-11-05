@@ -4,7 +4,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 message("Building this awesome project!")
 
 # Set the CMake install prefix for MongoDB C++ driver
-set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/libs/mongo-cxx-driver")
+if(APPLE)
+  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/libs/mongo-cxx-driver")
+elseif(WIN32)
+  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/mongo-cxx-driver-r3.11.0/build/mongo-cxx-driver")
+endif()
 message("CMake install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 # Project name
@@ -25,6 +29,11 @@ add_library(sim_lib
   src/sim_src/dashboard.cpp
 )
 
+target_include_directories(sim_lib
+    PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+   
 add_library(database
   src/database/mongoDBWrapper.cpp
 )
@@ -39,6 +48,5 @@ find_package(bsoncxx REQUIRED)
 if (bsoncxx_FOUND)
   message(STATUS "bsoncxx found!")
 endif()
-
 
 add_subdirectory(app)

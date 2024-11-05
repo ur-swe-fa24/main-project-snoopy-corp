@@ -23,6 +23,7 @@ class SimulationDriver{
         void start_dashboard();
         Robot* getRobot(int id);
         std::vector<Robot>* getRobots(){return &robots;};
+        std::vector<Robot> getFleet();
     private:
         std::vector<Robot> robots;
         Map selectedMap;
