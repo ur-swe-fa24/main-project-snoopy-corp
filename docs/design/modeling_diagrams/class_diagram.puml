@@ -120,3 +120,12 @@ Dashboard <|-- ErrorLog
 Dashboard <|-- LiveRobotDash
 Dashboard <|-- MetricsDash
 
+class MongoDBWrapper{
+    +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name);
+    +void insertRobotData(int id, const std::string& type, const std::string& status, 
+                         int location, const std::string& map, const std::string& currentRoomStatus);
+
+    -mongocxx::client client_;
+    -mongocxx::database db_;
+    -mongocxx::collection collection_;
+}
