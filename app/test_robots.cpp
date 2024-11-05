@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "sim_lib/robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
@@ -33,6 +34,21 @@ int main(){
     };
     Map m("map1", roomsEx1);
     SimulationDriver s(m);
+
+    // Thread to go each second and call the clean method
+    // Each 'second', call the clean method on each robot that has status Active
+    // Need to lock the robots hash map with a mutex whenever getting it so delete robot doesn't affect the hash map
+    // std::thread update_stuff {[s](){for(Robot robo : s.getRobots()) {
+    //                                        robo.clean()}}};
+
+    // Thread to call the dashboard up - will be the start_dashboard() method of simulator s
+    // The thread will just start the dashboard and when the thread is done, it is done
+
+    //When is each thread joinable - 
+        // for the update, that has to be killed manually
+        // for the dashboard, keep going until it is killed aka joinable - so can pretty much detach it
+
+
 
     std::string input;
     while (true) {
