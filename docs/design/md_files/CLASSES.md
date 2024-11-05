@@ -1,16 +1,20 @@
 # Class Diagram
-![class_diagram](/docs/design/png_files/ClassDiagram.png)
+![class_diagram](/docs/design/modeling_diagrams/class_diagram.puml)
 
 The class diagram shows the various objects that will be present in our project. 
 
-First is the Main class, which serves as the login function and allows the user to select what type of staff they are. It allows them to then open either the dashboard (read-only databases with visualizations) or modules (robot assignment services).
+First is the Main class, which serves as the login function and allows the user to select what type of staff they are. It allows them to then open either the dashboard (read-only databases with visualizations) or the Assignemnt Module (robot assignment services).
 
-The Module class has two children, the Building Staff's Simple Assignment Module and the Building Manager and Field Engineer's Complex/Schedule Module.
-
-There is also a related class which will allow the Field Engineer to Add/Drop Robots to the Module's fleet via an interface.
+The Simulation Driver stores the fleet of robots and serves as the main 'clock' via a thread implementation which will prompt the robots in the fleet to update (clean or move) and store their data in the MongoDB, and will prompt the MongoDBWrapper to push that data to the database.
 
 The Dashboard class has three children; the Live Robot Dashboard and Metrics Dashboard have information for their relevant staff, while the Error Log tracks Robot errors with the relevant info and time.
 
+The MongoDBWrapper wraps the database which stores all of the dashboard's information on the back end. When prompted periodically by the Simulation Driver, it will refresh the visual dashboard's information.
+
+The Assignment Module allows the user to assign robots to a given task, whether at the present or some upcoming task in the future.
+
 The Map class contains the JSON map of the room as well as the status of each room by index.
 
-Finally, the Robot class and its three children represent the actual robots.
+The Robot class and its three children represent the actual robots.
+
+Finally, the various enum types are used to represent objects in the real world (such as a robot's type, its current status, or the floor type).
