@@ -109,3 +109,29 @@
         << ", Map: " << this->getMapName() << ", Current Room Status: " << this->getRoomStatus() << "\n";
         return "";
     }
+
+    std::string Robot::robotTypeToString(RobotType type) {
+        switch (type) {
+            case RobotType::Shampoo:
+                return "Shampoo";
+            case RobotType::Scrubber:
+                return "Scrubber";
+            case RobotType::Vacuum:
+                return "Vacuum";
+            default:
+                return "Unknown";
+        }
+    }
+
+    std::string Robot::getRobotTypeFullName(char type) {
+        switch (type) {
+            case 'S': 
+                return "Scrubber";
+            case 'H': 
+                return "Shampoo";
+            case 'V': 
+                return "Vacuum";
+            default: 
+                return "Unknown";
+        }
+    }
