@@ -1,4 +1,5 @@
 @startuml class_diagram
+skinparam groupInheritance 3
 
 
 
@@ -20,20 +21,20 @@ class ErrorLog {
 
 class LiveRobotDash{
     +LiveRobotDash(Robot robot)
-    -Status status;
-    -Map curr_map;
-    -int location;
-    -int progress_task;
-    -int progress_queue;
-    -int queue_length;
+    -Status status 
+    -Map curr_map 
+    -int location 
+    -int progress_task 
+    -int progress_queue 
+    -int queue_length 
 }
 
 class MetricsDash{
-    +MetricsDash(Robot robot);
-    +MetricsDash(std::vector<Robot> robot);
-    -float efficiency;
-    -float erroWr_rate;
-    -int runtime;
+    +MetricsDash(Robot robot) 
+    +MetricsDash(std::vector<Robot> robot) 
+    -float efficiency 
+    -float erroWr_rate 
+    -int runtime 
 }
 
 enum FloorType{
@@ -59,28 +60,61 @@ class Map{
 }
 
 class Robot{
-    +Robot();
-        +Robot(RobotType type, int id);
-        +Robot(RobotType type, int id, Map currentMap);
+    +Robot() 
+        +Robot(RobotType type, int id) 
+        +Robot(RobotType type, int id, Map currentMap) 
 
-        +float getEfficiency();
-        +int getId();
-        +Status getStatus();
-        +int getLocation();
-        +int getProgressTask();
-        +int getProgressQueue();
-        +std::vector<int> getQueue();
-        +int getBatteryLevel();
-        +void update(); 
-        +std::string toString();
-        +std::string getMapName();
-        +RobotType getType() { return type; }
-        +std::string getRoomStatus();
+        +float getEfficiency() 
+        +int getId() 
+        +Status getStatus() 
+        +int getLocation() 
+        +int getProgressTask() 
+        +int getProgressQueue() 
+        +std::vector<int> getQueue() 
+        +int getBatteryLevel() 
+        +void update()  
+        +std::string toString() 
+        +std::string getMapName() 
+        +RobotType getType() { return type  }
+        +std::string getRoomStatus() 
 
-        -bool clean();    
-        -void reportError();    
-        -void move(int room_num);
+        -bool clean()     
+        -void reportError()     
+        -void move(int room_num) 
 }
+
+Robot ..> RobotType
+Robot ..> Status
+
+class ScrubberRobot{
+    +ScrubberRobot() 
+    +ScrubberRobot(int id) 
+    +ScrubberRobot(int id, Map currentMap) 
+    -int WaterLevel 
+    -bool clean() 
+}
+
+
+class ShampooRobot{
+    +ShampooRobot()  
+    +ShampooRobot(int id)  
+    +ShampooRobot(int id, Map currentMap)  
+    -int ShampooLevel  
+    -bool clean()  
+}
+
+class VacuumRobot{
+    +VacuumRobot()  
+    +VacuumRobot(int id, Map currentMap)  
+    +VacuumRobot(int id)  
+    -int TrashbagLevel  
+    -bool clean()   
+}
+
+Robot <|-- ScrubberRobot
+Robot <|-- ShampooRobot
+Robot <|-- VacuumRobot
+
 
 Dashboard <|-- ErrorLog
 Dashboard <|-- LiveRobotDash
