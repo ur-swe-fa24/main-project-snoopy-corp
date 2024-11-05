@@ -120,6 +120,9 @@ Dashboard <|-- ErrorLog
 Dashboard <|-- LiveRobotDash
 Dashboard <|-- MetricsDash
 
+Dashboard ..> MongoDBWrapper
+Dashboard ..> Robot
+Map ..> FloorType
 class MongoDBWrapper{
     +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name);
     +void insertRobotData(int id, const std::string& type, const std::string& status, 
