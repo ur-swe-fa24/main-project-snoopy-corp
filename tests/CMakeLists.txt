@@ -14,5 +14,5 @@ target_compile_features(test PRIVATE cxx_std_17)
 target_link_libraries(test
   PRIVATE
     Catch2::Catch2WithMain
-    myExe
+    sim_lib
 )

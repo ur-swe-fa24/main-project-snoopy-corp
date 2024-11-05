@@ -49,4 +49,6 @@ if (bsoncxx_FOUND)
   message(STATUS "bsoncxx found!")
 endif()
 
+
 add_subdirectory(app)
+add_subdirectory(tests)
