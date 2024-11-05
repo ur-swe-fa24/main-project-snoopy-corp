@@ -154,3 +154,49 @@ class MongoDBWrapper{
     -mongocxx::database db_   
     -mongocxx::collection collection_   
 }
+
+class AssignmentModule{
+    -Map curr_map
+    -long time
+    -void close()
+    +boolean assign(std::vector<Robot> fleet, std::vector<int> rooms)
+    - Calendar calendar
+    - SimulationDriver sd
+
+
+}
+
+AssignmentModule ..> Robot
+AssignmentModule ..> SimulationDriver
+SimulationDriver ..> MongoDBWrapper
+
+class SimulationDriver{
+        +SimulationDriver()
+        +explicit SimulationDriver(std::vector<Robot> robots)
+        +explicit SimulationDriver(Map selectedMap)
+        +explicit SimulationDriver(std::vector<Robot> robots, Map selectedMap)
+        +void addRobot(Robot robot)
+        +Robot removeRobot(int id)
+        +void clear()
+        +void toString()
+        +int getRobotIndex() { return robot_index; }
+        +int assignRobotIndex()
+        +Map getSelectedMap() { return selectedMap; }
+        +void start_dashboard()
+        +Robot* getRobot(int id)
+        +std::vector<Robot> getFleet()
+
+        -std::vector<Robot> robots
+        -Map selectedMap
+        -int robot_index = 0
+}
+
+class Main{
+    + string staff_type
+    -open_dashboard(string staff_type)
+    -open_module(string staff_type)
+}
+
+Main ..> Dashboard
+Main ..> AssignmentModule
+SimulationDriver ..> Robot
