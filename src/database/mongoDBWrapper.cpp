@@ -1,5 +1,6 @@
 #include "../../include/database/mongoDBWrapper.hpp"
 
+
 MongoDBWrapper::MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& collection_name)
     : client_(mongocxx::uri{uri}), db_(client_[db_name]), collection_(db_[collection_name]) {
 
