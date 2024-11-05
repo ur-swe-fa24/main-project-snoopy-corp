@@ -88,6 +88,11 @@
         "xlocmon": "cpp",
         "xlocnum": "cpp",
         "xloctime": "cpp",
+        "any": "cpp",
+        "csignal": "cpp",
+        "unordered_set": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp"
         "xhash": "cpp",
         "hash_map": "cpp",
         "text_encoding": "cpp"
