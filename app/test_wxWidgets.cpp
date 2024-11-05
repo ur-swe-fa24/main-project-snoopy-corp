@@ -1,24 +1,12 @@
 #include <wx/wx.h>
-#include <iostream>
 
-class Test_Wx : public wxApp {
+class MyApp : public wxApp {
 public:
-    virtual bool OnInit();
-};
-
-class MyFrame : public wxFrame {
-public:
-    MyFrame() : wxFrame(nullptr, wxID_ANY, "Hello wxWidgets") {
-        Show(true);
+    virtual bool OnInit() {
+        wxFrame *frame = new wxFrame(nullptr, wxID_ANY, "SNOOPY CORP WXWIDGETS!!!");
+        frame->Show(true);
+        return true;
     }
 };
 
-wxIMPLEMENT_APP(Test_Wx);
-
-bool Test_Wx::OnInit() {
-    std::cout << "Init";
-    wxLogMessage("Application is initializing...");
-    MyFrame *frame = new MyFrame();
-    frame->Show(true);
-    return true;
-}
+wxIMPLEMENT_APP(MyApp);

@@ -20,7 +20,7 @@ src/sim_src/dashboard.cpp
 
 target_include_directories(sim_lib
     PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
 # Link spdlog 

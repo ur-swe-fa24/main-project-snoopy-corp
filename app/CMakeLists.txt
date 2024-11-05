@@ -23,5 +23,7 @@ target_link_libraries(myExe
         ${wxWidgets_LIBRARIES} 
         )
 
-
+        message("wxWidgets Libraries: ${wxWidgets_LIBRARIES}")
+        message("wxWidgets Include Dirs: ${wxWidgets_INCLUDE_DIRS}")
+        
 target_compile_features(myExe PRIVATE cxx_std_17)
