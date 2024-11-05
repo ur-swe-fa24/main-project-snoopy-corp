@@ -33,6 +33,8 @@ class Robot{
         std::string getMapName();
         RobotType getType() { return type; }
         std::string getRoomStatus();
+        static std::string robotTypeToString(RobotType type); 
+        static std::string getRobotTypeFullName(char type);
 
         // Temporarily Public, will turn Private soon through update function
         bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
