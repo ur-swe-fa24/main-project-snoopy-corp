@@ -13,9 +13,9 @@ if (spdlog_FOUND)
   message(STATUS "spdlog found!")
 endif()
 
-add_executable(myExe
-    test_robots.cpp
-)
+# add_executable(myExe
+#     test_robots.cpp
+# )
 
 target_include_directories(myExe
     PRIVATE

@@ -4,11 +4,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 message("Building this awesome project!")
 
 # Set the CMake install prefix for MongoDB C++ driver
-if(APPLE)
-  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/libs/mongo-cxx-driver")
-elseif(WIN32)
-  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/mongo-cxx-driver-r3.11.0/build/mongo-cxx-driver")
-endif()
+# if(APPLE)
+set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/libs/mongo-cxx-driver")
+# elseif(WIN32)
+  # set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/mongo-cxx-driver-r3.11.0/build/mongo-cxx-driver")
+# endif()
 message("CMake install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 # Project name
