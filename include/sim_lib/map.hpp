@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 //#include <nlohmann/json.hpp>
-//using json = nlohmann::json; ?
+//using json = nlohmann::json;
 
 // Enum Classes
 enum class FloorType{
@@ -15,12 +15,14 @@ enum class FloorType{
 class Map{
     private:
         std::string name; // Name of map object
-        std::map<std::string, std::vector<std::string>> rooms; // Temporarily represents JSON of map
+        //json rooms;
+        std::map<std::string, std::vector<std::string>> rooms; //temp vector
         //FloorType floorType;
         //int cleaningStatus;
 
     public:
         Map();
+        //Map(std::string name, json rooms);
         Map(std::string name, std::map<std::string, std::vector<std::string>> rooms);
         std::string getName() { return name; };
         void setName(std::string mapName) { name = mapName; };

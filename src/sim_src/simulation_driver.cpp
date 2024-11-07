@@ -12,7 +12,7 @@
     {
         robots.push_back(robot);
     }
-
+    
     Robot SimulationDriver::removeRobot(int id){
         int index = 0;
         Robot removedRobot;
