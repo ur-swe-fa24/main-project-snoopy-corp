@@ -11,6 +11,7 @@ class ScrubberRobot : public Robot{
         ScrubberRobot();
         ScrubberRobot(int id);
         ScrubberRobot(int id, Map currentMap);
+        nlohmann::json toJson() override;
 
     private:
         int WaterLevel;

@@ -19,3 +19,9 @@
         currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // toy demo
         return true;    
     }
+
+    nlohmann::json VacuumRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Trash Bag Level"] = TrashbagLevel;
+        return json;
+    };

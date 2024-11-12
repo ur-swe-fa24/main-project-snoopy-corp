@@ -11,6 +11,7 @@ class ShampooRobot : public Robot{
         ShampooRobot();
         ShampooRobot(int id);
         ShampooRobot(int id, Map currentMap);
+        nlohmann::json toJson() override;
 
     private:
         int ShampooLevel;

@@ -135,3 +135,17 @@
                 return "Unknown";
         }
     }
+
+    nlohmann::json Robot::toJson(){
+        return nlohmann::json{
+            {"ID", id}, 
+            {"Type", robotTypeToString(type)}, 
+            {"Status", magic_enum::enum_name(type)},
+            {"Location", location},
+            {"Tasks completed", tasks_completed},
+            {"Task attempted", tasks_attempted},
+            {"Progress task", progress_task},
+            {"Progress Queue", progress_queue},
+            {"Battery Level", battery_level},
+            {"Queue", queue}};
+    }
