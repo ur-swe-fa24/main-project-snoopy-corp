@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <nlohmann/json.hpp>
+#include <magic_enum.hpp>
 #include "map.hpp"
 
 enum class RobotType{
@@ -34,6 +36,7 @@ class Robot{
         std::string getMapName();
         RobotType getType() { return type; }
         std::string getRoomStatus();
+        virtual nlohmann::json toJson();
         static std::string robotTypeToString(RobotType type); 
         static std::string getRobotTypeFullName(char type);
 
