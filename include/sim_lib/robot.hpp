@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <queue>
 #include "map.hpp"
 
 enum class RobotType{
@@ -26,7 +27,7 @@ class Robot{
         int getLocation();
         int getProgressTask();
         int getProgressQueue();
-        std::vector<int> getQueue();
+        std::queue<int> getQueue();
         int getBatteryLevel();
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         std::string toString();
@@ -50,7 +51,7 @@ class Robot{
         int tasks_attempted; // lifetime counter
         int progress_task;  // progresss through current task (out of 10)
         int progress_queue; // progress through current queue, can get length of the queue itself to see how much left
-        std::vector<int> queue;
+        std::queue<int> queue;
         int battery_level;
         Map currentMap;  
         

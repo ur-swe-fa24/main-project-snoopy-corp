@@ -2,13 +2,13 @@
 #include <iostream>
 
     // Default constructor 
-    Robot::Robot() : type(RobotType::Scrubber), id(-1) {}
+    Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{} {}
 
     // Overloaded constructor with type and id parameters
-    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10) {}
+    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{} {}
 
     // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id, Map currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10) {}
+    Robot::Robot(RobotType type, int id, Map currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{} {}
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
@@ -34,7 +34,7 @@
         return progress_queue;
     }
 
-    std::vector<int> Robot::getQueue(){
+    std::queue<int> Robot::getQueue(){
         return queue;
     }
 
@@ -48,11 +48,18 @@
             bool PLACEHOLDER = true;
             if(PLACEHOLDER)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
             {
-                queue.erase(queue.begin());
-                if(queue.empty())
-                    status = Status::Inactive;
-                else
-                    move(queue.front());
+                if(queue.size() != 0)
+                {
+                    queue.pop();
+                    // for(auto q : queue){
+                    //     std::cout << q;
+                    // }
+                    // if(queue.empty())
+                    if(queue.size() == 0)
+                        status = Status::Inactive;
+                    else
+                        move(queue.front());
+                }
             }
             else{
                 bool successfulClean = clean();
