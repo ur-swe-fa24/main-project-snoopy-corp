@@ -26,6 +26,9 @@ class Robot{
         // Copy constructor
         Robot(const Robot& other);
 
+        // Move operator
+        Robot& operator=(Robot&& other);
+        
         float getEfficiency();
         int getId();
         Status getStatus();

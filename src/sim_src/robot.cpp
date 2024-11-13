@@ -18,6 +18,10 @@
 
     Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
 
+    Robot& Robot::operator=(Robot&& other){
+        Map currentMap = std::move(other.currentMap);
+        return *this;
+    }
 
 
     float Robot::getEfficiency(){

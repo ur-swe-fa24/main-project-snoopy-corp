@@ -85,7 +85,7 @@ TEST_CASE("Cleaning Unit Tests") {
     SECTION("Ensure fail rates are correctly generated"){
         VacuumRobot r_4 = VacuumRobot(6,m1);
         std::cout << r_4.getFailRate();
-        bool valid = r_4.getFailRate() <= 0.01 || r_4.getFailRate() == 0.1;
+        bool valid = r_4.getFailRate() <= 0.01 || r_4.getFailRate() == Catch::Approx(0.1);
         REQUIRE(valid);
     }
 
