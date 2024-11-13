@@ -1,5 +1,6 @@
 #include "../../include/sim_lib/robot.hpp"
 #include <iostream>
+using json = nlohmann::json;
 
     // Default constructor 
     Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{} {}
@@ -144,15 +145,24 @@
     }
 
     nlohmann::json Robot::toJson(){
-        return nlohmann::json{
+        std::vector<int> vec;
+        std::queue<int> tempQueue = queue;
+        while (!tempQueue.empty()) {
+            vec.push_back(tempQueue.front());
+            tempQueue.pop();
+        }
+        auto j = json{
             {"ID", id}, 
-            {"Type", robotTypeToString(type)}, 
-            {"Status", magic_enum::enum_name(type)},
+            {"Type", std::string(magic_enum::enum_name(type))}, 
+            {"Status", std::string(magic_enum::enum_name(status))},
             {"Location", location},
             {"Tasks completed", tasks_completed},
             {"Task attempted", tasks_attempted},
             {"Progress task", progress_task},
             {"Progress Queue", progress_queue},
             {"Battery Level", battery_level},
-            {"Queue", queue}};
+            {"Queue", vec}};
+        return j;
     }
+ 
+ 
