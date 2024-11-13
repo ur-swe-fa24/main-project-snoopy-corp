@@ -8,7 +8,14 @@
     // Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
 
     // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
+    Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {
+        failure_rate = genFailRate();   // robots by default will have a 0-0.5% chance of failing on a given task segment (10 per room)
+        if(failure_rate > 0.00495)    failure_rate = 0.1;     //robots have a 1% chance of being defective
+    }
+
+    Robot::Robot(RobotType type, int id, Map& currentMap, float failure_rate) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, 
+    status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
@@ -42,6 +49,13 @@
         return battery_level;
     }
 
+    float Robot::getRandom(){
+        return float_distribution(gen);
+    }
+
+    float Robot::genFailRate(){
+        return fail_distribution(gen);
+    }
     void Robot::addTask(int room){
         queue.push(room);
         return;

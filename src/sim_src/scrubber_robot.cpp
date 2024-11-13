@@ -1,14 +1,15 @@
 #include "../../include/sim_lib/scrubber_robot.hpp"
 #include <string>
 #include <iostream>
+#include <random>
 
-    // Default constructor 
-    // ScrubberRobot::ScrubberRobot() :  Robot(RobotType::Generic, 0, 0) {}
+    
 
-    // Overloaded constructor with type and id parameters
+    // Overloaded constructor with id and map parameters
     ScrubberRobot::ScrubberRobot(int id, Map& currentMap) : Robot(RobotType::Scrubber, id, currentMap) {}
 
-    // ScrubberRobot::ScrubberRobot(int id) : Robot(RobotType::Scrubber, id) {}
+    ScrubberRobot::ScrubberRobot(int id, Map& currentMap, float failure_rate) : Robot(RobotType::Scrubber, id, currentMap, failure_rate) {}
+
 
     bool ScrubberRobot::clean() 
     {

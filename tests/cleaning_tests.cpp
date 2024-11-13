@@ -10,13 +10,14 @@ TEST_CASE("Cleaning Unit Tests") {
     json roomsEx0 = {
         {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "0"}, {"FloorType", "Wood"}}},
         {"2", {{"Room", "Office"}, {"Cleaning Status", "0"}, {"FloorType", "Carpet"}}},
-        {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}}
+        {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"4", {{"Room", "Bathroom_2"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}}
     };
     Map m1 = Map("m1", roomsEx0);
 
-    ScrubberRobot r1 = ScrubberRobot(0, m1);
-    ShampooRobot r2 = ShampooRobot(1, m1);
-    VacuumRobot r3 = VacuumRobot(2, m1);
+    ScrubberRobot r1 = ScrubberRobot(0, m1, 0);
+    ShampooRobot r2 = ShampooRobot(1, m1, 0);
+    VacuumRobot r3 = VacuumRobot(2, m1, 0);
 
     r1.addTask(1);
     r1.addTask(3);
@@ -54,8 +55,38 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(r1.getLocation() == 3);
         REQUIRE(stoi(m1.getRoomCleanliness("1")) == 10);
         REQUIRE(stoi(m1.getRoomCleanliness("3")) == 0);
+    }
 
+    SECTION("Robots fail when intended"){
+        VacuumRobot r_fail = VacuumRobot(3, m1, 1.0);
+        r_fail.addTask(1);
+        r_fail.update();
+        REQUIRE(r_fail.getLocation() == 1);
+        r_fail.update();
+        REQUIRE(r_fail.getStatus() == Status::Error);
 
+        VacuumRobot r_fail_50 = VacuumRobot(4, m1, 0.5);
+        r_fail_50.addTask(2);
+        r_fail_50.addTask(3);
+        for(int i = 0; i < 21; i++){
+            r_fail_50.update();
+        }
+        REQUIRE(r_fail_50.getStatus() == Status::Error);    // this technically has a 0.0000009% chance of failing so should probably be removed
+                                                            // but I wanted to test that a conditionally failing robot may fail
+
+        VacuumRobot r_succeed = VacuumRobot(5, m1, 0);
+        r_succeed.addTask(4);
+        for(int i = 0; i < 15; i++){
+            r_succeed.update();
+        }
+        REQUIRE(r_succeed.getStatus() == Status::Inactive);    
+    }
+
+    SECTION("Ensure fail rates are correctly generated"){
+        VacuumRobot r_4 = VacuumRobot(6,m1);
+        std::cout << r_4.getFailRate();
+        bool valid = r_4.getFailRate() <= 0.01 || r_4.getFailRate() == 0.1;
+        REQUIRE(valid);
     }
 
 }

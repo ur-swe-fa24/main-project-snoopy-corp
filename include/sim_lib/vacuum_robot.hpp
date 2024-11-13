@@ -8,9 +8,11 @@
 class VacuumRobot : public Robot{
 
     public: 
-        VacuumRobot();
+        // VacuumRobot();
+        // VacuumRobot(int id);
         VacuumRobot(int id, Map& currentMap);
-        VacuumRobot(int id);
+        VacuumRobot(int id, Map& currentMap, float failure_rate);
+
 
     private:
         int TrashbagLevel;

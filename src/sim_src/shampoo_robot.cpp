@@ -6,7 +6,8 @@
 
     // Overloaded constructor with type and id parameters
     ShampooRobot::ShampooRobot(int id, Map& currentMap) : Robot(RobotType::Shampoo, id, currentMap) {}
-    // ShampooRobot::ShampooRobot(int id) : Robot(RobotType::Shampoo, id) {}
+    ShampooRobot::ShampooRobot(int id, Map& currentMap, float failure_rate) : Robot(RobotType::Shampoo, id, currentMap, failure_rate) {}
+
 
     bool ShampooRobot::clean() 
     {

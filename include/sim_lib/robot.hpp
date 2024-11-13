@@ -5,6 +5,7 @@
 #include <string>
 #include <queue>
 #include "map.hpp"
+#include <random>
 
 enum class RobotType{
     Shampoo, Scrubber, Vacuum
@@ -20,6 +21,7 @@ class Robot{
         // Robot();
         // Robot(RobotType type, int id);
         Robot(RobotType type, int id, Map& currentMap);
+        Robot(RobotType type, int id, Map& currentMap, float failure_rate);
 
         float getEfficiency();
         int getId();
@@ -34,6 +36,7 @@ class Robot{
         std::string toString();
         std::string getMapName();
         RobotType getType() { return type; }
+        float getFailureRate() { return failure_rate; }
         std::string getRoomStatus();
         static std::string robotTypeToString(RobotType type); 
         static std::string getRobotTypeFullName(char type);
@@ -42,6 +45,9 @@ class Robot{
         void move(int room_num);
         virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();
+        float getRandom();
+        float genFailRate();
+        float getFailRate() { return failure_rate; }
         
 
     protected:
@@ -56,9 +62,14 @@ class Robot{
         std::queue<int> queue;
         int battery_level;
         Map& currentMap;  
-        
+        float failure_rate;
              //triggered when clean() returns false
         void setStatus(Status s);
+
+        std::mt19937 gen;
+        std::uniform_real_distribution<float> float_distribution;
+        std::uniform_real_distribution<float> fail_distribution;
+
 };
 
 #endif
