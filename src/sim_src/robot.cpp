@@ -1,14 +1,14 @@
 #include "../../include/sim_lib/robot.hpp"
 #include <iostream>
 
-    // Default constructor 
-    Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{} {}
+    // // Default constructor 
+    // Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{}, status(Status::Inactive), location(-1) {}
 
-    // Overloaded constructor with type and id parameters
-    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{} {}
+    // // Overloaded constructor with type and id parameters
+    // Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
 
     // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id, Map currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{} {}
+    Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
@@ -42,19 +42,33 @@
         return battery_level;
     }
 
+    void Robot::addTask(int room){
+        queue.push(room);
+        return;
+    }
+
+    void Robot::setStatus(Status s){
+        status = s;
+        return;
+    }
+
     void Robot::update(){
-        if(status == Status::Active)
+        // std::cout << "update called ";
+        if(status == Status::Inactive)
         {
-            bool PLACEHOLDER = true;
-            if(PLACEHOLDER)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
+            if(queue.size() != 0)
+            {
+                move(queue.front());
+                setStatus(Status::Active);
+            }
+        }
+        else if(status == Status::Active)
+        {
+            if(std::stoi(currentMap.getRoomCleanliness(std::to_string(location))) >= 10)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
             {
                 if(queue.size() != 0)
                 {
                     queue.pop();
-                    // for(auto q : queue){
-                    //     std::cout << q;
-                    // }
-                    // if(queue.empty())
                     if(queue.size() == 0)
                         status = Status::Inactive;
                     else
@@ -62,11 +76,13 @@
                 }
             }
             else{
+                // std::cout << "clean about to be called; ";
                 bool successfulClean = clean();
                 if(!successfulClean) reportError();
                 else battery_level--;
             }
         }
+        //else: error case
     }
 
 
@@ -99,12 +115,17 @@
 
 
     bool Robot::clean(){
+        std::cout << "OH NO";
         currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // WILL BE OVERRIDDEN BY SUBCLASSES
         return true;
     }
 
     std::string Robot::getMapName(){
         return currentMap.getName();
+    }
+
+    Map& Robot::getMap(){
+        return currentMap;
     }
 
     std::string Robot::getRoomStatus(){

@@ -10,7 +10,7 @@ class ScrubberRobot : public Robot{
     public:  
         ScrubberRobot();
         ScrubberRobot(int id);
-        ScrubberRobot(int id, Map currentMap);
+        ScrubberRobot(int id, Map& currentMap);
 
     private:
         int WaterLevel;

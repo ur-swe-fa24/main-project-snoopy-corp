@@ -10,7 +10,7 @@ class ShampooRobot : public Robot{
     public: 
         ShampooRobot();
         ShampooRobot(int id);
-        ShampooRobot(int id, Map currentMap);
+        ShampooRobot(int id, Map& currentMap);
 
     private:
         int ShampooLevel;

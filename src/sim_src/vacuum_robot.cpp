@@ -4,8 +4,8 @@
     // ScrubberRobot::ScrubberRobot() :  Robot(RobotType::Generic, 0, 0) {}
 
     // Overloaded constructor with type and id parameters
-    VacuumRobot::VacuumRobot(int id, Map currentMap) : Robot(RobotType::Vacuum, id, currentMap) {}
-    VacuumRobot::VacuumRobot(int id) : Robot(RobotType::Vacuum, id) {}
+    VacuumRobot::VacuumRobot(int id, Map& currentMap) : Robot(RobotType::Vacuum, id, currentMap) {}
+    // VacuumRobot::VacuumRobot(int id) : Robot(RobotType::Vacuum, id) {}
 
     bool VacuumRobot::clean() 
     {
