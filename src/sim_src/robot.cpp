@@ -1,8 +1,10 @@
 #include "../../include/sim_lib/robot.hpp"
 #include <iostream>
 
+
     // // Default constructor 
-    // Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{}, status(Status::Inactive), location(-1) {}
+    //initial value of reference to non-const must be an lvalueC/C++(461)
+    // Robot::Robot() : currentMap(Map("DEFAULT_MAP", {{"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})){}
 
 
 
