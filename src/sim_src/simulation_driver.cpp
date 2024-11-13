@@ -2,16 +2,34 @@
 
 
 
-    // Overloaded constructor with type and id parameters
-    SimulationDriver::SimulationDriver() {}
-    SimulationDriver::SimulationDriver(std::vector<Robot> robots) : robots(robots){}
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap){}
-    SimulationDriver::SimulationDriver(std::vector<Robot> robots, Map selectedMap) : robots(robots), selectedMap(selectedMap){}
+    // Default constructor 
+    SimulationDriver::SimulationDriver() : DEFAULT_MAP(Map("DEFAULT_MAP", {
+        {"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})), 
+        DEFAULT_ROBOT(Robot(RobotType::Vacuum, 0, DEFAULT_MAP)), robots({DEFAULT_ROBOT}) {
+
+        }
+        
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap),
+        DEFAULT_ROBOT(Robot(RobotType::Vacuum, 0, selectedMap)), robots({DEFAULT_ROBOT}) {
+        }
+
+
 
     void SimulationDriver::addRobot(Robot robot)
     {
         robots.push_back(robot);
     }
+    // Robot SimulationDriver::removeRobot(int id){
+    //     // int index = 0;
+    //     // for(Robot r : robots){
+    //     //     if(r.getId() == id){
+    //     //         robots.erase(robots.begin() + index);
+    //     //         return r;
+    //     //     }
+    //     //     else index++;
+    //     // }
+    //     // return nullptr;
+    // }
     
     // Robot SimulationDriver::removeRobot(int id){    //RETURN TO THIS
     //     // int index = 0;
@@ -29,6 +47,15 @@
     //     // if(found) return removedRobot;
     //     // else return Robot(RobotType::Scrubber, -1);
     // }
+
+    void SimulationDriver::constructRobot(){
+        json def = {
+        {"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}
+        };
+        Map DEFAULT_MAP = Map("DEFAULT_MAP", def);
+        Robot DEFAULT_ROBOT = Robot(RobotType::Vacuum, 0, DEFAULT_MAP);
+        std::vector<Robot> robots = {DEFAULT_ROBOT};
+    }
 
     void SimulationDriver::clear(){
         robots.clear();

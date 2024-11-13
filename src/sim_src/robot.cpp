@@ -4,8 +4,7 @@
     // // Default constructor 
     // Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{}, status(Status::Inactive), location(-1) {}
 
-    // // Overloaded constructor with type and id parameters
-    // Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
+
 
     // Overloaded constructor with type, id, and Map parameters
     Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1),
@@ -16,6 +15,10 @@
 
     Robot::Robot(RobotType type, int id, Map& currentMap, float failure_rate) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, 
     status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
+
+    Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
+
+
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;

@@ -23,6 +23,9 @@ class Robot{
         Robot(RobotType type, int id, Map& currentMap);
         Robot(RobotType type, int id, Map& currentMap, float failure_rate);
 
+        // Copy constructor
+        Robot(const Robot& other);
+
         float getEfficiency();
         int getId();
         Status getStatus();
