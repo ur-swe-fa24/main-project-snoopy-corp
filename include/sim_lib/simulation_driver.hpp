@@ -2,6 +2,7 @@
 #define SIMULATION_DRIVER_HPP
 
 #include <vector>
+#include <nlohmann/json.hpp>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
@@ -22,7 +23,7 @@ class SimulationDriver{
         Map getSelectedMap() { return selectedMap; }
         void start_dashboard();
         Robot* getRobot(int id);
-        std::vector<Robot> getFleet();
+        std::vector<nlohmann::json> getFleet();
     private:
         std::vector<Robot> robots;
         Map selectedMap;

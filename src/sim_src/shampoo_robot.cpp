@@ -29,3 +29,9 @@
         }
         return true;    
     }
+
+    nlohmann::json ShampooRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Shampoo Level"] = ShampooLevel;
+        return json;
+    };

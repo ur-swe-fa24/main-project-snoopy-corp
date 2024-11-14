@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <nlohmann/json.hpp>
+#include <magic_enum.hpp>
 #include "map.hpp"
 #include <random>
 
@@ -44,6 +46,7 @@ class Robot{
         RobotType getType() { return type; }
         float getFailureRate() { return failure_rate; }
         std::string getRoomStatus();
+        virtual nlohmann::json toJson();
         static std::string robotTypeToString(RobotType type); 
         static std::string getRobotTypeFullName(char type);
         Map& getMap();
