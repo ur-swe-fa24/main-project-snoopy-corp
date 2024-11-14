@@ -4,5 +4,5 @@ CPMAddPackage("gh:gabime/spdlog@1.14.1")
 CPMAddPackage("gh:catchorg/Catch2@3.6.0") 
 # JSON library for Maps
 CPMAddPackage("gh:nlohmann/json@3.11.3")
-# Add magic_enum using CPM
+# Add magic_enum for enums
 CPMAddPackage("gh:Neargye/magic_enum@0.9.6")

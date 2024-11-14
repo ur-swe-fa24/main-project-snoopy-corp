@@ -50,6 +50,7 @@ endif()
 
 target_link_libraries(sim_lib
   nlohmann_json::nlohmann_json
+  magic_enum
 )
 
 add_subdirectory(app)
