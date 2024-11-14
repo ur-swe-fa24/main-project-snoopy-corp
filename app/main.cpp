@@ -59,7 +59,7 @@ int main() {
             }
 
             s.addRobot(*robot);  // Add robot to the simulation driver
-            mongo_wrapper.insertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
+            mongo_wrapper.upsertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
             std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
             delete robot;  // Clean up dynamically allocated robot after adding it to the vector
         }
@@ -71,7 +71,7 @@ int main() {
 
             try {
                 Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-                mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
+                mongo_wrapper.upsertRobotData(removedRobot.getId(), std::nullopt, "Removed", std::nullopt, std::nullopt, std::nullopt);
                 std::cout << "Robot with ID " << id << " removed successfully.\n";
             } catch (const std::exception& e) {
                 std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
