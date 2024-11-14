@@ -67,7 +67,7 @@ int main() {
         else if (input == "R") {
             std::cout << "Enter ID of Robot to be removed: ";
             std::getline(std::cin, input);
-            // int id = std::stoi(input);
+            int id = std::stoi(input);
 
             try {
                 Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
