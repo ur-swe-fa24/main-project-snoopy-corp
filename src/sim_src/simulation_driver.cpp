@@ -2,32 +2,45 @@
 
 
 
-    // Overloaded constructor with type and id parameters
-    SimulationDriver::SimulationDriver() {}
-    SimulationDriver::SimulationDriver(std::vector<Robot> robots) : robots(robots){}
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap){}
-    SimulationDriver::SimulationDriver(std::vector<Robot> robots, Map selectedMap) : robots(robots), selectedMap(selectedMap){}
+    // Default constructor 
+    SimulationDriver::SimulationDriver() : DEFAULT_MAP(Map("DEFAULT_MAP", {
+        {"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})), 
+        DEFAULT_ROBOT(Robot(RobotType::Vacuum, -1, DEFAULT_MAP)), robots({DEFAULT_ROBOT}) {
+
+        }
+        
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap),
+        DEFAULT_ROBOT(Robot(RobotType::Vacuum, -1, selectedMap)), robots({DEFAULT_ROBOT}) {
+        }
+
+
 
     void SimulationDriver::addRobot(Robot robot)
     {
         robots.push_back(robot);
     }
-    
+
+    // Needed = operator
     Robot SimulationDriver::removeRobot(int id){
         int index = 0;
-        Robot removedRobot;
-        bool found = false;
-        for (Robot r : robots) {
-            if(r.getId()==id)
-            {
-                removedRobot = r;
+        for(Robot r : robots){
+            if(r.getId() == id){
                 robots.erase(robots.begin() + index);
-                break;
+                return r;
             }
             else index++;
-        }   
-        if(found) return removedRobot;
-        else return Robot(RobotType::Scrubber, -1);
+        }
+        return DEFAULT_ROBOT;
+    }
+    
+
+    void SimulationDriver::constructRobot(){
+        json def = {
+        {"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}
+        };
+        Map DEFAULT_MAP = Map("DEFAULT_MAP", def);
+        Robot DEFAULT_ROBOT = Robot(RobotType::Vacuum, 0, DEFAULT_MAP);
+        std::vector<Robot> robots = {DEFAULT_ROBOT};
     }
 
     void SimulationDriver::clear(){
