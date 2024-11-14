@@ -17,8 +17,16 @@ using bsoncxx::builder::basic::make_document;
 class MongoDBWrapper {
 public:
     MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& collection_name);
-    void insertRobotData(int id, const std::string& type, const std::string& status,
-                         int location, const std::string& map, const std::string& currentRoomStatus);
+    void upsertRobotData(
+        int id, 
+        std::optional<std::string> type,           // Optional: Robot type (e.g., "Scrubber", "Vacuum")
+        std::optional<std::string> status,         // Optional: Status (e.g., "Active", "Removed")
+        std::optional<int> location,               // Optional: Current location of the robot
+        std::optional<std::string> map,            // Optional: Map name where the robot is located
+        std::optional<std::string> currentRoomStatus // Optional: Status of the room the robot is in
+    );
+
+                        
 
 private:
     mongocxx::client client_;
