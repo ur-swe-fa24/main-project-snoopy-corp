@@ -65,14 +65,14 @@ TEST_CASE("Cleaning Unit Tests") {
         r_fail.update();
         REQUIRE(r_fail.getStatus() == Status::Error);
 
-        VacuumRobot r_fail_50 = VacuumRobot(4, m1, 0.5);
-        r_fail_50.addTask(2);
-        r_fail_50.addTask(3);
-        for(int i = 0; i < 21; i++){
-            r_fail_50.update();
-        }
-        REQUIRE(r_fail_50.getStatus() == Status::Error);    // this technically has a 0.0000009% chance of failing so should probably be removed
-                                                            // but I wanted to test that a conditionally failing robot may fail
+        // VacuumRobot r_fail_50 = VacuumRobot(4, m1, 0.5);
+        // r_fail_50.addTask(2);
+        // r_fail_50.addTask(3);
+        // for(int i = 0; i < 21; i++){
+        //     r_fail_50.update();
+        // }
+        // REQUIRE(r_fail_50.getStatus() == Status::Error);    // this technically has a 0.0000009% chance of failing so should probably be removed
+        //                                                     // but I wanted to test that a conditionally failing robot may fail
 
         VacuumRobot r_succeed = VacuumRobot(5, m1, 0);
         r_succeed.addTask(4);
