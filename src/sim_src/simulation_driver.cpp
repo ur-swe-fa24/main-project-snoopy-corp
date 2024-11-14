@@ -13,22 +13,22 @@
         robots.push_back(robot);
     }
     
-    Robot SimulationDriver::removeRobot(int id){
-        int index = 0;
-        Robot removedRobot;
-        bool found = false;
-        for (Robot r : robots) {
-            if(r.getId()==id)
-            {
-                removedRobot = r;
-                robots.erase(robots.begin() + index);
-                break;
-            }
-            else index++;
-        }   
-        if(found) return removedRobot;
-        else return Robot(RobotType::Scrubber, -1);
-    }
+    // Robot SimulationDriver::removeRobot(int id){    //RETURN TO THIS
+    //     // int index = 0;
+    //     // Robot removedRobot;
+    //     // bool found = false;
+    //     // for (Robot r : robots) {
+    //     //     if(r.getId()==id)
+    //     //     {
+    //     //         removedRobot = r;
+    //     //         robots.erase(robots.begin() + index);
+    //     //         break;
+    //     //     }
+    //     //     else index++;
+    //     // }   
+    //     // if(found) return removedRobot;
+    //     // else return Robot(RobotType::Scrubber, -1);
+    // }
 
     void SimulationDriver::clear(){
         robots.clear();
