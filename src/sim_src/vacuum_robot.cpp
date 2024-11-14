@@ -12,9 +12,12 @@
         if(getRandom() <= failure_rate){
             return false;
         }
-
-        currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // toy demo
+        else{
+            int current_cleanliness = stoi(currentMap.getRoomCleanliness(std::to_string(location)));
+            current_cleanliness++;
+            currentMap.updateRoomCleanliness(std::to_string(location), std::to_string(current_cleanliness));
         return true;    
+        }
     }
 
     nlohmann::json VacuumRobot::toJson() {
