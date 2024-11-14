@@ -6,13 +6,22 @@ ELSE (${Catch2_FOUND})
     MESSAGE(STATUS "Could not find Catch2. Check to make sure its installed on your system!")
 ENDIF (${Catch2_FOUND})
 
-add_executable(test Map_Tests.cpp)
+add_executable(map_test Map_Tests.cpp)
+add_executable(clean_test cleaning_tests.cpp)
 
-target_compile_features(test PRIVATE cxx_std_17)
+target_compile_features(map_test PRIVATE cxx_std_17)
+
+target_compile_features(clean_test PRIVATE cxx_std_17)
 
 # How we link with Catch2!
-target_link_libraries(test
+target_link_libraries(map_test
   PRIVATE
     Catch2::Catch2WithMain
-    myExe
+    sim_lib
+)
+
+target_link_libraries(clean_test
+  PRIVATE
+    Catch2::Catch2WithMain
+    sim_lib
 )

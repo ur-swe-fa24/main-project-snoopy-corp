@@ -65,13 +65,13 @@ int main() {
             Robot* robot = nullptr;
             int robotIndex = s.assignRobotIndex();  // Assign a unique robot index
             std::string robotTypeName = Robot::getRobotTypeFullName(input[0]);
-
+            Map map = s.getSelectedMap();
             if (robotTypeName == "Scrubber") {
-                robot = new ScrubberRobot(robotIndex, s.getSelectedMap());
+                robot = new ScrubberRobot(robotIndex, map);
             } else if (robotTypeName == "Shampoo") {
-                robot = new ShampooRobot(robotIndex, s.getSelectedMap());
+                robot = new ShampooRobot(robotIndex, map);
             } else if (robotTypeName == "Vacuum") {
-                robot = new VacuumRobot(robotIndex, s.getSelectedMap());
+                robot = new VacuumRobot(robotIndex, map);
             } else {
                 std::cout << "Invalid robot type. Please enter S, H, or V.\n";
                 continue;
@@ -86,15 +86,15 @@ int main() {
         else if (input == "R") {
             std::cout << "Enter ID of Robot to be removed: ";
             std::getline(std::cin, input);
-            int id = std::stoi(input);
+            // int id = std::stoi(input);
 
-            try {
-                Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-                mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
-                std::cout << "Robot with ID " << id << " removed successfully.\n";
-            } catch (const std::exception& e) {
-                std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
-            }
+            // try {
+            //     Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
+            //     mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
+            //     std::cout << "Robot with ID " << id << " removed successfully.\n";
+            // } catch (const std::exception& e) {
+            //     std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
+            // }
         }
 
         else if (input == "V") {

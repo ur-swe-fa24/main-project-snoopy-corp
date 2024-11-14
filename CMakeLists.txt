@@ -48,4 +48,9 @@ if (bsoncxx_FOUND)
   message(STATUS "bsoncxx found!")
 endif()
 
+target_link_libraries(sim_lib
+  nlohmann_json::nlohmann_json
+)
+
 add_subdirectory(app)
+add_subdirectory(tests)

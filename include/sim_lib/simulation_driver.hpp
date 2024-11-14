@@ -28,6 +28,9 @@ class SimulationDriver{
         std::vector<Robot> robots;
         Map selectedMap;
         int robot_index = 0;
+        Robot DEFAULT_ROBOT;
+        Map DEFAULT_MAP;
+        void constructRobot();
         
 };
 

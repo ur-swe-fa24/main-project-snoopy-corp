@@ -8,10 +8,10 @@
 class ScrubberRobot : public Robot{
 
     public:  
-        ScrubberRobot();
-        ScrubberRobot(int id);
-        ScrubberRobot(int id, Map currentMap);
-        nlohmann::json toJson() override;
+        // ScrubberRobot();
+        // ScrubberRobot(int id);
+        ScrubberRobot(int id, Map& currentMap);
+        ScrubberRobot(int id, Map& currentMap, float failure_rate);
 
     private:
         int WaterLevel;
