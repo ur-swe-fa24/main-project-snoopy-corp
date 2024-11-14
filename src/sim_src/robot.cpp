@@ -1,11 +1,12 @@
 #include "../../include/sim_lib/robot.hpp"
 #include <iostream>
 
-    // // Default constructor 
-    // Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{}, status(Status::Inactive), location(-1) {}
 
-    // // Overloaded constructor with type and id parameters
-    // Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1) {}
+    // // Default constructor 
+    //initial value of reference to non-const must be an lvalueC/C++(461)
+    // Robot::Robot() : currentMap(Map("DEFAULT_MAP", {{"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})){}
+
+
 
     // Overloaded constructor with type, id, and Map parameters
     Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1),
@@ -16,6 +17,14 @@
 
     Robot::Robot(RobotType type, int id, Map& currentMap, float failure_rate) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, 
     status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
+
+    Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
+
+    Robot& Robot::operator=(Robot&& other){
+        Map currentMap = std::move(other.currentMap);
+        return *this;
+    }
+
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
