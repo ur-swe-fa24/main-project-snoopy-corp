@@ -1,69 +1,92 @@
 #include "../../include/database/mongoDBWrapper.hpp"
+#include <iostream>
 
 
-MongoDBWrapper::MongoDBWrapper(
-    const std::string& uri, 
-    const std::string& db_name, 
-    const std::string& collection_name): 
-        client_(mongocxx::uri{uri}), 
-        db_(client_[db_name]), 
-        collection_(db_[collection_name]) {
+// Constructor
+MongoDBWrapper::MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name)
+    :client_(mongocxx::uri{uri}), 
+     db_(client_[db_name]), 
+     active_collection_(db_[active_collection_name]),
+     removed_collection_(db_[removed_collection_name]) {
 
-        // Configure spdlog pattern and log level
-        spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-        spdlog::set_level(spdlog::level::info);
+    // Configure spdlog pattern and log level
+    spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+    spdlog::set_level(spdlog::level::info);
 
-        spdlog::info("MongoDB Wrapper initialized.");
-        spdlog::info("Connected to MongoDB at {}", uri);
-    }
+    spdlog::info("MongoDB Wrapper initialized.");
+    spdlog::info("Connected to MongoDB at {}", uri);
+}
 
-// Update all fields or insert a new document if no match is founded
+// Insert or update a robot's data
+void MongoDBWrapper::upsertRobotData(bool isActive,
+                                     int id,
+                                     const std::optional<std::string>& type,
+                                     const std::string& status,
+                                     const std::optional<int>& location,
+                                     const std::optional<std::string>& mapName,
+                                     const std::optional<std::string>& roomStatus) {
 
-#include <optional>  // For using std::optional
-
-void MongoDBWrapper::upsertRobotData(
-    int id, 
-    std::optional<std::string> type = std::nullopt,
-    std::optional<std::string> status = std::nullopt,
-    std::optional<int> location = std::nullopt,
-    std::optional<std::string> map = std::nullopt,
-    std::optional<std::string> currentRoomStatus = std::nullopt) {
-
-    // Filter document to find robot by ID
-    auto filter = make_document(kvp("ID", id));
-
-    // Create an update document with only the fields that are provided
-    auto update_doc_builder = bsoncxx::builder::basic::document{};
-
-    update_doc_builder.append(bsoncxx::builder::basic::kvp("$set", [&](bsoncxx::builder::basic::sub_document subdoc) {
-        // Always include the ID field in the filter but do not change it in MongoDB
-        subdoc.append(kvp("ID", id));
-
-        // Only add fields to the update document if they are provided
-        // Each std::optional parameter is checked to see if it has a value.
-        // If the optional has a value, it is dereferenced with * and added to the update document.
-        if (type) subdoc.append(kvp("Type", *type));                  // If type is provided, add/update it
-        if (status) subdoc.append(kvp("Status", *status));            // If status is provided, add/update it
-        if (location) subdoc.append(kvp("Location", *location));      // If location is provided, add/update it
-        if (map) subdoc.append(kvp("Map", *map));                     // If map is provided, add/update it
-        if (currentRoomStatus) subdoc.append(kvp("Current Room Status", *currentRoomStatus)); // If room status is provided, add/update it
-    }));
+    auto& collection = isActive ? active_collection_ : removed_collection_;
 
     try {
-        // Perform upsert operation: update if document with ID exists, insert if not
-        auto result = collection_.update_one(filter.view(), update_doc_builder.view(), mongocxx::options::update().upsert(true));
-        if (result) {
-            if (result->matched_count() > 0) {
-                spdlog::info("Successfully updated robot data for ID: {}", id);
-            } else if (result->upserted_id()) {
-                // Log the ID of the new document if an insert occurred
-                std::string upserted_id = result->upserted_id().value().get_oid().value.to_string();
-                spdlog::info("Inserted new robot data with ID: {}", upserted_id);
-            }
+        // Build the filter to find the robot by ID
+        bsoncxx::builder::basic::document filterBuilder;
+        filterBuilder.append(bsoncxx::builder::basic::kvp("id", id));
+
+        // Build the update document
+        bsoncxx::builder::basic::document updateBuilder;
+        updateBuilder.append(
+            bsoncxx::builder::basic::kvp("$set", [&](bsoncxx::builder::basic::sub_document subDoc) {
+                subDoc.append(bsoncxx::builder::basic::kvp("status", status));
+
+                if (type) {
+                    subDoc.append(bsoncxx::builder::basic::kvp("type", *type));
+                }
+
+                if (location) {
+                    subDoc.append(bsoncxx::builder::basic::kvp("location", *location));
+                }
+
+                if (mapName) {
+                    subDoc.append(bsoncxx::builder::basic::kvp("map", *mapName));
+                }
+
+                if (roomStatus) {
+                    subDoc.append(bsoncxx::builder::basic::kvp("room_status", *roomStatus));
+                }
+            })
+        );
+
+        // Perform the upsert operation
+        collection.update_one(filterBuilder.view(), updateBuilder.view(), mongocxx::options::update().upsert(true));
+
+        spdlog::info("Upserted robot with ID {} successfully.", id);
+    } 
+    catch (const mongocxx::exception& e) {
+        spdlog::error("Error during upsert: {}", e.what());
+    }
+}
+
+// Move a robot from active collection to removed collection
+void MongoDBWrapper::moveRobotToRemoved(int id) {
+    try {
+        // Find the robot in the active collection
+        bsoncxx::builder::basic::document filterBuilder;
+        filterBuilder.append(bsoncxx::builder::basic::kvp("id", id));
+
+        auto robot = active_collection_.find_one(filterBuilder.view());
+        if (robot) {
+            // Insert the robot into the removed collection
+            removed_collection_.insert_one(robot->view());
+
+            // Remove the robot from the active collection
+            active_collection_.delete_one(filterBuilder.view());
+
+            spdlog::info("Moved robot with ID {} from active to removed collection.", id);
         } else {
-            spdlog::warn("Upsert operation did not affect any document for ID: {}", id);
+            spdlog::warn("Robot with ID {} not found in active collection.", id);
         }
     } catch (const mongocxx::exception& e) {
-        spdlog::error("MongoDB upsert error: {}", e.what());
+        spdlog::error("Error moving robot to removed collection: {}", e.what());
     }
 }

@@ -16,22 +16,25 @@ using bsoncxx::builder::basic::make_document;
 
 class MongoDBWrapper {
 public:
-    MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& collection_name);
-    void upsertRobotData(
-        int id, 
-        std::optional<std::string> type,           // Optional: Robot type (e.g., "Scrubber", "Vacuum")
-        std::optional<std::string> status,         // Optional: Status (e.g., "Active", "Removed")
-        std::optional<int> location,               // Optional: Current location of the robot
-        std::optional<std::string> map,            // Optional: Map name where the robot is located
-        std::optional<std::string> currentRoomStatus // Optional: Status of the room the robot is in
+    MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name);
+    // Insert or update a robot's data
+    void upsertRobotData(bool isActive,
+                         int id,
+                         const std::optional<std::string>& type,
+                         const std::string& status,
+                         const std::optional<int>& location,
+                         const std::optional<std::string>& mapName,
+                         const std::optional<std::string>& roomStatus
     );
-
+    // Remove a robot by moving it from active to removed collection
+    void moveRobotToRemoved(int id);
                         
 
 private:
     mongocxx::client client_;
     mongocxx::database db_;
-    mongocxx::collection collection_;
+    mongocxx::collection active_collection_;
+    mongocxx::collection removed_collection_;
 };
 
 #endif // MONGODBWRAPPER_HPP

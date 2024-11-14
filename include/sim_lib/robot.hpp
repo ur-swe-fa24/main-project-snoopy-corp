@@ -76,6 +76,8 @@ class Robot{
         std::uniform_real_distribution<float> float_distribution;
         std::uniform_real_distribution<float> fail_distribution;
 
+    
+
 };
 
 #endif
