@@ -29,9 +29,6 @@ target_include_directories(sim_lib
     PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
-
-# Link nlohmann::json and magic_enum to sim_lib
-target_link_libraries(sim_lib PUBLIC nlohmann_json magic_enum)
    
 add_library(database
   src/database/mongoDBWrapper.cpp
