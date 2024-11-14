@@ -2,6 +2,7 @@
 #define SIMULATION_DRIVER_HPP
 
 #include <vector>
+#include <mutex>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
@@ -26,6 +27,7 @@ class SimulationDriver{
         std::vector<Robot> getFleet();
     private:
         std::vector<Robot> robots;
+        std::mutex robotsMutex;
         Map selectedMap;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;

@@ -16,11 +16,13 @@
 
     void SimulationDriver::addRobot(Robot robot)
     {
+        std::lock_guard<std::mutex> guard(robotsMutex);
         robots.push_back(robot);
     }
 
     // Needed = operator
     Robot SimulationDriver::removeRobot(int id){
+        std::lock_guard<std::mutex> guard(robotsMutex);
         int index = 0;
         for(Robot r : robots){
             if(r.getId() == id){
@@ -47,6 +49,7 @@
     }
 
     void SimulationDriver::toString(){
+        std::lock_guard<std::mutex> guard(robotsMutex);
         for (Robot r : robots){
             r.toString();
         }
@@ -65,6 +68,7 @@
     }
 
     Robot* SimulationDriver::getRobot(int id) {
+        std::lock_guard<std::mutex> guard(robotsMutex);
         for(int i = 0; i < robots.size(); i++){
             if(robots[i].getId()==id){
                 return &robots[i];
