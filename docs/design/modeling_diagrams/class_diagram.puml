@@ -72,8 +72,11 @@ class Map{
 
 class Robot{
     +Robot() 
-        +Robot(RobotType type, int id) 
+        ' +Robot(RobotType type, int id) 
         +Robot(RobotType type, int id, Map currentMap) 
+        +Robot(RobotType type, int id, Map& currentMap, float failure_rate)
+        +Robot(const Robot& other)
+        +Robot& operator=(Robot&& other)
         +float getEfficiency() 
         +int getId() 
         +Status getStatus() 
@@ -84,12 +87,18 @@ class Robot{
         +int getBatteryLevel() 
         +void update()  
         +std::string toString() 
+        +Map& getMap()
         +std::string getMapName() 
         +RobotType getType() { return type  }
         +std::string getRoomStatus() 
         -bool clean()     
-        -void reportError()     
+        -void reportError()  
+        -float getRandom()   
         -void move(int room_num) 
+
+        #std::mt19937 gen
+        #std::uniform_real_distribution<float> float_distribution
+        #std::uniform_real_distribution<float> fail_distribution
 
         #int id
         #RobotType type
@@ -99,7 +108,7 @@ class Robot{
         #int tasks_attempted
         #int progress_task
         #int progress_queue
-        #std::vector<int> queue
+        #std::queue<int> queue
         #int battery_level
         #Map currentMap
 }
