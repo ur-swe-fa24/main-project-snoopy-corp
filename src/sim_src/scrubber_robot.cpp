@@ -33,3 +33,9 @@
         }
         return true;    
     }
+
+    nlohmann::json ScrubberRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Water Level"] = WaterLevel;
+        return json;
+    };

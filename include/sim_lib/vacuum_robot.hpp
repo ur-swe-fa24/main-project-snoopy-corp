@@ -13,6 +13,7 @@ class VacuumRobot : public Robot{
         VacuumRobot(int id, Map& currentMap);
         VacuumRobot(int id, Map& currentMap, float failure_rate);
 
+        nlohmann::json toJson() override;
 
     private:
         int TrashbagLevel;
