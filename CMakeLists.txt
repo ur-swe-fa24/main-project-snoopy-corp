@@ -25,10 +25,12 @@ add_library(sim_lib
   src/sim_src/dashboard.cpp
 )
 
+
 target_include_directories(sim_lib
     PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
+
    
 add_library(database
   src/database/mongoDBWrapper.cpp
@@ -45,7 +47,27 @@ if (bsoncxx_FOUND)
   message(STATUS "bsoncxx found!")
 endif()
 
+find_package(wxWidgets REQUIRED COMPONENTS core base)
+if (wxWidgets_FOUND)
+  message(STATUS "wxWidgets found!")
+endif()
+include(${wxWidgets_USE_FILE})
+
 target_link_libraries(sim_lib
+  nlohmann_json::nlohmann_json
+)
+
+# Add wxwidget library with necessary source files
+add_library(wxwidgets_lib
+  src/wxwidgets/wxwidgets.cpp
+)
+
+target_include_directories(wxwidgets_lib
+  PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+target_link_libraries(wxwidgets_lib 
+  ${wxWidgets_LIBRARIES}
   nlohmann_json::nlohmann_json
 )
 

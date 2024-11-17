@@ -1,4 +1,4 @@
-find_package(wxWidgets REQUIRED COMPONENTS core base)
+#find_package(wxWidgets REQUIRED COMPONENTS core base)
 
 include(${wxWidgets_USE_FILE})
 
@@ -40,8 +40,10 @@ target_link_libraries(
     PRIVATE
         sim_lib
         database
+        wxwidgets_lib
         spdlog::spdlog_header_only
         mongo::mongocxx_shared
+        nlohmann_json::nlohmann_json
 )
 
 target_link_libraries(
