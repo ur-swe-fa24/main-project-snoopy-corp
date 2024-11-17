@@ -31,28 +31,28 @@ void MongoDBWrapper::upsertRobotData(bool isActive,
     try {
         // Build the filter to find the robot by ID
         bsoncxx::builder::basic::document filterBuilder;
-        filterBuilder.append(bsoncxx::builder::basic::kvp("id", id));
+        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", id));
 
         // Build the update document
         bsoncxx::builder::basic::document updateBuilder;
         updateBuilder.append(
             bsoncxx::builder::basic::kvp("$set", [&](bsoncxx::builder::basic::sub_document subDoc) {
-                subDoc.append(bsoncxx::builder::basic::kvp("status", status));
+                subDoc.append(bsoncxx::builder::basic::kvp("Status", status));
 
                 if (type) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("type", *type));
+                    subDoc.append(bsoncxx::builder::basic::kvp("Type", *type));
                 }
 
                 if (location) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("location", *location));
+                    subDoc.append(bsoncxx::builder::basic::kvp("Location", *location));
                 }
 
                 if (mapName) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("map", *mapName));
+                    subDoc.append(bsoncxx::builder::basic::kvp("Map", *mapName));
                 }
 
                 if (roomStatus) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("room_status", *roomStatus));
+                    subDoc.append(bsoncxx::builder::basic::kvp("Room Status", *roomStatus));
                 }
             })
         );
@@ -72,7 +72,7 @@ void MongoDBWrapper::moveRobotToRemoved(int id) {
     try {
         // Find the robot in the active collection
         bsoncxx::builder::basic::document filterBuilder;
-        filterBuilder.append(bsoncxx::builder::basic::kvp("id", id));
+        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", id));
 
         auto robot = active_collection_.find_one(filterBuilder.view());
         if (robot) {

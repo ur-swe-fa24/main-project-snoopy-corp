@@ -30,7 +30,7 @@
         return tasks_completed / tasks_attempted;
     }
 
-    int Robot::getId(){
+    int Robot::getId() const{
         return id;
     }
 
@@ -186,3 +186,8 @@
                 return "Unknown";
         }
     }
+
+    void Robot::setId(int newId) {
+        id = newId;
+    }
+

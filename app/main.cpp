@@ -72,6 +72,8 @@ int main() {
             try {
                 Robot* robot = s.getRobot(id);  // Retrieve the robot from the simulation
                 if (robot) {
+                    // Update the robot's status to "Removed" in the MongoDB active collection
+                    mongo_wrapper.upsertRobotData(true, robot->getId(), std::nullopt, "Removed", robot->getLocation(), robot->getMapName(), robot->getRoomStatus());
                     mongo_wrapper.moveRobotToRemoved(id);  // Move robot to the removed collection
                     s.removeRobot(id);  // Remove from simulation
                     std::cout << "Robot with ID " << id << " moved to the removed collection successfully.\n";

@@ -30,7 +30,7 @@ class Robot{
         Robot& operator=(Robot&& other);
         
         float getEfficiency();
-        int getId();
+        int getId() const;
         Status getStatus();
         int getLocation();
         int getProgressTask();
@@ -54,6 +54,7 @@ class Robot{
         float getRandom();
         float genFailRate();
         float getFailRate() { return failure_rate; }
+        void setId(int newId);
         
 
     protected:
