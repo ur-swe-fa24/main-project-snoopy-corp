@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <stdexcept>
+
 #include "sim_lib/robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/shampoo_robot.hpp"
@@ -25,6 +28,20 @@ int main() {
     Map m("map1", roomsEx1);
     SimulationDriver s(m);
 
+    // Thread to go each second and call the clean method
+    // Each 'second', call the clean method on each robot that has status Active
+    // TODO: Need to lock the robots vector with a mutex whenever getting it so delete robot doesn't affect updates here
+    bool simulationThread = true;
+    std::thread update_stuff {[&s, &simulationThread](){
+        while (simulationThread){
+            
+            for(Robot robo : *s.getRobots()) {
+                robo.update();
+            }
+            std::this_thread::sleep_for (std::chrono::seconds(1));
+        }}};
+
+
     std::string input;
     std::cout << "Enter a command (A - Add, R - Remove, V - View, M - Move, C - Clean, E - Exit): ";
     while (true) {
@@ -34,7 +51,10 @@ int main() {
         input = std::toupper(input[0]);
 
         if (input == "E") {
+            // End simulation, join the threads, and finish
             std::cout << "Exiting the program. Goodbye!\n";
+            simulationThread = false;
+            update_stuff.join();
             break;
         }
 
@@ -46,13 +66,13 @@ int main() {
             Robot* robot = nullptr;
             int robotIndex = s.assignRobotIndex();  // Assign a unique robot index
             std::string robotTypeName = Robot::getRobotTypeFullName(input[0]);
-            Map map = s.getSelectedMap();
+
             if (robotTypeName == "Scrubber") {
-                robot = new ScrubberRobot(robotIndex, map);
+                robot = new ScrubberRobot(robotIndex, s.getSelectedMap());
             } else if (robotTypeName == "Shampoo") {
-                robot = new ShampooRobot(robotIndex, map);
+                robot = new ShampooRobot(robotIndex, s.getSelectedMap());
             } else if (robotTypeName == "Vacuum") {
-                robot = new VacuumRobot(robotIndex, map);
+                robot = new VacuumRobot(robotIndex, s.getSelectedMap());
             } else {
                 std::cout << "Invalid robot type. Please enter S, H, or V.\n";
                 continue;
@@ -67,15 +87,15 @@ int main() {
         else if (input == "R") {
             std::cout << "Enter ID of Robot to be removed: ";
             std::getline(std::cin, input);
-            // int id = std::stoi(input);
+            int id = std::stoi(input);
 
-            // try {
-            //     Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-            //     mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
-            //     std::cout << "Robot with ID " << id << " removed successfully.\n";
-            // } catch (const std::exception& e) {
-            //     std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
-            // }
+            try {
+                Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
+                mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
+                std::cout << "Robot with ID " << id << " removed successfully.\n";
+            } catch (const std::exception& e) {
+                std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
+            }
         }
 
         else if (input == "V") {

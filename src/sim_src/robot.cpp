@@ -1,14 +1,31 @@
 #include "../../include/sim_lib/robot.hpp"
 #include <iostream>
+using json = nlohmann::json;
 
-    // Default constructor 
-    Robot::Robot() : type(RobotType::Scrubber), id(-1), queue{} {}
 
-    // Overloaded constructor with type and id parameters
-    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{} {}
+    // // Default constructor 
+    //initial value of reference to non-const must be an lvalueC/C++(461)
+    // Robot::Robot() : currentMap(Map("DEFAULT_MAP", {{"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})){}
+
+
 
     // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id, Map currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{} {}
+    Robot::Robot(RobotType type, int id, Map& currentMap) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {
+        failure_rate = genFailRate();   // robots by default will have a 0-0.5% chance of failing on a given task segment (10 per room)
+        if(failure_rate > 0.00495)    failure_rate = 0.1;     //robots have a 1% chance of being defective
+    }
+
+    Robot::Robot(RobotType type, int id, Map& currentMap, float failure_rate) : type(type), id(id), currentMap(currentMap), battery_level(10), queue{}, 
+    status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
+
+    Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
+
+    Robot& Robot::operator=(Robot&& other){
+        Map currentMap = std::move(other.currentMap);
+        return *this;
+    }
+
 
     float Robot::getEfficiency(){
         return tasks_completed / tasks_attempted;
@@ -42,19 +59,40 @@
         return battery_level;
     }
 
+    float Robot::getRandom(){
+        return float_distribution(gen);
+    }
+
+    float Robot::genFailRate(){
+        return fail_distribution(gen);
+    }
+    void Robot::addTask(int room){
+        queue.push(room);
+        return;
+    }
+
+    void Robot::setStatus(Status s){
+        status = s;
+        return;
+    }
+
     void Robot::update(){
-        if(status == Status::Active)
+        // std::cout << "update called ";
+        if(status == Status::Inactive)
         {
-            bool PLACEHOLDER = true;
-            if(PLACEHOLDER)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
+            if(queue.size() != 0)
+            {
+                move(queue.front());
+                setStatus(Status::Active);
+            }
+        }
+        else if(status == Status::Active)
+        {
+            if(std::stoi(currentMap.getRoomCleanliness(std::to_string(location))) >= 10)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
             {
                 if(queue.size() != 0)
                 {
                     queue.pop();
-                    // for(auto q : queue){
-                    //     std::cout << q;
-                    // }
-                    // if(queue.empty())
                     if(queue.size() == 0)
                         status = Status::Inactive;
                     else
@@ -62,11 +100,13 @@
                 }
             }
             else{
+                // std::cout << "clean about to be called; ";
                 bool successfulClean = clean();
                 if(!successfulClean) reportError();
                 else battery_level--;
             }
         }
+        //else: error case
     }
 
 
@@ -99,12 +139,17 @@
 
 
     bool Robot::clean(){
+        std::cout << "OH NO";
         currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // WILL BE OVERRIDDEN BY SUBCLASSES
         return true;
     }
 
     std::string Robot::getMapName(){
         return currentMap.getName();
+    }
+
+    Map& Robot::getMap(){
+        return currentMap;
     }
 
     std::string Robot::getRoomStatus(){
@@ -142,3 +187,26 @@
                 return "Unknown";
         }
     }
+
+    nlohmann::json Robot::toJson(){
+        std::vector<int> vec;
+        std::queue<int> tempQueue = queue;
+        while (!tempQueue.empty()) {
+            vec.push_back(tempQueue.front());
+            tempQueue.pop();
+        }
+        auto j = json{
+            {"ID", id}, 
+            {"Type", std::string(magic_enum::enum_name(type))}, 
+            {"Status", std::string(magic_enum::enum_name(status))},
+            {"Location", location},
+            {"Tasks completed", tasks_completed},
+            {"Task attempted", tasks_attempted},
+            {"Progress task", progress_task},
+            {"Progress Queue", progress_queue},
+            {"Battery Level", battery_level},
+            {"Queue", vec}};
+        return j;
+    }
+ 
+ 
