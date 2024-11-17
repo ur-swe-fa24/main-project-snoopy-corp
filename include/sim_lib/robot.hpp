@@ -48,7 +48,7 @@ class Robot{
         static std::string getRobotTypeFullName(char type);
         Map& getMap();
         // Temporarily Public, will turn Private soon through update function
-        void move(int room_num);
+        bool move(int room_num);
         virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();
         float getRandom();

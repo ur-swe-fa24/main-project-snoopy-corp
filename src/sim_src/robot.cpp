@@ -113,9 +113,18 @@
         status = Status::Error;
         // TO BE DETERMINED
     }
-    void Robot::move(int room_num){
-        location = room_num;
+
+    bool Robot::move(int room_num) {
+        std::string roomKey = std::to_string(room_num);
+        if (currentMap.roomExists(roomKey)) {
+            location = room_num;
+            return true; // Move was successful
+        } else {
+            std::cout << "Invalid room number: " << roomKey << ". Please enter a valid room number.\n";
+            return false; // Move was unsuccessful
+        }
     }
+
 
     std::string typeToString(RobotType type){
         switch(type){

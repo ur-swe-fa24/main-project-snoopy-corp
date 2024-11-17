@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <nlohmann/json.hpp>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
