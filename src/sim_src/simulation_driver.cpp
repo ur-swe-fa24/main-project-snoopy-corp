@@ -1,4 +1,6 @@
 #include "../../include/sim_lib/simulation_driver.hpp"
+#include <ostream>
+#include <iostream>
 
 
 
@@ -73,8 +75,16 @@
 
     std::vector<nlohmann::json> SimulationDriver::getFleet() {
         std::vector<nlohmann::json> info;
+        std::cout << "robots length = " << robots.size() << std::endl;
+        
         for (Robot robo : robots) {
+            std::cout << robo.getId() << " " << robo.getLocation() << " " << robo.getBatteryLevel() << " " << std::endl;
             info.push_back(robo.toJson());
         }
         return info;
     };
+
+    SimulationDriver& SimulationDriver::operator=(SimulationDriver&& other){
+        std::vector<Robot> robots = std::move(other.robots);
+        return *this;
+    }

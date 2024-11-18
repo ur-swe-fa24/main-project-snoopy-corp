@@ -5,6 +5,10 @@
 #include <wx/notebook.h>
 #include <wx/listctrl.h>
 #include "sim_lib/robot.hpp"
+#include "sim_lib/simulation_driver.hpp"
+#include "sim_lib/shampoo_robot.hpp"
+#include "sim_lib/scrubber_robot.hpp"
+#include "sim_lib/robot.hpp"
 
 // Container class for the window, or frame in MainFrame
 class MyWidget: public wxApp {
@@ -25,10 +29,14 @@ private:
     wxBoxSizer* mainSizer;
     wxListView *robotListView;
 
+    Map map;
+    SimulationDriver simDriver;
+
     void OnExit( wxCommandEvent& event ); //Exits program
     void switchToEngineer( wxCommandEvent& event ); // Switches screen to engineer perspective
     void switchToManager( wxCommandEvent& event ); // Switches screen to manager perspective
     void addRobot(wxString type);
+    void populateList();
   
     DECLARE_EVENT_TABLE()
 }; 

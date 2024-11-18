@@ -70,6 +70,7 @@ target_include_directories(wxwidgets_lib
 target_link_libraries(wxwidgets_lib 
   ${wxWidgets_LIBRARIES}
   nlohmann_json::nlohmann_json
+  magic_enum
 )
 
 add_subdirectory(app)

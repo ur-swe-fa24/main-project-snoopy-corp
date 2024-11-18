@@ -16,14 +16,10 @@ class Map{
     private:
         std::string name; // Name of map object
         json rooms;
-
         //std::map<std::string, std::vector<std::string>> rooms; //temp vector
-        //FloorType floorType;
-        //int cleaningStatus;
 
     public:
         //Map(std::string name, std::map<std::string, std::vector<std::string>> rooms);
-
         Map();
         Map(std::string name, json rooms);
         std::string getName() { return name; };
@@ -40,6 +36,3 @@ class Map{
 
 #endif // MAP_HPP
 
-// map class
-// map name
-// json: roomname, floortype, cleanliness
