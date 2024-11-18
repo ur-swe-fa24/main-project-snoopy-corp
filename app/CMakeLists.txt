@@ -3,11 +3,11 @@ find_package(wxWidgets REQUIRED COMPONENTS core base)
 include(${wxWidgets_USE_FILE})
 
 add_executable(myExe
-    test_robots.cpp
+    main.cpp
 )
 
 add_executable(myWxExe
-    test_wxWidgets.cpp
+    main_wxWidgets.cpp
 )
 
 # Common includes and libraries for both executables
