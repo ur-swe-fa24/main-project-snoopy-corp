@@ -63,10 +63,14 @@
     }
 
     Robot* SimulationDriver::getRobot(int id) {
-        for(int i = 0; i < robots.size(); i++){
-            if(robots[i].getId()==id){
-                return &robots[i];
-            }
+        // for(int i = 0; i < robots.size(); i++){
+        //     if(robots[i].getId()==id){
+        //         return &robots[i];
+        //     }
+        // }
+
+        for(auto r : robots){
+            if(r.getId() == id) return &r;
         }
         return nullptr;
     }

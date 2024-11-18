@@ -23,6 +23,17 @@ TEST_CASE("Cleaning Unit Tests") {
     r1.addTask(3);
     r2.addTask(2);
 
+    SimulationDriver sd = SimulationDriver(m1);
+    sd.addRobot(r1);
+    sd.addRobot(r2);
+
+    SECTION("ROBOT BASICS"){
+        REQUIRE(r1.getId() == 0);
+        REQUIRE(r1.getBatteryLevel() == 10);
+        REQUIRE(sd.getRobot(1)->getId()== 1);
+        REQUIRE(sd.getRobot(0)->getBatteryLevel()==10);
+
+    }
     SECTION("Robot has initial room"){
         REQUIRE(r1.getLocation() == -1);
         r1.update();

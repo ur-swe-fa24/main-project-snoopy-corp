@@ -10,9 +10,9 @@ class SimulationDriver{
 
     public:
         SimulationDriver();
-        explicit SimulationDriver(std::vector<Robot> robots);
+        explicit SimulationDriver(std::vector<Robot>& robots);
         explicit SimulationDriver(Map selectedMap);
-        explicit SimulationDriver(std::vector<Robot> robots, Map selectedMap);
+        explicit SimulationDriver(std::vector<Robot>& robots, Map selectedMap);
         void addRobot(Robot robot);
         Robot removeRobot(int id);
         void clear();
@@ -24,7 +24,7 @@ class SimulationDriver{
         Robot* getRobot(int id);
         std::vector<Robot> getFleet();
     private:
-        std::vector<Robot> robots;
+        std::vector<Robot>& robots;
         Map selectedMap;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
