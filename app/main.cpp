@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <stdexcept>
+
 #include "sim_lib/robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/shampoo_robot.hpp"
@@ -24,6 +27,17 @@ int main() {
     // Map m("map1", roomsEx1);
     // SimulationDriver s(m);
 
+    // Thread to go each second and call the clean method
+    // Each 'second', call the clean method on each robot that has status Active
+    // TODO: Need to lock the robots vector with a mutex whenever getting it so delete robot doesn't affect updates here
+    // std::atomic<bool> simulationThread = true;
+    // std::thread update_stuff {[&s, &simulationThread](){
+    //     while (simulationThread){
+    //         s.update_all();
+    //         std::this_thread::sleep_for (std::chrono::seconds(2));
+    //     }}};
+
+
     // std::string input;
     // std::cout << "Enter a command (A - Add, R - Remove, V - View, M - Move, C - Clean, E - Exit): ";
     // while (true) {
@@ -33,7 +47,10 @@ int main() {
     //     input = std::toupper(input[0]);
 
     //     if (input == "E") {
+            // End simulation, join the threads, and finish
     //         std::cout << "Exiting the program. Goodbye!\n";
+            // simulationThread = false;
+            // update_stuff.join();
     //         break;
     //     }
 
