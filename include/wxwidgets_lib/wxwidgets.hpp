@@ -31,11 +31,14 @@ private:
 
     Map map;
     SimulationDriver simDriver;
+    int integer = 0;
 
     void OnExit( wxCommandEvent& event ); //Exits program
     void switchToEngineer( wxCommandEvent& event ); // Switches screen to engineer perspective
     void switchToManager( wxCommandEvent& event ); // Switches screen to manager perspective
     void addRobot( wxCommandEvent& event ); // Add robot information to list
+    void deleteRobot( wxCommandEvent& event ); // Delete robot from list and simulation driver
+    int findListItem( wxString id ); // Private helper function for deleteRobot
     void addRobotTest(wxString type);
     void populateList();
   
@@ -47,6 +50,7 @@ enum {
     ID_ToManager = 1001,
     ID_ToEngineer = 1002,
     ID_AddRobot = 1003,
+    ID_DeleteRobot = 1004,
     ID_Exit = wxID_EXIT // You can reuse wxWidgets pre-defined IDs if needed
 };
 

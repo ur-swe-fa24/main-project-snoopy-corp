@@ -126,13 +126,13 @@ using json = nlohmann::json;
 
     bool Robot::move(int room_num) {
         std::string roomKey = std::to_string(room_num);
-        if (currentMap.roomExists(roomKey)) {
+        //if (currentMap.roomExists(roomKey)) {
             location = room_num;
             return true; // Move was successful
-        } else {
-            std::cout << "Invalid room number: " << roomKey << ". Please enter a valid room number.\n";
-            return false; // Move was unsuccessful
-        }
+        //} else {
+        //    std::cout << "Invalid room number: " << roomKey << ". Please enter a valid room number.\n";
+        //    return false; // Move was unsuccessful
+        //}
     }
 
 

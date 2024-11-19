@@ -15,13 +15,14 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_ToEngineer, MainFrame::switchToEngineer ) 
     EVT_BUTTON ( ID_ToManager, MainFrame::switchToManager ) 
     EVT_BUTTON ( ID_AddRobot, MainFrame::addRobot )
+    EVT_BUTTON ( ID_DeleteRobot, MainFrame::deleteRobot )
 END_EVENT_TABLE() 
 
 // Properties of main window
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
 : wxFrame((wxFrame *) NULL, -1, title, pos, size) 
 {
-    // Temporary, to be removed ----------------------------------
+    // Temporary, to be removed ------------------------------------------------------------------------------------------------------
     json roomsEx0 = {
         {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
         {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
@@ -44,7 +45,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     json robotFleet = simDriver.getFleet();
     //std::cout << robotFleet << std::endl;
     */
-    // ---------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------------------
     
     
     // Defines main panel to hold everything
@@ -73,27 +74,29 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     robotListView->AppendColumn("Current Room Status");
     robotListView->SetColumnWidth(6, 180);
 
-    // Pull engineer screens together
     // Defines top half of engineer panel
     wxBoxSizer* engineerTopSizer = new wxBoxSizer(wxVERTICAL);
     engineerTopSizer->Add(robotListView, 1, wxALL | wxEXPAND, 0);
     engineerTopPanel->SetSizer(engineerTopSizer);
 
     // Defines bottom half of engineer panel
-    wxBoxSizer* engineerBottomSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* engineerBottomSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* addRobot = new wxButton(engineerBottomPanel, ID_AddRobot, "Add Robot");
+    wxButton* deleteRobot = new wxButton(engineerBottomPanel, ID_DeleteRobot, "Delete Robot", wxPoint(50,50));
     engineerBottomSizer->Add(addRobot, 1, wxALL, FromDIP(10));
+    engineerBottomSizer->Add(deleteRobot, 1, wxALL, FromDIP(10));
+    engineerBottomPanel->SetSizer(engineerBottomSizer);
 
     //addRobotTest("Scrubber");
     populateList();
 
+    // Pulls engineer screens together
     wxBoxSizer* engineerSizer = new wxBoxSizer(wxVERTICAL);
     wxButton* toManager = new wxButton(engineerPanel, ID_ToManager, "Go to Manager");
     engineerSizer->Add(toManager, 0, wxTOP | wxLEFT, 10);
     engineerSizer->Add(engineerTopPanel, 1, wxALL | wxEXPAND, 10);
     engineerSizer->Add(engineerBottomPanel, 1, wxALL | wxEXPAND, 10);
     engineerPanel->SetSizer(engineerSizer);
-    
 
     // Defines manager screen and its contents
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
@@ -138,13 +141,60 @@ void MainFrame::switchToManager(wxCommandEvent& event) {
 
 // Button function to add robot to list
 void MainFrame::addRobot(wxCommandEvent& event) {
-    wxTextEntryDialog dialog(this, "Enter robot type");
+    wxTextEntryDialog dialog(this, "Must be Scrubber, Vacuum, or Shampoo", "Enter Robot Type");
     if (dialog.ShowModal() == wxID_OK) {
-        addRobotTest(dialog.GetValue());
+        if (!((dialog.GetValue()).ToStdString() == "Shampoo") && !((dialog.GetValue()).ToStdString() == "Scrubber") && !((dialog.GetValue()).ToStdString() == "Vacuum")) {
+            
+        } else {
+            Robot robot = Robot(simDriver.stringToRobotType((dialog.GetValue()).ToStdString()), simDriver.assignRobotIndex());
+            simDriver.addRobot(robot);
+
+            json robotJson = robot.toJson();
+            robotListView->InsertItem(integer, robotJson["ID"].dump());
+            robotListView->SetItem(integer, 1, robotJson["Type"].dump());
+            robotListView->SetItem(integer, 2, robotJson["Status"].dump());
+            robotListView->SetItem(integer, 3, robotJson["Location"].dump());
+            robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
+            robotListView->SetItem(integer, 5, robotJson["Tasks Completed"].dump());
+            robotListView->SetItem(integer, 6, robotJson["Progress Task"].dump());
+            integer++;
+        }
     } else {
 
     }
 }
+
+// Button function to remove robot from list and simulation driver
+void MainFrame::deleteRobot(wxCommandEvent& event) {
+    wxTextEntryDialog dialog(this, "Enter robot ID to be removed", "Remove Robot");
+    if (dialog.ShowModal() == wxID_OK) {
+        int itemIndex = findListItem(dialog.GetValue());
+        if (itemIndex != -1) {
+            simDriver.removeRobot(stoi(dialog.GetValue().ToStdString()));
+            robotListView->DeleteItem(itemIndex); // Delete the item
+            wxMessageBox("Item with ID " + dialog.GetValue() + " deleted.", "Success");
+        } else {
+            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+        }
+    } else {
+        //std::cout << "oh no" << std::endl;
+    }
+}
+
+// Helper function for deleteRobot
+int MainFrame::findListItem(wxString id) {
+    int itemIndex = -1;
+    int itemCount = robotListView->GetItemCount();
+
+    for (int i = 0; i < itemCount; ++i) {
+        if (robotListView->GetItemText(i, 0) == id) { // Compare with the ID in the first column
+            itemIndex = i;
+            break;
+        }
+    }
+    return itemIndex;
+}
+
 
 // Temporary function to demonstrate list
 void MainFrame::addRobotTest(wxString type) {
@@ -157,7 +207,8 @@ void MainFrame::addRobotTest(wxString type) {
     robotListView->SetItem(0, 6, "None");
 }
 
-// Function that automatically populates list with robots in vector
+// Function that automatically populates list with robots in vector when wxPanel is first opened
+// Might delete in upcoming sprint due to simulation driver constructor update (no longer needs robot vector?)
 void MainFrame::populateList() {
     json robotFleet = simDriver.getFleet();
 
