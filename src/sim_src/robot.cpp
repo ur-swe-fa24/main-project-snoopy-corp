@@ -31,7 +31,7 @@ using json = nlohmann::json;
         return tasks_completed / tasks_attempted;
     }
 
-    int Robot::getId(){
+    int Robot::getId() const{
         return id;
     }
 
@@ -114,9 +114,18 @@ using json = nlohmann::json;
         status = Status::Error;
         // TO BE DETERMINED
     }
-    void Robot::move(int room_num){
-        location = room_num;
+
+    bool Robot::move(int room_num) {
+        std::string roomKey = std::to_string(room_num);
+        if (currentMap.roomExists(roomKey)) {
+            location = room_num;
+            return true; // Move was successful
+        } else {
+            std::cout << "Invalid room number: " << roomKey << ". Please enter a valid room number.\n";
+            return false; // Move was unsuccessful
+        }
     }
+
 
     std::string typeToString(RobotType type){
         switch(type){
@@ -188,6 +197,10 @@ using json = nlohmann::json;
         }
     }
 
+    void Robot::setId(int newId) {
+        id = newId;
+    }
+
     nlohmann::json Robot::toJson(){
         std::vector<int> vec;
         std::queue<int> tempQueue = queue;
@@ -209,4 +222,4 @@ using json = nlohmann::json;
         return j;
     }
  
- 
+

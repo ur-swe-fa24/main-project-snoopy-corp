@@ -13,7 +13,7 @@ int main() {
     mongocxx::instance instance{};  // Initialize MongoDB instance for the entire application
 
     // Initialize MongoDB wrapper to log robot actions
-    MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "robot_db", "robot_data");
+    MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "robot_db", "active_robots", "removed_robots");
 
     // Set up initial map and simulation driver
     std::map<std::string, std::vector<std::string>> roomsEx1 = {
@@ -59,7 +59,7 @@ int main() {
             }
 
             s.addRobot(*robot);  // Add robot to the simulation driver
-            mongo_wrapper.insertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
+            mongo_wrapper.upsertRobotData(true, robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
             std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
             delete robot;  // Clean up dynamically allocated robot after adding it to the vector
         }
@@ -67,15 +67,22 @@ int main() {
         else if (input == "R") {
             std::cout << "Enter ID of Robot to be removed: ";
             std::getline(std::cin, input);
-            // int id = std::stoi(input);
+            int id = std::stoi(input);
 
-            // try {
-            //     Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-            //     mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
-            //     std::cout << "Robot with ID " << id << " removed successfully.\n";
-            // } catch (const std::exception& e) {
-            //     std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
-            // }
+            try {
+                Robot* robot = s.getRobot(id);  // Retrieve the robot from the simulation
+                if (robot) {
+                    // Update the robot's status to "Removed" in the MongoDB active collection
+                    mongo_wrapper.upsertRobotData(true, robot->getId(), std::nullopt, "Removed", robot->getLocation(), robot->getMapName(), robot->getRoomStatus());
+                    mongo_wrapper.moveRobotToRemoved(id);  // Move robot to the removed collection
+                    s.removeRobot(id);  // Remove from simulation
+                    std::cout << "Robot with ID " << id << " moved to the removed collection successfully.\n";
+                } else {
+                    std::cout << "Robot with ID " << id << " not found. Please check the ID and try again.\n";
+                }
+            } catch (const std::exception& e) {
+                std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
+            }
         }
 
         else if (input == "V") {
@@ -95,7 +102,7 @@ int main() {
             Robot* robot = s.getRobot(id);
             if (robot) {
                 robot->move(newLocation);
-                mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), "Moved", robot->getLocation(), m.getName(), "default");
+                mongo_wrapper.upsertRobotData(true, robot->getId(), std::nullopt, "Moved", newLocation, std::nullopt, robot->getRoomStatus());
                 std::cout << "Robot with ID " << id << " moved to room " << newLocation << ".\n";
             } else {
                 std::cout << "Robot with ID " << id << " not found. Please check the ID and try again.\n";
@@ -113,7 +120,7 @@ int main() {
                     std::cout << "Robot needs to be moved to a location first in order to clean.\n";
                 } else {
                     bool success = robot->clean();
-                    mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), success ? "Cleaned" : "Error", robot->getLocation(), m.getName(), success ? "Clean" : "Unclean");
+                    mongo_wrapper.upsertRobotData(true, robot->getId(), std::nullopt, success ? "Cleaned" : "Error", robot->getLocation(), m.getName(), success ? "Clean" : "Unclean");
                     std::cout << "Robot with ID " << id << (success ? " successfully cleaned the room.\n" : " encountered an error while cleaning.\n");
                 }
             } else {
