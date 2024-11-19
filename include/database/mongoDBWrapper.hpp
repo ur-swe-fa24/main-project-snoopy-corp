@@ -8,24 +8,19 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 #include <mongocxx/exception/exception.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 
 
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::make_document;
+using json = nlohmann::json;
 
 class MongoDBWrapper {
 public:
     MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name);
     // Insert or update a robot's data
-    void upsertRobotData(bool isActive,
-                         int id,
-                         const std::optional<std::string>& type,
-                         const std::string& status,
-                         const std::optional<int>& location,
-                         const std::optional<std::string>& mapName,
-                         const std::optional<std::string>& roomStatus
-    );
+    void upsertRobotData(nlohmann::json robotData);
     // Remove a robot by moving it from active to removed collection
     void moveRobotToRemoved(int id);
                         

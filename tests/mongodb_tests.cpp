@@ -1,4 +1,5 @@
 #include "database/mongoDBWrapper.hpp"
+#include "sim_lib/robot.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/catch_approx.hpp>
@@ -24,15 +25,21 @@ TEST_CASE("MongoDBWrapper Unit Tests", "[MongoDBWrapper]") {
     MongoDBWrapper mongoWrapper(testUri, testDbName, activeCollection, removedCollection);
 
     SECTION("Upsert Robot Data") {
+        // nlohmann::json roomsEx1 = {
+        // {"3", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
+        // {"4", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
+        // {"5", {{"Room", "Bathroom"}, {"Cleaning Status", "Clean"}, {"FloorType", "Tile"}}}};
+        // Map map = Map("TestMap", roomsEx1);
+        Robot robo = Robot(RobotType::Scrubber, 101);
+        robo.move(5);
         int robotId = 101;
         std::string type = "Scrubber";
-        std::string status = "Active";
+        std::string status = "Inactive";
         int location = 5;
-        std::string mapName = "TestMap";
-        std::string roomStatus = "Clean";
+        // std::string mapName = "TestMap";
+        // std::string roomStatus = "Clean";
 
-        REQUIRE_NOTHROW(mongoWrapper.upsertRobotData(
-            true, robotId, type, status, location, mapName, roomStatus));
+        REQUIRE_NOTHROW(mongoWrapper.upsertRobotData(robo.toJson()));
 
         // Verify the data in the database
         mongocxx::client client{mongocxx::uri{testUri}};
@@ -47,8 +54,8 @@ TEST_CASE("MongoDBWrapper Unit Tests", "[MongoDBWrapper]") {
         REQUIRE(view["ID"].get_int32() == robotId);
         REQUIRE(std::string(view["Status"].get_string().value) == status);
         REQUIRE(view["Location"].get_int32() == location);
-        REQUIRE(std::string(view["Map"].get_string().value) == mapName);
-        REQUIRE(std::string(view["Room Status"].get_string().value) == roomStatus);
+        // REQUIRE(std::string(view["Map"].get_string().value) == mapName);
+        // REQUIRE(std::string(view["Room Status"].get_string().value) == roomStatus);
     }
 
     SECTION("Move Robot to Removed Collection") {

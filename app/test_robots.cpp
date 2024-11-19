@@ -28,20 +28,6 @@ int main() {
     Map m("map1", roomsEx1);
     SimulationDriver s(m);
 
-    // Thread to go each second and call the clean method
-    // Each 'second', call the clean method on each robot that has status Active
-    // TODO: Need to lock the robots vector with a mutex whenever getting it so delete robot doesn't affect updates here
-    bool simulationThread = true;
-    std::thread update_stuff {[&s, &simulationThread](){
-        while (simulationThread){
-            
-            for(Robot robo : *s.getRobots()) {
-                robo.update();
-            }
-            std::this_thread::sleep_for (std::chrono::seconds(1));
-        }}};
-
-
     std::string input;
     std::cout << "Enter a command (A - Add, R - Remove, V - View, M - Move, C - Clean, E - Exit): ";
     while (true) {
@@ -53,8 +39,6 @@ int main() {
         if (input == "E") {
             // End simulation, join the threads, and finish
             std::cout << "Exiting the program. Goodbye!\n";
-            simulationThread = false;
-            update_stuff.join();
             break;
         }
 
@@ -68,18 +52,18 @@ int main() {
             std::string robotTypeName = Robot::getRobotTypeFullName(input[0]);
 
             if (robotTypeName == "Scrubber") {
-                robot = new ScrubberRobot(robotIndex, s.getSelectedMap());
+                robot = new ScrubberRobot(robotIndex);
             } else if (robotTypeName == "Shampoo") {
-                robot = new ShampooRobot(robotIndex, s.getSelectedMap());
+                robot = new ShampooRobot(robotIndex);
             } else if (robotTypeName == "Vacuum") {
-                robot = new VacuumRobot(robotIndex, s.getSelectedMap());
+                robot = new VacuumRobot(robotIndex);
             } else {
                 std::cout << "Invalid robot type. Please enter S, H, or V.\n";
                 continue;
             }
 
             s.addRobot(*robot);  // Add robot to the simulation driver
-            mongo_wrapper.insertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
+            mongo_wrapper.upsertRobotData(robot->toJson());
             std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
             delete robot;  // Clean up dynamically allocated robot after adding it to the vector
         }
@@ -91,7 +75,7 @@ int main() {
 
             try {
                 Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-                mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
+                mongo_wrapper.upsertRobotData(removedRobot.toJson());
                 std::cout << "Robot with ID " << id << " removed successfully.\n";
             } catch (const std::exception& e) {
                 std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
@@ -115,7 +99,7 @@ int main() {
             Robot* robot = s.getRobot(id);
             if (robot) {
                 robot->move(newLocation);
-                mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), "Moved", robot->getLocation(), m.getName(), "default");
+                mongo_wrapper.upsertRobotData(robot->toJson());
                 std::cout << "Robot with ID " << id << " moved to room " << newLocation << ".\n";
             } else {
                 std::cout << "Robot with ID " << id << " not found. Please check the ID and try again.\n";
@@ -133,7 +117,7 @@ int main() {
                     std::cout << "Robot needs to be moved to a location first in order to clean.\n";
                 } else {
                     bool success = robot->clean();
-                    mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), success ? "Cleaned" : "Error", robot->getLocation(), m.getName(), success ? "Clean" : "Unclean");
+                    mongo_wrapper.upsertRobotData(robot->toJson());
                     std::cout << "Robot with ID " << id << (success ? " successfully cleaned the room.\n" : " encountered an error while cleaning.\n");
                 }
             } else {
