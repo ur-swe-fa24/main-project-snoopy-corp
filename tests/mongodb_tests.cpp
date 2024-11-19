@@ -1,14 +1,14 @@
-#define CATCH_CONFIG_MAIN
 #include "database/mongoDBWrapper.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/catch_approx.hpp>
+#include <bsoncxx/document/view.hpp>
 #include <iostream>
 
 // Ensure only one instance of mongocxx::instance exists
-mongocxx::instance& getMongoInstance(){
-        static mongocxx::instance instance{};
-        return instance;
+mongocxx::instance& getMongoInstance() {
+    static mongocxx::instance instance{};
+    return instance;
 }
 
 TEST_CASE("MongoDBWrapper Unit Tests", "[MongoDBWrapper]") {
@@ -45,10 +45,10 @@ TEST_CASE("MongoDBWrapper Unit Tests", "[MongoDBWrapper]") {
         auto view = result->view();
 
         REQUIRE(view["ID"].get_int32() == robotId);
-        REQUIRE(view["Status"].get_utf8().value.to_string() == status);
+        REQUIRE(std::string(view["Status"].get_string().value) == status);
         REQUIRE(view["Location"].get_int32() == location);
-        REQUIRE(view["Map"].get_utf8().value.to_string() == mapName);
-        REQUIRE(view["Room Status"].get_utf8().value.to_string() == roomStatus);
+        REQUIRE(std::string(view["Map"].get_string().value) == mapName);
+        REQUIRE(std::string(view["Room Status"].get_string().value) == roomStatus);
     }
 
     SECTION("Move Robot to Removed Collection") {
