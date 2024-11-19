@@ -23,9 +23,9 @@ class SimulationDriver{
         void start_dashboard();
         Robot* getRobot(int id);
         std::vector<nlohmann::json> getFleet();
-
         void update_all();
         void update(Robot& r);
+        RobotType stringToRobotType(std::string type);
 
     private:
         std::vector<Robot> robots;

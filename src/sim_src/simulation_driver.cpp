@@ -1,5 +1,9 @@
-#include "../../include/sim_lib/_sim_lib.hpp"
+#include "../../include/sim_lib/simulation_driver.hpp"
+#include <ostream>
 #include <iostream>
+
+
+
     // Default constructor 
     SimulationDriver::SimulationDriver(){}
         
@@ -19,6 +23,17 @@
         usedIds.insert(id);
         robots.push_back(std::move(robot));
     }
+
+    RobotType SimulationDriver::stringToRobotType(std::string type) {
+        if (type == "Vacuum") {
+            return RobotType::Vacuum;
+        } else if (type == "Shampoo") {
+            return RobotType::Shampoo;
+        } else {
+            return RobotType::Scrubber;
+        }
+    }
+
 
     // Needed = operator
     Robot& SimulationDriver::removeRobot(int id){
