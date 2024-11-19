@@ -5,7 +5,7 @@
 #include <magic_enum.hpp>
 #include <algorithm>
 #include <iostream>
-
+#include <random>
 
 
     // Default constructor 
@@ -100,11 +100,6 @@
         return robot_index++;
     }
 
-    // void SimulationDriver::start_dashboard(){
-    //     std::thread dash {[this](){auto dash = Dashboard(robots);}};
-    //     dash.join();
-    // }
-
     Robot* SimulationDriver::getRobot(int id) {
         pthread_rwlock_rdlock(&robotsLock);
         for(int i = 0; i < robots.size(); i++){
@@ -138,20 +133,20 @@
 
     void SimulationDriver::update(Robot& r){
         pthread_rwlock_rdlock(&robotsLock);
-        // std::cout << r.getId() << "\n";
-        if(r.getStatus() == Status::Inactive)
+        if(r.getBatteryLevel() <= 0){
+            r.reportError();
+        }
+        else if(r.getStatus() == Status::Inactive)
         {
             // std::cout << r.getId() << " has status inactive" << "\n";
             if(r.getQueue().size() != 0)
             {
-                // std::cout << r.getId() << " has " << r.getQueue().front() << " in queue" << "\n";
-                // std::cout << r.getId() << " has pre-move location: " << r.getLocation() << "\n";
                 r.move(r.getQueue().front());
                 // std::cout << r.getId() << " has post-move location: " << r.getLocation() << "\n";
 
                 r.setStatus(Status::Active);
             }
-            // std::cout << "N";
+            else r.chargeRobot();
         }
         else if(r.getStatus() == Status::Active)
         {
@@ -175,11 +170,31 @@
                     int current_cleanliness = std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation())));
                     current_cleanliness++;
                     selectedMap.updateRoomCleanliness(std::to_string(r.getLocation()), std::to_string(current_cleanliness));
-                    r.setBatteryLevel(-1);
+                    
                 }
+                r.incrementBatteryLevel(1);
                 
             }
+        }
+        else if(r.getStatus() == Status::BeingFixed)
+        {
+            if(r.getPauseTicks() > 0) r.incrementPauseTicks();
+            else r.setStatus(Status::Inactive);
         }
         pthread_rwlock_unlock(&robotsLock);
         //else: error case
     }
+
+int SimulationDriver::fixRobot(int id){
+        pthread_rwlock_wrlock(&robotsLock);
+        for(Robot& r : robots){
+            if(r.getId() == id){
+                // pthread_rwlock_unlock(&robotsLock);
+                r.setStatus(Status::BeingFixed);
+                r.setBatteryLevel(60);
+                r.setPauseTicks(50);
+            }
+        }
+        pthread_rwlock_unlock(&robotsLock);
+        return 0;
+}           

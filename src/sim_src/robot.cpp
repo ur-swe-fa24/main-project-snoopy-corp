@@ -8,17 +8,17 @@ using json = nlohmann::json;
     // Robot::Robot() : currentMap(Map("DEFAULT_MAP", {{"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})){}
 
 
-    Robot::Robot() : battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    Robot::Robot() : battery_level(60), queue{}, status(Status::Inactive), location(-1),
     gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {}
 
     // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(60), queue{}, status(Status::Inactive), location(-1),
     gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {
         failure_rate = genFailRate();   // robots by default will have a 0-0.5% chance of failing on a given task segment (10 per room)
         if(failure_rate > 0.00495)    failure_rate = 0.1;     //robots have a 1% chance of being defective
     }
 
-    Robot::Robot(RobotType type, int id, float failure_rate) : type(type), id(id), battery_level(10), queue{}, 
+    Robot::Robot(RobotType type, int id, float failure_rate) : type(type), id(id), battery_level(60), queue{}, 
     status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
 
     // Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
@@ -65,7 +65,7 @@ using json = nlohmann::json;
         return battery_level;
     }
 
-    void Robot::setBatteryLevel(int amt){
+    void Robot::incrementBatteryLevel(int amt){
         battery_level -= amt;
     }
     float Robot::getRandom(){
@@ -84,40 +84,6 @@ using json = nlohmann::json;
         status = s;
         return;
     }
-
-    void Robot::update(){
-        // std::cout << "update called ";
-        // if(status == Status::Inactive)
-        // {
-        //     if(queue.size() != 0)
-        //     {
-        //         move(queue.front());
-        //         setStatus(Status::Active);
-        //     }
-        // }
-        // else if(status == Status::Active)
-        // {
-        //     if(std::stoi(currentMap.getRoomCleanliness(std::to_string(location))) >= 10)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
-        //     {
-        //         if(queue.size() != 0)
-        //         {
-        //             queue.pop();
-        //             if(queue.size() == 0)
-        //                 status = Status::Inactive;
-        //             else
-        //                 move(queue.front());
-        //         }
-        //     }
-        //     else{
-        //         // std::cout << "clean about to be called; ";
-        //         bool successfulClean = clean();
-        //         if(!successfulClean) reportError();
-        //         else battery_level--;
-        //     }
-        // }
-        // //else: error case
-    }
-
 
     void Robot::reportError(){
         status = Status::Error;
@@ -193,5 +159,7 @@ using json = nlohmann::json;
             {"Queue", vec}};
         return j;
     }
+
+
  
 
