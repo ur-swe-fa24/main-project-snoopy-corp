@@ -9,7 +9,15 @@
 
     void SimulationDriver::addRobot(Robot& robot)
     {
-        robots.push_back(robot);
+        int id = robot.getId();
+        if (usedIds.find(id) != usedIds.end()) {
+            id++;
+        }
+        // Update the robot's ID to the unique value
+        robot.setId(id);
+        // Mark the ID as used and add the robot to the fleet
+        usedIds.insert(id);
+        robots.push_back(std::move(robot));
     }
 
     // Needed = operator
@@ -21,8 +29,22 @@
                 return r;
             }
             else index++;
+
+//     Robot SimulationDriver::removeRobot(int id){
+//         auto it = std::find_if(robots.begin(), robots.end(),
+//         [id](const Robot& r) { return r.getId() == id; });
+
+//         if (it != robots.end()) {
+//             Robot removedRobot = std::move(*it); // Create a copy of the robot being removed
+//             robots.erase(it);                   // Erase the robot from the vector
+//             return removedRobot;
         }
-        return DEFAULT_ROBOT;
+
+        return DEFAULT_ROBOT; // Return the default robot if not found
+    }
+
+    void SimulationDriver::constructRobot(){
+        return;
     }
 
     void SimulationDriver::clear(){
@@ -36,8 +58,11 @@
     }
 
     int SimulationDriver::assignRobotIndex(){
-        robot_index++;
-        return robot_index-1;
+        while (usedIds.find(robot_index) != usedIds.end()) {
+            robot_index++;
+        }
+        usedIds.insert(robot_index);
+        return robot_index++;
     }
 
     // void SimulationDriver::start_dashboard(){

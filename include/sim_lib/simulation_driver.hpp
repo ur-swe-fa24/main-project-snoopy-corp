@@ -2,6 +2,7 @@
 #define SIMULATION_DRIVER_HPP
 
 #include <vector>
+#include <unordered_set>
 #include <nlohmann/json.hpp>
 #include "robot.hpp"
 #include "map.hpp"
@@ -28,6 +29,7 @@ class SimulationDriver{
 
     private:
         std::vector<Robot> robots;
+        std::unordered_set<int> usedIds;   // Track all used robot IDs
         Map selectedMap;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;

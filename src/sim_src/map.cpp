@@ -17,3 +17,7 @@ void Map::updateRoomCleanliness(std::string roomId, std::string cleaningStatus) 
 void Map::updateRoomName(std::string roomId, std::string roomName) {
     rooms[roomId]["Room"] = roomName;
 };
+
+bool Map::roomExists(const std::string& roomId) const {
+    return rooms.contains(roomId); // Checks if the key exists in the JSON object
+}

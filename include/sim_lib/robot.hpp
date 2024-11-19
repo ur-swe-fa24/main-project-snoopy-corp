@@ -31,7 +31,7 @@ class Robot{
         // Robot& operator=(Robot&& other);
         
         float getEfficiency();
-        int getId();
+        int getId() const;
         Status getStatus();
         int getLocation();
         int getProgressTask();
@@ -49,7 +49,7 @@ class Robot{
         static std::string robotTypeToString(RobotType type); 
         static std::string getRobotTypeFullName(char type);
         // Temporarily Public, will turn Private soon through update function
-        void move(int room_num);
+        bool move(int room_num);
         virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();
         float getRandom();
@@ -57,7 +57,8 @@ class Robot{
         float getFailRate() { return failure_rate; }
         void popQueue();
         void setStatus(Status s);
-
+        void setId(int newId);
+        
 
     protected:
         int id;
@@ -76,6 +77,8 @@ class Robot{
         std::mt19937 gen;
         std::uniform_real_distribution<float> float_distribution;
         std::uniform_real_distribution<float> fail_distribution;
+
+    
 
 };
 
