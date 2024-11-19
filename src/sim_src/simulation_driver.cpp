@@ -4,6 +4,9 @@
 #include <magic_enum.hpp>
 #include <algorithm>
 #include <iostream>
+
+
+
     // Default constructor 
     SimulationDriver::SimulationDriver(){
         if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
@@ -29,8 +32,18 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
-        pthread_rwlock_unlock(&robotsLock);
     }
+
+    RobotType SimulationDriver::stringToRobotType(std::string type) {
+        if (type == "Vacuum") {
+            return RobotType::Vacuum;
+        } else if (type == "Shampoo") {
+            return RobotType::Shampoo;
+        } else {
+            return RobotType::Scrubber;
+        }
+    }
+
 
     // Needed = operator
     Robot& SimulationDriver::removeRobot(int id){
