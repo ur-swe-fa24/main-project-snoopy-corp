@@ -52,6 +52,7 @@
 //         if (it != robots.end()) {
 //             Robot removedRobot = std::move(*it); // Create a copy of the robot being removed
 //             robots.erase(it);                   // Erase the robot from the vector
+//             pthread_rwlock_unlock(&robotsLock);
 //             return removedRobot;
         }
         pthread_rwlock_unlock(&robotsLock);
@@ -102,21 +103,26 @@
     }
 
     std::vector<nlohmann::json> SimulationDriver::getFleet() {
+        pthread_rwlock_rdlock(&robotsLock);
         std::vector<nlohmann::json> info;
-        // for (Robot robo : robots) {
-        //     info.push_back(robo.toJson());
-        // }
+        for (Robot robo : robots) {
+            info.push_back(robo.toJson());
+        }
         return info;
+        pthread_rwlock_unlock(&robotsLock);
     };
 
     void SimulationDriver::update_all(){
+        pthread_rwlock_rdlock(&robotsLock);
         for(Robot& r : robots){
             // std::cout << r.getId() << "\n";
             update(r);
         }
+        pthread_rwlock_unlock(&robotsLock);
     }
 
     void SimulationDriver::update(Robot& r){
+        pthread_rwlock_rdlock(&robotsLock);
         // std::cout << r.getId() << "\n";
         if(r.getStatus() == Status::Inactive)
         {
@@ -159,5 +165,6 @@
                 
             }
         }
+        pthread_rwlock_unlock(&robotsLock);
         //else: error case
     }
