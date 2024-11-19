@@ -35,7 +35,8 @@ private:
     void OnExit( wxCommandEvent& event ); //Exits program
     void switchToEngineer( wxCommandEvent& event ); // Switches screen to engineer perspective
     void switchToManager( wxCommandEvent& event ); // Switches screen to manager perspective
-    void addRobot(wxString type);
+    void addRobot( wxCommandEvent& event ); // Add robot information to list
+    void addRobotTest(wxString type);
     void populateList();
   
     DECLARE_EVENT_TABLE()
@@ -45,6 +46,7 @@ private:
 enum {
     ID_ToManager = 1001,
     ID_ToEngineer = 1002,
+    ID_AddRobot = 1003,
     ID_Exit = wxID_EXIT // You can reuse wxWidgets pre-defined IDs if needed
 };
 

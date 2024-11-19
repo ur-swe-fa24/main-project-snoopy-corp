@@ -1,6 +1,7 @@
 #include "wxwidgets_lib/wxwidgets.hpp"
 #include <ostream>
 
+// Starts main application
 bool MyWidget::OnInit() {
 	MainFrame *MainWin = new MainFrame(_("Welcome to Snoopy Corp!"), wxDefaultPosition, wxSize(1000, 800));
 	MainWin->Show(true);
@@ -8,17 +9,19 @@ bool MyWidget::OnInit() {
 	return true;
 } 
 
+// EVENT TABLE: DEFINES EACH BUTTON / EVENT
 BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_Exit, MainFrame::OnExit ) 
     EVT_BUTTON ( ID_ToEngineer, MainFrame::switchToEngineer ) 
     EVT_BUTTON ( ID_ToManager, MainFrame::switchToManager ) 
+    EVT_BUTTON ( ID_AddRobot, MainFrame::addRobot )
 END_EVENT_TABLE() 
 
-
+// Properties of main window
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
 : wxFrame((wxFrame *) NULL, -1, title, pos, size) 
 {
-    // Temporary, to be removed ----
+    // Temporary, to be removed ----------------------------------
     json roomsEx0 = {
         {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
         {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
@@ -27,6 +30,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     map = Map("map1", roomsEx0);
     simDriver = SimulationDriver(map);
+
+    /*
     ShampooRobot robot = ShampooRobot(simDriver.assignRobotIndex(), map);
     simDriver.addRobot(robot);
     std::cout << "shampoo: " << robot.getId() << " " << robot.getLocation() << " " << robot.getBatteryLevel() << std::endl;
@@ -38,7 +43,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     std::cout << "first get fleet" << std::endl;
     json robotFleet = simDriver.getFleet();
     //std::cout << robotFleet << std::endl;
-    // --------
+    */
+    // ---------------------------------------------------------------------
     
     
     // Defines main panel to hold everything
@@ -68,14 +74,18 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     robotListView->SetColumnWidth(6, 180);
 
     // Pull engineer screens together
+    // Defines top half of engineer panel
     wxBoxSizer* engineerTopSizer = new wxBoxSizer(wxVERTICAL);
     engineerTopSizer->Add(robotListView, 1, wxALL | wxEXPAND, 0);
     engineerTopPanel->SetSizer(engineerTopSizer);
 
-    //addRobot("Scrubber");
-    populateList();
+    // Defines bottom half of engineer panel
+    wxBoxSizer* engineerBottomSizer = new wxBoxSizer(wxVERTICAL);
+    wxButton* addRobot = new wxButton(engineerBottomPanel, ID_AddRobot, "Add Robot");
+    engineerBottomSizer->Add(addRobot, 1, wxALL, FromDIP(10));
 
-    //wxStaticText* staticText = new wxStaticText(engineerBottomPanel, wxID_ANY, s.getFleet(), wxPoint(20, 20));
+    //addRobotTest("Scrubber");
+    populateList();
 
     wxBoxSizer* engineerSizer = new wxBoxSizer(wxVERTICAL);
     wxButton* toManager = new wxButton(engineerPanel, ID_ToManager, "Go to Manager");
@@ -126,7 +136,18 @@ void MainFrame::switchToManager(wxCommandEvent& event) {
     mainSizer->Layout(); // Update layout to reflect changes
 }
 
-void MainFrame::addRobot(wxString type) {
+// Button function to add robot to list
+void MainFrame::addRobot(wxCommandEvent& event) {
+    wxTextEntryDialog dialog(this, "Enter robot type");
+    if (dialog.ShowModal() == wxID_OK) {
+        addRobotTest(dialog.GetValue());
+    } else {
+
+    }
+}
+
+// Temporary function to demonstrate list
+void MainFrame::addRobotTest(wxString type) {
     robotListView->InsertItem(0, "1");
     robotListView->SetItem(0, 1, type);
     robotListView->SetItem(0, 2, "Active");
@@ -136,9 +157,8 @@ void MainFrame::addRobot(wxString type) {
     robotListView->SetItem(0, 6, "None");
 }
 
-
+// Function that automatically populates list with robots in vector
 void MainFrame::populateList() {
-    std::cout << "second get fleet" << std::endl;
     json robotFleet = simDriver.getFleet();
 
     for (int i = 0; i < robotFleet.size(); i++) {
@@ -152,3 +172,4 @@ void MainFrame::populateList() {
 
     }
 } 
+
