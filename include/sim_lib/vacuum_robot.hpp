@@ -10,8 +10,8 @@ class VacuumRobot : public Robot{
     public: 
         // VacuumRobot();
         // VacuumRobot(int id);
-        VacuumRobot(int id, Map& currentMap);
-        VacuumRobot(int id, Map& currentMap, float failure_rate);
+        VacuumRobot(int id);
+        VacuumRobot(int id, float failure_rate);
 
         nlohmann::json toJson() override;
 
