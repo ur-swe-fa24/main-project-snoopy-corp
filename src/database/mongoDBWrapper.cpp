@@ -18,49 +18,22 @@ MongoDBWrapper::MongoDBWrapper(const std::string& uri, const std::string& db_nam
 }
 
 // Insert or update a robot's data
-void MongoDBWrapper::upsertRobotData(bool isActive,
-                                     int id,
-                                     const std::optional<std::string>& type,
-                                     const std::string& status,
-                                     const std::optional<int>& location,
-                                     const std::optional<std::string>& mapName,
-                                     const std::optional<std::string>& roomStatus) {
-
+void MongoDBWrapper::upsertRobotData(nlohmann::json robotData) {
+    bool isActive = robotData["Status"] != "Deleted";
     auto& collection = isActive ? active_collection_ : removed_collection_;
-
     try {
         // Build the filter to find the robot by ID
         bsoncxx::builder::basic::document filterBuilder;
-        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", id));
+        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", robotData["ID"].get<int>()));
 
         // Build the update document
         bsoncxx::builder::basic::document updateBuilder;
-        updateBuilder.append(
-            bsoncxx::builder::basic::kvp("$set", [&](bsoncxx::builder::basic::sub_document subDoc) {
-                subDoc.append(bsoncxx::builder::basic::kvp("Status", status));
-
-                if (type) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("Type", *type));
-                }
-
-                if (location) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("Location", *location));
-                }
-
-                if (mapName) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("Map", *mapName));
-                }
-
-                if (roomStatus) {
-                    subDoc.append(bsoncxx::builder::basic::kvp("Room Status", *roomStatus));
-                }
-            })
-        );
+        updateBuilder.append(bsoncxx::builder::basic::kvp("$set", bsoncxx::from_json(robotData.dump())));
 
         // Perform the upsert operation
         collection.update_one(filterBuilder.view(), updateBuilder.view(), mongocxx::options::update().upsert(true));
 
-        spdlog::info("Upserted robot with ID {} successfully.", id);
+        spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
     } 
     catch (const mongocxx::exception& e) {
         spdlog::error("Error during upsert: {}", e.what());

@@ -124,35 +124,16 @@ using json = nlohmann::json;
         // TO BE DETERMINED
     }
 
-    bool Robot::move(int room_num) {
-        std::string roomKey = std::to_string(room_num);
-        if (currentMap.roomExists(roomKey)) {
-            location = room_num;
-            return true; // Move was successful
-        } else {
-            std::cout << "Invalid room number: " << roomKey << ". Please enter a valid room number.\n";
-            return false; // Move was unsuccessful
-        }
+    void Robot::move(int room_num) {
+        location = room_num;
     }
 
-
-    std::string typeToString(RobotType type){
-        switch(type){
-            case RobotType::Shampoo: return "Shampoo";
-            case RobotType::Scrubber: return "Scrubber";
-            case RobotType::Vacuum: return "Vacuum";
-            default:          return "Bad typeToString request";
-        }
+    std::string Robot::typeToString(RobotType Robot_type){
+        return std::string(magic_enum::enum_name(Robot_type));
     }
 
-    std::string statusToString(Status status){
-        switch(status){
-            case Status::Active: return "Active";
-            case Status::Inactive: return "Inactive";
-            case Status::Error: return "Error";
-            default:          return "Bad statusToString request";
-
-        }
+    std::string Robot::statusToString(Status status){
+        return std::string(magic_enum::enum_name(status));
     }
 
 
@@ -167,23 +148,10 @@ using json = nlohmann::json;
 
 
     std::string Robot::toString(){
-        std::cout << "ID: " << id << ", Type: " << typeToString(type) 
-        << ", Status: " << statusToString(status) << ", Location: " << this->getLocation();
+        std::cout << "ID: " << id << ", Type: " << this->typeToString(type) 
+        << ", Status: " << this->statusToString(status) << ", Location: " << this->getLocation();
         // << ", Map: " << this->getMapName() << ", Current Room Status: " << this->getRoomStatus() << "\n";
         return "";
-    }
-
-    std::string Robot::robotTypeToString(RobotType type) {
-        switch (type) {
-            case RobotType::Shampoo:
-                return "Shampoo";
-            case RobotType::Scrubber:
-                return "Scrubber";
-            case RobotType::Vacuum:
-                return "Vacuum";
-            default:
-                return "Unknown";
-        }
     }
 
     std::string Robot::getRobotTypeFullName(char type) {
@@ -214,7 +182,9 @@ using json = nlohmann::json;
             {"ID", id}, 
             {"Type", std::string(magic_enum::enum_name(type))}, 
             {"Status", std::string(magic_enum::enum_name(status))},
+            // {"Map", currentMap.getName()},
             {"Location", location},
+            // {"Room Status", getRoomStatus()},
             {"Tasks completed", tasks_completed},
             {"Task attempted", tasks_attempted},
             {"Progress task", progress_task},
