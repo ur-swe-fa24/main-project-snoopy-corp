@@ -11,11 +11,9 @@ class SimulationDriver{
 
     public:
         SimulationDriver();
-        explicit SimulationDriver(std::vector<Robot> robots);
         explicit SimulationDriver(Map selectedMap);
-        explicit SimulationDriver(std::vector<Robot> robots, Map selectedMap);
-        void addRobot(Robot robot);
-        Robot removeRobot(int id);
+        void addRobot(Robot& robot);
+        Robot& removeRobot(int id);
         void clear();
         void toString();
         int getRobotIndex() { return robot_index; }
@@ -24,13 +22,18 @@ class SimulationDriver{
         void start_dashboard();
         Robot* getRobot(int id);
         std::vector<nlohmann::json> getFleet();
+
+        void update_all();
+        void update(Robot& r);
+
     private:
         std::vector<Robot> robots;
         Map selectedMap;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
-        Map DEFAULT_MAP;
         void constructRobot();
+
+
         
 };
 
