@@ -31,10 +31,17 @@ target_include_directories(sim_lib
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
-   
+
 add_library(database
   src/database/mongoDBWrapper.cpp
 )
+
+target_include_directories(database
+    PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+
+
 
 # Find and link MongoDB C++ driver libraries
 find_package(mongocxx REQUIRED)

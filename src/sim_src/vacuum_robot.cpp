@@ -4,8 +4,8 @@
     // ScrubberRobot::ScrubberRobot() :  Robot(RobotType::Generic, 0, 0) {}
 
     // Overloaded constructor with type and id parameters
-    VacuumRobot::VacuumRobot(int id, Map& currentMap) : Robot(RobotType::Vacuum, id, currentMap) {}
-    VacuumRobot::VacuumRobot(int id, Map& currentMap, float failure_rate) : Robot(RobotType::Vacuum, id, currentMap, failure_rate) {}
+    VacuumRobot::VacuumRobot(int id) : Robot(RobotType::Vacuum, id) {}
+    VacuumRobot::VacuumRobot(int id, float failure_rate) : Robot(RobotType::Vacuum, id, failure_rate) {}
 
     bool VacuumRobot::clean() 
     {
@@ -13,9 +13,7 @@
             return false;
         }
         else{
-            int current_cleanliness = stoi(currentMap.getRoomCleanliness(std::to_string(location)));
-            current_cleanliness++;
-            currentMap.updateRoomCleanliness(std::to_string(location), std::to_string(current_cleanliness));
+            
             return true;    
         }
     }

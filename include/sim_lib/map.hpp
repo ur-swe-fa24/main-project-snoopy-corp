@@ -30,6 +30,7 @@ class Map{
         
         void updateRoomName(std::string roomId, std::string roomName); // Updates name of given room
         std::string getRoomName(std::string roomId) { return rooms[roomId]["Room"]; }
+        bool roomExists(const std::string& roomId) const;
 
         // Note that there are no methods to update/set floorType.
 };

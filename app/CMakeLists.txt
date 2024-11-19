@@ -54,13 +54,13 @@ target_link_libraries(
         spdlog::spdlog_header_only
         mongo::mongocxx_shared
 )
-target_link_libraries(
-    database
+target_link_libraries(database
     PRIVATE
         sim_lib
         ${wxWidgets_LIBRARIES} 
         spdlog::spdlog_header_only
-        mongo::mongocxx_shared)
+        mongo::mongocxx_shared
+)
 
 
 target_compile_features(myExe PRIVATE cxx_std_17)
