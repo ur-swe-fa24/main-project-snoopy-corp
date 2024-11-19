@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 #include <magic_enum.hpp>
 #include <random>
+#include <iostream>
 
 enum class RobotType{
     Shampoo, Scrubber, Vacuum
