@@ -11,8 +11,7 @@
             }
     }
         
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap),
-        DEFAULT_ROBOT(Robot(RobotType::Vacuum, -1)), robots({DEFAULT_ROBOT}) {
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap) {
             if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
