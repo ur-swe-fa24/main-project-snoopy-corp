@@ -6,4 +6,4 @@
 
 + Wrote the unit tests for `MongoDBWrapper.cpp` and all tests passed for `upsert` and `movetoRemoved`
 
-+ Correspondingly updated `Robot.cpp`, `SimulationDriver.cpp`.cpp to work with MongoDB
++ Correspondingly updated `Robot.cpp`, `SimulationDriver.cpp`, `CMakeLists` to work with MongoDB
