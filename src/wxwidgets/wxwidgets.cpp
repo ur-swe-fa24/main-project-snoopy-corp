@@ -172,6 +172,7 @@ void MainFrame::deleteRobot(wxCommandEvent& event) {
         if (itemIndex != -1) {
             simDriver.removeRobot(stoi(dialog.GetValue().ToStdString()));
             robotListView->DeleteItem(itemIndex); // Delete the item
+            integer--;
             wxMessageBox("Item with ID " + dialog.GetValue() + " deleted.", "Success");
         } else {
             wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
