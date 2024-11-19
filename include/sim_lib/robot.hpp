@@ -13,7 +13,7 @@ enum class RobotType{
 };
 
 enum class Status{
-    Active, Inactive, Error
+    Active, Inactive, Error, Deleted
 };
 
 class Robot{
@@ -41,15 +41,16 @@ class Robot{
         int getBatteryLevel();
         void setBatteryLevel(int amt);
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
+        static std::string typeToString(RobotType type);
+        static std::string statusToString(Status status);  
+        static std::string getRobotTypeFullName(char type);
         std::string toString();
         RobotType getType() { return type; }
         float getFailureRate() { return failure_rate; }
-        std::string getRoomStatus();
+        // std::string getRoomStatus();
         virtual nlohmann::json toJson();
-        static std::string robotTypeToString(RobotType type); 
-        static std::string getRobotTypeFullName(char type);
         // Temporarily Public, will turn Private soon through update function
-        bool move(int room_num);
+        void move(int room_num);
         virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();
         float getRandom();

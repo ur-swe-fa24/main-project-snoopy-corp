@@ -18,12 +18,11 @@ int main() {
     // // Initialize MongoDB wrapper to log robot actions
     // MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "robot_db", "robot_data");
 
-    // // Set up initial map and simulation driver
-    // std::map<std::string, std::vector<std::string>> roomsEx1 = {
-    //     {"0" , {"default", "default", "defaultA"}},
-    //     {"1" , {"kitchen", "Unclean", "wood"}},
-    //     {"2", {"office", "Unclean", "carpet"}},
-    //     {"3" , {"bathroom", "Unclean", "tile"}}
+    // Set up initial map and simulation driver
+    // nlohmann::json roomsEx1 = {
+    //     {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
+    //     {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
+    //     {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Tile"}}}
     // };
     // Map m("map1", roomsEx1);
     // SimulationDriver s(m);
@@ -77,11 +76,11 @@ int main() {
     //             continue;
     //         }
 
-    //         s.addRobot(*robot);  // Add robot to the simulation driver
-    //         mongo_wrapper.insertRobotData(robot->getId(), robotTypeName, "Active", robot->getLocation(), m.getName(), "default");
-    //         std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
-    //         delete robot;  // Clean up dynamically allocated robot after adding it to the vector
-    //     }
+        //     s.addRobot(*robot);  // Add robot to the simulation driver
+        //     mongo_wrapper.upsertRobotData(robot->toJson());
+        //     std::cout << "Robot added successfully with ID " << robot->getId() << ".\n";
+        //     delete robot;  // Clean up dynamically allocated robot after adding it to the vector
+        // }
 
     //     else if (input == "R") {
     //         std::cout << "Enter ID of Robot to be removed: ";
@@ -90,7 +89,7 @@ int main() {
 
     //         // try {
     //         //     Robot removedRobot = s.removeRobot(id);  // Remove robot from simulation
-    //         //     mongo_wrapper.insertRobotData(removedRobot.getId(), Robot::robotTypeToString(removedRobot.getType()), "Removed", removedRobot.getLocation(), m.getName(), "default");
+    //         //     mongo_wrapper.insertRobotData(removedRobot.toJson());
     //         //     std::cout << "Robot with ID " << id << " removed successfully.\n";
     //         // } catch (const std::exception& e) {
     //         //     std::cout << "Error: " << e.what() << ". Please check the ID and try again.\n";
@@ -114,7 +113,7 @@ int main() {
     //         Robot* robot = s.getRobot(id);
     //         if (robot) {
     //             robot->move(newLocation);
-    //             mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), "Moved", robot->getLocation(), m.getName(), "default");
+    //             mongo_wrapper.upsertRobotData(robot->toJson());
     //             std::cout << "Robot with ID " << id << " moved to room " << newLocation << ".\n";
     //         } else {
     //             std::cout << "Robot with ID " << id << " not found. Please check the ID and try again.\n";
@@ -132,7 +131,7 @@ int main() {
     //                 std::cout << "Robot needs to be moved to a location first in order to clean.\n";
     //             } else {
     //                 bool success = robot->clean();
-    //                 mongo_wrapper.insertRobotData(robot->getId(), Robot::robotTypeToString(robot->getType()), success ? "Cleaned" : "Error", robot->getLocation(), m.getName(), success ? "Clean" : "Unclean");
+    //                 mongo_wrapper.upsertRobotData(robot->toJson());
     //                 std::cout << "Robot with ID " << id << (success ? " successfully cleaned the room.\n" : " encountered an error while cleaning.\n");
     //             }
     //         } else {
