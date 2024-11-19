@@ -22,7 +22,7 @@
 
     void SimulationDriver::addRobot(Robot& robot)
     {
-        pthread_rwlock_wrlock(&robotsLock);
+        // pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
         if (usedIds.find(id) != usedIds.end()) {
             id++;
@@ -32,6 +32,7 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
+        // pthread_rwlock_unlock(&robotsLock);
     }
 
     RobotType SimulationDriver::stringToRobotType(std::string type) {
@@ -47,12 +48,12 @@
 
     // Needed = operator
     Robot& SimulationDriver::removeRobot(int id){
-        pthread_rwlock_wrlock(&robotsLock);
+        // pthread_rwlock_wrlock(&robotsLock);
         int index = 0;
         for(Robot& r : robots){
             if(r.getId() == id){
                 robots.erase(robots.begin() + index);
-                pthread_rwlock_unlock(&robotsLock);
+                // pthread_rwlock_unlock(&robotsLock);
                 return r;
             }
             else index++;
@@ -67,7 +68,7 @@
 //             pthread_rwlock_unlock(&robotsLock);
 //             return removedRobot;
         }
-        pthread_rwlock_unlock(&robotsLock);
+        // pthread_rwlock_unlock(&robotsLock);
         return DEFAULT_ROBOT; // Return the default robot if not found
     }
 
@@ -120,8 +121,8 @@
         for (Robot robo : robots) {
             info.push_back(robo.toJson());
         }
-        return info;
         pthread_rwlock_unlock(&robotsLock);
+        return info;
     };
 
     void SimulationDriver::update_all(){
