@@ -1,15 +1,26 @@
 #include "../../include/sim_lib/_sim_lib.hpp"
-#include <thread>
+#include <pthread.h>
+#include <iostream>
+#include <magic_enum.hpp>
+#include <algorithm>
 #include <iostream>
     // Default constructor 
-    SimulationDriver::SimulationDriver(){}
+    SimulationDriver::SimulationDriver(){
+        if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
+                throw std::runtime_error("Failed to initialize robotsLock");
+            }
+    }
         
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap) {}
-
-
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap),
+        DEFAULT_ROBOT(Robot(RobotType::Vacuum, -1)), robots({DEFAULT_ROBOT}) {
+            if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
+                throw std::runtime_error("Failed to initialize robotsLock");
+            }
+        }
 
     void SimulationDriver::addRobot(Robot& robot)
     {
+        pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
         if (usedIds.find(id) != usedIds.end()) {
             id++;
@@ -19,14 +30,17 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
+        pthread_rwlock_unlock(&robotsLock);
     }
 
     // Needed = operator
     Robot& SimulationDriver::removeRobot(int id){
+        pthread_rwlock_wrlock(&robotsLock);
         int index = 0;
         for(Robot& r : robots){
             if(r.getId() == id){
                 robots.erase(robots.begin() + index);
+                pthread_rwlock_unlock(&robotsLock);
                 return r;
             }
             else index++;
@@ -40,7 +54,7 @@
 //             robots.erase(it);                   // Erase the robot from the vector
 //             return removedRobot;
         }
-
+        pthread_rwlock_unlock(&robotsLock);
         return DEFAULT_ROBOT; // Return the default robot if not found
     }
 
@@ -49,13 +63,17 @@
     }
 
     void SimulationDriver::clear(){
+        pthread_rwlock_wrlock(&robotsLock);
         robots.clear();
+        pthread_rwlock_unlock(&robotsLock);
     }
 
     void SimulationDriver::toString(){
+        pthread_rwlock_rdlock(&robotsLock);
         for (Robot& r : robots){
             r.toString();
         }
+        pthread_rwlock_unlock(&robotsLock);
     }
 
     int SimulationDriver::assignRobotIndex(){
@@ -67,16 +85,19 @@
     }
 
     // void SimulationDriver::start_dashboard(){
-    //     auto dash = Dashboard(robots);
+    //     std::thread dash {[this](){auto dash = Dashboard(robots);}};
+    //     dash.join();
     // }
 
     Robot* SimulationDriver::getRobot(int id) {
-        std::lock_guard<std::mutex> guard(robotsMutex);
+        pthread_rwlock_rdlock(&robotsLock);
         for(int i = 0; i < robots.size(); i++){
             if(robots[i].getId()==id){
+                pthread_rwlock_unlock(&robotsLock);
                 return &robots[i];
             }
         }
+        pthread_rwlock_unlock(&robotsLock);
         return nullptr;
     }
 

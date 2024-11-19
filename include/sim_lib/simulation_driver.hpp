@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <nlohmann/json.hpp>
 #include <mutex>
+#include <thread>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
@@ -31,7 +32,7 @@ class SimulationDriver{
     private:
         std::vector<Robot> robots;
         std::unordered_set<int> usedIds;   // Track all used robot IDs
-        std::mutex robotsMutex;
+        pthread_rwlock_t robotsLock;
         Map selectedMap;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
