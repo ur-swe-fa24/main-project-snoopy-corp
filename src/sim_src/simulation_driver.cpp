@@ -1,4 +1,5 @@
-#include "../../include/sim_lib/_sim_lib.hpp"
+#include "../../include/sim_lib/simulation_driver.hpp"
+#include <ostream>
 #include <pthread.h>
 #include <iostream>
 #include <magic_enum.hpp>
@@ -44,6 +45,17 @@
             return RobotType::Scrubber;
         }
     }
+
+    RobotType SimulationDriver::stringToRobotType(std::string type) {
+        if (type == "Vacuum") {
+            return RobotType::Vacuum;
+        } else if (type == "Shampoo") {
+            return RobotType::Shampoo;
+        } else {
+            return RobotType::Scrubber;
+        }
+    }
+
 
 
     // Needed = operator
