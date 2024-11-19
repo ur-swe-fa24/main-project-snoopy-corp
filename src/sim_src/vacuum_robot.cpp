@@ -16,6 +16,12 @@
             int current_cleanliness = stoi(currentMap.getRoomCleanliness(std::to_string(location)));
             current_cleanliness++;
             currentMap.updateRoomCleanliness(std::to_string(location), std::to_string(current_cleanliness));
-            return true;   
-        } 
+            return true;    
+        }
     }
+
+    nlohmann::json VacuumRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Trash Bag Level"] = TrashbagLevel;
+        return json;
+    };

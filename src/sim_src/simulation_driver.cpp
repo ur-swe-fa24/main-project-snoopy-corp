@@ -81,3 +81,11 @@
         }
         return nullptr;
     }
+
+    std::vector<nlohmann::json> SimulationDriver::getFleet() {
+        std::vector<nlohmann::json> info;
+        for (Robot robo : robots) {
+            info.push_back(robo.toJson());
+        }
+        return info;
+    };

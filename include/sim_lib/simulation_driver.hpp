@@ -24,7 +24,7 @@ class SimulationDriver{
         Map getSelectedMap() { return selectedMap; }
         void start_dashboard();
         Robot* getRobot(int id);
-        std::vector<Robot> getFleet();
+        std::vector<nlohmann::json> getFleet();
     private:
         std::vector<Robot> robots;
         std::unordered_set<int> usedIds;   // Track all used robot IDs
