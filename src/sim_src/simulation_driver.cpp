@@ -46,16 +46,6 @@
         }
     }
 
-    RobotType SimulationDriver::stringToRobotType(std::string type) {
-        if (type == "Vacuum") {
-            return RobotType::Vacuum;
-        } else if (type == "Shampoo") {
-            return RobotType::Shampoo;
-        } else {
-            return RobotType::Scrubber;
-        }
-    }
-
 
 
     // Needed = operator
