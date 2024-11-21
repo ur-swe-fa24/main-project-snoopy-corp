@@ -10,18 +10,6 @@
 
     ScrubberRobot::ScrubberRobot(int id, float failure_rate) : Robot(RobotType::Scrubber, id, failure_rate) {}
 
-
-    bool ScrubberRobot::clean() 
-    {
-        if(getRandom() <= failure_rate){
-            return false;
-        }
-        else{
-            
-            return true;    
-        }    
-    }
-
     nlohmann::json ScrubberRobot::toJson() {
         nlohmann::json json = Robot::toJson();
         json["Water Level"] = WaterLevel;

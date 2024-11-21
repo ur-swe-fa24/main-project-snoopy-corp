@@ -14,7 +14,7 @@ enum class RobotType{
 };
 
 enum class Status{
-    Active, Inactive, Error, Deleted
+    Active, Inactive, Error, Deleted, BeingFixed
 };
 
 class Robot{
@@ -40,7 +40,8 @@ class Robot{
         std::queue<int> getQueue();
         void addTask(int room);
         int getBatteryLevel();
-        void setBatteryLevel(int amt);
+        void incrementBatteryLevel(int amt);
+        void setBatteryLevel(int amt) { battery_level = amt; }
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         static std::string typeToString(RobotType type);
         static std::string statusToString(Status status);  
@@ -52,7 +53,7 @@ class Robot{
         virtual nlohmann::json toJson();
         // Temporarily Public, will turn Private soon through update function
         void move(int room_num);
-        virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
+        bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
         void reportError();
         float getRandom();
         float genFailRate();
@@ -60,7 +61,10 @@ class Robot{
         void popQueue();
         void setStatus(Status s);
         void setId(int newId);
-        
+        void setPauseTicks(int s) { pause_ticks = s; }
+        void incrementPauseTicks() { pause_ticks -= 1; }
+        int getPauseTicks() { return pause_ticks; }
+        void chargeRobot() { battery_level += 2; }
 
     protected:
         int id;
@@ -80,6 +84,7 @@ class Robot{
         std::uniform_real_distribution<float> float_distribution;
         std::uniform_real_distribution<float> fail_distribution;
 
+        int pause_ticks = 0;    // how long the robot should wait before taking action due to error fixing or charging
     
 
 };
