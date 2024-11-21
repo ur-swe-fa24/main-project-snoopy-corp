@@ -196,6 +196,8 @@
     }
 
     void SimulationDriver::reportSimError(nlohmann::json err){
-        err["Time"] = (std::chrono::system_clock::now() - start).count()/1000;
+        float time = (std::chrono::system_clock::now() - start).count()/1000;
+        err["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+                      std::to_string((int)time % 60) + " seconds";
         // REPORT ERROR IN THE MONGODB
     }
