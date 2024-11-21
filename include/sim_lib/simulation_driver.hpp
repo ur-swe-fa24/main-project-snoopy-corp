@@ -28,6 +28,7 @@ class SimulationDriver{
         void update_all();
         void update(Robot& r);
         RobotType stringToRobotType(std::string type);
+        std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
     private:
         std::vector<Robot> robots;
@@ -37,8 +38,7 @@ class SimulationDriver{
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
         void constructRobot();
-
-
+        void reportSimError(nlohmann::json err);
         
 };
 

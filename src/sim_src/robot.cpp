@@ -119,9 +119,12 @@ using json = nlohmann::json;
     }
 
 
-    void Robot::reportError(){
+    nlohmann::json Robot::reportError(std::string err){
         status = Status::Error;
-        // TO BE DETERMINED
+        return json{{"ID", id},
+                    {"Note", err},
+                    {"Location", location},
+                    {"Time", }};
     }
 
     void Robot::move(int room_num) {

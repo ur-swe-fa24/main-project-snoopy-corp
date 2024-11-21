@@ -5,6 +5,7 @@
 #include <magic_enum.hpp>
 #include <algorithm>
 #include <iostream>
+#include <cstdlib>
 
 
 
@@ -128,16 +129,14 @@
     };
 
     void SimulationDriver::update_all(){
-        pthread_rwlock_rdlock(&robotsLock);
+        pthread_rwlock_wrlock(&robotsLock);
         for(Robot& r : robots){
-            // std::cout << r.getId() << "\n";
             update(r);
         }
         pthread_rwlock_unlock(&robotsLock);
     }
 
     void SimulationDriver::update(Robot& r){
-        pthread_rwlock_rdlock(&robotsLock);
         // std::cout << r.getId() << "\n";
         if(r.getStatus() == Status::Inactive)
         {
@@ -170,16 +169,33 @@
             else{
                 // std::cout << "clean about to be called; ";
                 bool successfulClean = r.clean();
-                if(!successfulClean) r.reportError();
+                if(!successfulClean){
+                    int choice = rand() % 2;
+                    switch(choice){     // SEND ERROR TO MONGODB
+                        case 1:
+                            reportSimError(r.reportError("Cannot clean room due to Robot Damage"));
+                            return;
+                        default:
+                            reportSimError(r.reportError("Cannot clean room due to Sensor Error"));
+                            return;
+                    }
+                }
                 else{
                     int current_cleanliness = std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation())));
                     current_cleanliness++;
                     selectedMap.updateRoomCleanliness(std::to_string(r.getLocation()), std::to_string(current_cleanliness));
                     r.setBatteryLevel(-1);
+                    if (r.getBatteryLevel() == 0){
+                        reportSimError(r.reportError("Robot Battery Died"));
+                    }
                 }
                 
             }
         }
-        pthread_rwlock_unlock(&robotsLock);
         //else: error case
+    }
+
+    void SimulationDriver::reportSimError(nlohmann::json err){
+        err["Time"] = (std::chrono::system_clock::now() - start).count()/1000;
+        // REPORT ERROR IN THE MONGODB
     }
