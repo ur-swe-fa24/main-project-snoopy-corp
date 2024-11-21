@@ -9,6 +9,9 @@
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
+#include <climits>
+#include <magic_enum.hpp>
+
 
 class SimulationDriver{
 
@@ -30,7 +33,7 @@ class SimulationDriver{
         RobotType stringToRobotType(std::string type);
         int fixRobot(int id);
         int chargeRobot(int id);
-        
+        void assignmentModule(std::vector<int> tasks);
 
     private:
         std::vector<Robot> robots;
@@ -40,9 +43,12 @@ class SimulationDriver{
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
         void constructRobot();
-
-
-        
+        std::unordered_map<RobotType, std::vector<std::string>> type_mappings = {
+            {RobotType::Scrubber, {"Wood", "Tile"}},
+            {RobotType::Vacuum, {"Wood", "Tile", "Carpet"}},
+            {RobotType::Shampoo, {"Carpet"}}
+        };
 };
+
 
 #endif

@@ -49,6 +49,7 @@ class Robot{
         void setBatteryLevel(int amt) { battery_level = amt; }
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         static std::string typeToString(RobotType type);
+
         static std::string statusToString(Status status);  
         static std::string getRobotTypeFullName(char type);
         std::string toString();
@@ -70,7 +71,7 @@ class Robot{
         void incrementPauseTicks() { pause_ticks -= 1; }
         int getPauseTicks() { return pause_ticks; }
         void chargeRobot() { battery_level += 2; }
-
+        int timeRemaining() { return queue.size()*10; }
     protected:
         int id;
         RobotType type;

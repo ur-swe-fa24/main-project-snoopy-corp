@@ -17,8 +17,8 @@ TEST_CASE("Cleaning Unit Tests") {
         {"6", {{"Room", "DEMO"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}},
         {"7", {{"Room", "DEMO2"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}},
         {"8", {{"Room", "DEMO3"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
-        {"9", {{"Room", "DEMO4"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}}
-
+        {"9", {{"Room", "DEMO4"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"10", {{"Room", "DEMO5"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}}
 
 
     };
@@ -152,7 +152,6 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(s.getRobot(9)->getTC() == 1);
 
         REQUIRE(s.getRobot(9)->getEfficiency() == Catch::Approx(0.5));
-
     }
 
 }
