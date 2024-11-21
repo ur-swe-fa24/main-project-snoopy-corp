@@ -18,11 +18,19 @@ using json = nlohmann::json;
 
 class MongoDBWrapper {
 public:
-    MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name);
+    MongoDBWrapper(
+            const std::string& uri, 
+            const std::string& db_name, 
+            const std::string& active_collection_name, 
+            const std::string& removed_collection_name,
+            const std::string& error_collection_name
+    );
     // Insert or update a robot's data
     void upsertRobotData(nlohmann::json robotData);
     // Remove a robot by moving it from active to removed collection
     void moveRobotToRemoved(int id);
+    // Add Error log
+    void logError(nlohmann::json robotData);
                         
 
 private:
@@ -30,6 +38,7 @@ private:
     mongocxx::database db_;
     mongocxx::collection active_collection_;
     mongocxx::collection removed_collection_;
+    mongocxx::collection error_collection_;
 };
 
 #endif // MONGODBWRAPPER_HPP

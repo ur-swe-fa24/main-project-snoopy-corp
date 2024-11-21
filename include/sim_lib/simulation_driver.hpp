@@ -28,6 +28,8 @@ class SimulationDriver{
         void update_all();
         void update(Robot& r);
         RobotType stringToRobotType(std::string type);
+        int fixRobot(int id);
+        int chargeRobot(int id);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
     private:

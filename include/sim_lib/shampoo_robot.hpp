@@ -16,7 +16,6 @@ class ShampooRobot : public Robot{
 
     private:
         int ShampooLevel;
-        bool clean();
 
 };
 

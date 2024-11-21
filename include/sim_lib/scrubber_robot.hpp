@@ -15,9 +15,7 @@ class ScrubberRobot : public Robot{
         nlohmann::json toJson() override;
 
     private:
-        int WaterLevel;
-        bool clean();
-        
+        int WaterLevel;        
 };
 
 #endif
