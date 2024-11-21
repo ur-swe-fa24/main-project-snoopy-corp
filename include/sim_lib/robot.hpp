@@ -32,6 +32,10 @@ class Robot{
         // Robot& operator=(Robot&& other);
         
         float getEfficiency();
+        void incrementTasksAttempted() { tasks_attempted += 1; }
+        void incrementTasksCompleted() { tasks_completed += 1; }
+        int getTA() { return tasks_attempted; }
+        int getTC() { return tasks_completed; }
         int getId() const;
         Status getStatus();
         int getLocation();
@@ -39,6 +43,7 @@ class Robot{
         int getProgressQueue();
         std::queue<int> getQueue();
         void addTask(int room);
+        void addTask(std::vector<int> rooms);
         int getBatteryLevel();
         void incrementBatteryLevel(int amt);
         void setBatteryLevel(int amt) { battery_level = amt; }

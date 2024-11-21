@@ -141,6 +141,8 @@
             // std::cout << r.getId() << " has status inactive" << "\n";
             if(r.getQueue().size() != 0)
             {
+                if(r.getId()==9) std::cout << "INCREMENT ATTEMPTS";
+                r.incrementTasksAttempted();
                 r.move(r.getQueue().front());
                 // std::cout << r.getId() << " has post-move location: " << r.getLocation() << "\n";
 
@@ -152,13 +154,19 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
+                if(r.getId()==9) std::cout << "INCREMENT COMPLETES";
+
+                r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {
                     r.popQueue();
                     if(r.getQueue().size() == 0)
                         r.setStatus(Status::Inactive);
-                    else
+                    else{
+                        if(r.getId()==9) std::cout << "INCREMENT ATTEMPTS";
+                        r.incrementTasksAttempted();
                         r.move(r.getQueue().front());
+                    }
                 }
                 else r.setStatus(Status::Inactive);
             }

@@ -30,6 +30,7 @@ class SimulationDriver{
         RobotType stringToRobotType(std::string type);
         int fixRobot(int id);
         int chargeRobot(int id);
+        
 
     private:
         std::vector<Robot> robots;
