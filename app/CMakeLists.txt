@@ -1,13 +1,13 @@
-find_package(wxWidgets REQUIRED COMPONENTS core base)
+#find_package(wxWidgets REQUIRED COMPONENTS core base)
 
 include(${wxWidgets_USE_FILE})
 
 add_executable(myExe
-    test_robots.cpp
+    main.cpp
 )
 
 add_executable(myWxExe
-    test_wxWidgets.cpp
+    main_wxWidgets.cpp
 )
 
 # Common includes and libraries for both executables
@@ -40,8 +40,10 @@ target_link_libraries(
     PRIVATE
         sim_lib
         database
+        wxwidgets_lib
         spdlog::spdlog_header_only
         mongo::mongocxx_shared
+        nlohmann_json::nlohmann_json
 )
 
 target_link_libraries(
@@ -52,13 +54,13 @@ target_link_libraries(
         spdlog::spdlog_header_only
         mongo::mongocxx_shared
 )
-target_link_libraries(
-    database
+target_link_libraries(database
     PRIVATE
         sim_lib
         ${wxWidgets_LIBRARIES} 
         spdlog::spdlog_header_only
-        mongo::mongocxx_shared)
+        mongo::mongocxx_shared
+)
 
 
 target_compile_features(myExe PRIVATE cxx_std_17)

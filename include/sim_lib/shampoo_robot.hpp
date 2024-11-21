@@ -8,9 +8,11 @@
 class ShampooRobot : public Robot{
 
     public: 
-        ShampooRobot();
+        // ShampooRobot();
+        // ShampooRobot(int id);
         ShampooRobot(int id);
-        ShampooRobot(int id, Map currentMap);
+        ShampooRobot(int id, float failure_rate);
+        nlohmann::json toJson() override;
 
     private:
         int ShampooLevel;

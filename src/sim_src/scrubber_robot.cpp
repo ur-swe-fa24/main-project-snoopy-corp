@@ -1,26 +1,29 @@
 #include "../../include/sim_lib/scrubber_robot.hpp"
 #include <string>
+#include <iostream>
+#include <random>
 
-    // Default constructor 
-    // ScrubberRobot::ScrubberRobot() :  Robot(RobotType::Generic, 0, 0) {}
+    
 
-    // Overloaded constructor with type and id parameters
-    ScrubberRobot::ScrubberRobot(int id, Map currentMap) : Robot(RobotType::Scrubber, id, currentMap) {}
-
+    // Overloaded constructor with id and map parameters
     ScrubberRobot::ScrubberRobot(int id) : Robot(RobotType::Scrubber, id) {}
+
+    ScrubberRobot::ScrubberRobot(int id, float failure_rate) : Robot(RobotType::Scrubber, id, failure_rate) {}
+
 
     bool ScrubberRobot::clean() 
     {
-        bool PLACEHOLDER = true;
-        // generate random number for error
-        if(PLACEHOLDER)   //if error
-        {
+        if(getRandom() <= failure_rate){
             return false;
         }
-        if(PLACEHOLDER) //if(currentMap[location].type == Map::Wood || currentMap[location].type == Map::Tile)
-        {
-            currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // toy demo
-            WaterLevel--;
-        }
-        return true;    
+        else{
+            
+            return true;    
+        }    
     }
+
+    nlohmann::json ScrubberRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Water Level"] = WaterLevel;
+        return json;
+    };

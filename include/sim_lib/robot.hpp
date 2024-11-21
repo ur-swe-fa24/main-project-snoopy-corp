@@ -3,43 +3,64 @@
 
 #include <vector>
 #include <string>
-#include "map.hpp"
+#include <queue>
+#include <nlohmann/json.hpp>
+#include <magic_enum.hpp>
+#include <random>
+#include <iostream>
 
 enum class RobotType{
     Shampoo, Scrubber, Vacuum
 };
 
 enum class Status{
-    Active, Inactive, Error
+    Active, Inactive, Error, Deleted
 };
 
 class Robot{
 
     public: 
         Robot();
+        // Robot(RobotType type, int id);
         Robot(RobotType type, int id);
-        Robot(RobotType type, int id, Map currentMap);
+        Robot(RobotType type, int id, float failure_rate);
 
+        // Copy constructor
+        // Robot(const Robot& other);
+
+        // Move operator
+        // Robot& operator=(Robot&& other);
+        
         float getEfficiency();
-        int getId();
+        int getId() const;
         Status getStatus();
         int getLocation();
         int getProgressTask();
         int getProgressQueue();
-        std::vector<int> getQueue();
+        std::queue<int> getQueue();
+        void addTask(int room);
         int getBatteryLevel();
+        void setBatteryLevel(int amt);
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
-        std::string toString();
-        std::string getMapName();
-        RobotType getType() { return type; }
-        std::string getRoomStatus();
-        static std::string robotTypeToString(RobotType type); 
+        static std::string typeToString(RobotType type);
+        static std::string statusToString(Status status);  
         static std::string getRobotTypeFullName(char type);
-
+        std::string toString();
+        RobotType getType() { return type; }
+        float getFailureRate() { return failure_rate; }
+        // std::string getRoomStatus();
+        virtual nlohmann::json toJson();
         // Temporarily Public, will turn Private soon through update function
-        bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
-        void reportError();     //triggered when clean() returns false
         void move(int room_num);
+        virtual bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
+        void reportError();
+        float getRandom();
+        float genFailRate();
+        float getFailRate() { return failure_rate; }
+        void popQueue();
+        void setStatus(Status s);
+        void setId(int newId);
+        
 
     protected:
         int id;
@@ -50,10 +71,17 @@ class Robot{
         int tasks_attempted; // lifetime counter
         int progress_task;  // progresss through current task (out of 10)
         int progress_queue; // progress through current queue, can get length of the queue itself to see how much left
-        std::vector<int> queue;
+        std::queue<int> queue;
         int battery_level;
-        Map currentMap;  
-        
+        float failure_rate;
+             //triggered when clean() returns false
+
+        std::mt19937 gen;
+        std::uniform_real_distribution<float> float_distribution;
+        std::uniform_real_distribution<float> fail_distribution;
+
+    
+
 };
 
 #endif

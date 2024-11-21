@@ -1,24 +1,26 @@
 #include "../../include/sim_lib/shampoo_robot.hpp"
+#include <iostream>
 
     // Default constructor 
     // ScrubberRobot::ScrubberRobot() :  Robot(RobotType::Generic, 0, 0) {}
 
     // Overloaded constructor with type and id parameters
-    ShampooRobot::ShampooRobot(int id, Map currentMap) : Robot(RobotType::Shampoo, id, currentMap) {}
     ShampooRobot::ShampooRobot(int id) : Robot(RobotType::Shampoo, id) {}
+    ShampooRobot::ShampooRobot(int id, float failure_rate) : Robot(RobotType::Shampoo, id, failure_rate) {}
+
 
     bool ShampooRobot::clean() 
     {
-        bool PLACEHOLDER = true;
-        // generate random number for error
-        if(PLACEHOLDER)   //if error
-        {
+        if(getRandom() <= failure_rate){
             return false;
         }
-        if(PLACEHOLDER) //if(currentMap[location].type == Map::Carpet || currentMap[location].type == Map::Carpet)
-        {
-            currentMap.updateRoomCleanliness(std::to_string(location), "Clean!");   // toy demo
-            ShampooLevel--;
-        }
-        return true;    
+        else{
+            return true;    
+        }    
     }
+
+    nlohmann::json ShampooRobot::toJson() {
+        nlohmann::json json = Robot::toJson();
+        json["Shampoo Level"] = ShampooLevel;
+        return json;
+    };
