@@ -1,20 +1,29 @@
 #include "../../include/database/mongoDBWrapper.hpp"
 #include <iostream>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 
 // Constructor
-MongoDBWrapper::MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name)
-    :client_(mongocxx::uri{uri}), 
-     db_(client_[db_name]), 
-     active_collection_(db_[active_collection_name]),
-     removed_collection_(db_[removed_collection_name]) {
+MongoDBWrapper::MongoDBWrapper(
+    const std::string& uri, 
+    const std::string& db_name, 
+    const std::string& active_collection_name, 
+    const std::string& removed_collection_name,
+    const std::string& error_collection_name):
+        client_(mongocxx::uri{uri}), 
+        db_(client_[db_name]), 
+        active_collection_(db_[active_collection_name]),
+        removed_collection_(db_[removed_collection_name]),
+        error_collection_(db_[error_collection_name]) {
 
-    // Configure spdlog pattern and log level
-    spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    spdlog::set_level(spdlog::level::info);
+        // Configure spdlog pattern and log level
+        spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+        spdlog::set_level(spdlog::level::info);
 
-    spdlog::info("MongoDB Wrapper initialized.");
-    spdlog::info("Connected to MongoDB at {}", uri);
+        spdlog::info("MongoDB Wrapper initialized.");
+        spdlog::info("Connected to MongoDB at {}", uri);
 }
 
 // Insert or update a robot's data
@@ -49,17 +58,53 @@ void MongoDBWrapper::moveRobotToRemoved(int id) {
 
         auto robot = active_collection_.find_one(filterBuilder.view());
         if (robot) {
-            // Insert the robot into the removed collection
-            removed_collection_.insert_one(robot->view());
+            // Modify the status to "Removed"
+            nlohmann::json robotData = nlohmann::json::parse(bsoncxx::to_json(robot->view()));
+            robotData["Status"] = "Removed";
 
-            // Remove the robot from the active collection
+            // Upsert to the removed collection
+            upsertRobotData(robotData);
+
+            // Remove from the active collection
             active_collection_.delete_one(filterBuilder.view());
-
             spdlog::info("Moved robot with ID {} from active to removed collection.", id);
         } else {
             spdlog::warn("Robot with ID {} not found in active collection.", id);
         }
     } catch (const mongocxx::exception& e) {
         spdlog::error("Error moving robot to removed collection: {}", e.what());
+    }
+}
+// Add error log entry
+void MongoDBWrapper::logError(nlohmann::json errorData) {
+    try {
+        // Validate the required fields in the input JSON
+        if (!errorData.contains("Time") || !errorData.contains("ID") || 
+            !errorData.contains("Location") || !errorData.contains("ErrorNotes")) {
+            spdlog::error("ErrorData JSON missing required fields.");
+            return;
+        }
+
+        // Build the log entry with required fields
+        nlohmann::json logEntry = {
+            {"Time", errorData["Time"]},
+            {"ID", errorData["ID"]},
+            {"Location", errorData["Location"]},
+            {"ErrorNotes", errorData["ErrorNotes"]}
+        };
+
+        // Convert JSON to BSON
+        auto bsonDoc = bsoncxx::from_json(logEntry.dump());
+
+        // Insert into the error log collection
+        error_collection_.insert_one(bsonDoc.view());
+
+        spdlog::info("Logged error: {}", logEntry.dump());
+    } 
+    catch (const mongocxx::exception& e) {
+        spdlog::error("Error logging robot error: {}", e.what());
+    } 
+    catch (const std::exception& e) {
+        spdlog::error("JSON processing error: {}", e.what());
     }
 }
