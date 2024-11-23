@@ -119,10 +119,9 @@ using json = nlohmann::json;
     }
 
 
-    nlohmann::json Robot::reportError(std::string err){
+    nlohmann::json Robot::reportError(){
         status = Status::Error;
         return json{{"ID", id},
-                    {"ErrorNotes", err},
                     {"Location", location}};
     }
 

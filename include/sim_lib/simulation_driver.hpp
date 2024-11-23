@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <mutex>
 #include <thread>
+#include <optional>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
@@ -31,18 +32,18 @@ class SimulationDriver{
         int fixRobot(int id);
         int chargeRobot(int id);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-        void setMongoWrapper(MongoDBWrapper *wrapper) {mongo_wrapper = wrapper;}
+        void setMongoWrapper(MongoDBWrapper wrapper) {mongo_wrapper = wrapper;}
 
     private:
         std::vector<Robot> robots;
         std::unordered_set<int> usedIds;   // Track all used robot IDs
         pthread_rwlock_t robotsLock;
         Map selectedMap;
-        MongoDBWrapper *mongo_wrapper;
+        std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
         void constructRobot();
-        void reportSimError(nlohmann::json err);
+        void reportSimError(nlohmann::json robotErr, std::string errorNotes);
         
 };
 

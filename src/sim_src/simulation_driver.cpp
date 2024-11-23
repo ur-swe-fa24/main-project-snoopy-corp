@@ -11,13 +11,13 @@
 
 
     // Default constructor 
-    SimulationDriver::SimulationDriver() : mongo_wrapper(nullptr){
+    SimulationDriver::SimulationDriver() : mongo_wrapper(std::nullopt){
         if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
     }
 
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(nullptr) {
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(std::nullopt) {
             if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
@@ -35,6 +35,7 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
+        mongo_wrapper->get().upsertRobotData(robot.toJson());
         pthread_rwlock_unlock(&robotsLock);
     }
 
@@ -52,12 +53,13 @@
 
     // Needed = operator
     Robot& SimulationDriver::removeRobot(int id){
-        // pthread_rwlock_wrlock(&robotsLock);
+        pthread_rwlock_wrlock(&robotsLock);
         int index = 0;
         for(Robot& r : robots){
             if(r.getId() == id){
                 robots.erase(robots.begin() + index);
-                // pthread_rwlock_unlock(&robotsLock);
+                mongo_wrapper->get().moveRobotToRemoved(id);
+                pthread_rwlock_unlock(&robotsLock);
                 return r;
             }
             else index++;
@@ -72,7 +74,7 @@
 //             pthread_rwlock_unlock(&robotsLock);
 //             return removedRobot;
         }
-        // pthread_rwlock_unlock(&robotsLock);
+        pthread_rwlock_unlock(&robotsLock);
         return DEFAULT_ROBOT; // Return the default robot if not found
     }
 
@@ -134,7 +136,7 @@
 
     void SimulationDriver::update(Robot& r){
         if(r.getBatteryLevel() <= 0){
-            r.reportError("Battery has died :(");
+            reportSimError(r.reportError(), "Battery has died :(");
         }
         else if(r.getStatus() == Status::Inactive)
         {
@@ -169,10 +171,10 @@
                     int choice = rand() % 2;
                     switch(choice){     // SEND ERROR TO MONGODB
                         case 1:
-                            reportSimError(r.reportError("Cannot clean room due to Robot Damage"));
+                            reportSimError(r.reportError(), "Cannot clean room due to Robot Damage");
                             return;
                         default:
-                            reportSimError(r.reportError("Cannot clean room due to Sensor Error"));
+                            reportSimError(r.reportError(), "Cannot clean room due to Sensor Error");
                             return;
                     }
                 }
@@ -182,7 +184,7 @@
                     selectedMap.updateRoomCleanliness(std::to_string(r.getLocation()), std::to_string(current_cleanliness));
                     
                     if (r.getBatteryLevel() == 0){
-                        reportSimError(r.reportError("Robot Battery Died"));
+                        reportSimError(r.reportError(), "Robot Battery Died");
                     }
                 }
                 r.incrementBatteryLevel(1);
@@ -211,9 +213,10 @@ int SimulationDriver::fixRobot(int id){
         return 0;
 }           
 
-    void SimulationDriver::reportSimError(nlohmann::json err){
+    void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
         float time = (std::chrono::system_clock::now() - start).count()/1000;
-        err["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
                       std::to_string((int)time % 60) + " seconds";
-        // REPORT ERROR IN THE MONGODB
+        robotErr["ErrorNotes"] = errorNotes;
+        mongo_wrapper->get().logError(robotErr);
     }
