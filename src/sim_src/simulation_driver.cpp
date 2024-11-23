@@ -5,26 +5,27 @@
 #include <magic_enum.hpp>
 #include <algorithm>
 #include <iostream>
-#include <random>#include <cstdlib>
+#include <random>
+#include <cstdlib>
 
 
 
     // Default constructor 
-    SimulationDriver::SimulationDriver(){
+    SimulationDriver::SimulationDriver() : mongo_wrapper(nullptr){
         if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
     }
-        
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap) {
+
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(nullptr) {
             if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
-        }
+    }
 
     void SimulationDriver::addRobot(Robot& robot)
     {
-        // pthread_rwlock_wrlock(&robotsLock);
+        pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
         if (usedIds.find(id) != usedIds.end()) {
             id++;
@@ -34,7 +35,7 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
-        // pthread_rwlock_unlock(&robotsLock);
+        pthread_rwlock_unlock(&robotsLock);
     }
 
     RobotType SimulationDriver::stringToRobotType(std::string type) {
@@ -133,7 +134,7 @@
 
     void SimulationDriver::update(Robot& r){
         if(r.getBatteryLevel() <= 0){
-            r.reportError();
+            r.reportError("Battery has died :(");
         }
         else if(r.getStatus() == Status::Inactive)
         {

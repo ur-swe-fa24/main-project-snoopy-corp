@@ -9,6 +9,7 @@
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
+#include "../database/mongoDBWrapper.hpp"
 
 class SimulationDriver{
 
@@ -22,7 +23,6 @@ class SimulationDriver{
         int getRobotIndex() { return robot_index; }
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
-        void start_dashboard();
         Robot* getRobot(int id);
         std::vector<nlohmann::json> getFleet();
         void update_all();
@@ -31,12 +31,14 @@ class SimulationDriver{
         int fixRobot(int id);
         int chargeRobot(int id);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+        void setMongoWrapper(MongoDBWrapper *wrapper) {mongo_wrapper = wrapper;}
 
     private:
         std::vector<Robot> robots;
         std::unordered_set<int> usedIds;   // Track all used robot IDs
         pthread_rwlock_t robotsLock;
         Map selectedMap;
+        MongoDBWrapper *mongo_wrapper;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
         void constructRobot();
