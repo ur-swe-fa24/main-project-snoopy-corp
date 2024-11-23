@@ -5,6 +5,7 @@
 bool MyWidget::OnInit() {
 	MainFrame *MainWin = new MainFrame(_("Welcome to Snoopy Corp!"), wxDefaultPosition, wxSize(1000, 800));
 	MainWin->Show(true);
+    static mongocxx::instance instance{};
 	//SetTopWindow(MainWin); // set as the main window 
 	return true;
 } 
@@ -30,9 +31,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     };
 
     map = Map("map1", roomsEx0);
-    static mongocxx::instance instance{};
     simDriver = SimulationDriver(map);
-    MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "test_robot_db", "active_robots", "removed_robots", "error_log");
     simDriver.setMongoWrapper(mongo_wrapper);
 
     /*

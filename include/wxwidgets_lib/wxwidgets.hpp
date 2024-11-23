@@ -31,7 +31,7 @@ private:
     wxListView *robotListView;
 
     Map map;
-    // MongoDBWrapper& mongo_wrapper;
+    MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "test_robot_db", "active_robots", "removed_robots", "error_log");
     SimulationDriver simDriver;
     int integer = 0;
 
