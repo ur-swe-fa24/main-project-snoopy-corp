@@ -32,7 +32,7 @@ class SimulationDriver{
         int fixRobot(int id);
         int chargeRobot(int id);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-        void setMongoWrapper(MongoDBWrapper wrapper) {mongo_wrapper = wrapper;}
+        void setMongoWrapper(MongoDBWrapper& wrapper) {mongo_wrapper = wrapper;}
 
     private:
         std::vector<Robot> robots;
