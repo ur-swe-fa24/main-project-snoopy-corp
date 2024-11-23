@@ -9,6 +9,7 @@
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/robot.hpp"
+#include "database/mongoDBWrapper.hpp"
 
 // Container class for the window, or frame in MainFrame
 class MyWidget: public wxApp {
@@ -30,6 +31,7 @@ private:
     wxListView *robotListView;
 
     Map map;
+    // MongoDBWrapper& mongo_wrapper;
     SimulationDriver simDriver;
     int integer = 0;
 

@@ -20,7 +20,7 @@ END_EVENT_TABLE()
 
 // Properties of main window
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
-: wxFrame((wxFrame *) NULL, -1, title, pos, size) 
+: wxFrame((wxFrame *) NULL, -1, title, pos, size)
 {
     // Temporary, to be removed ------------------------------------------------------------------------------------------------------
     json roomsEx0 = {
@@ -30,7 +30,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     };
 
     map = Map("map1", roomsEx0);
+    static mongocxx::instance instance{};
     simDriver = SimulationDriver(map);
+    MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "test_robot_db", "active_robots", "removed_robots", "error_log");
+    simDriver.setMongoWrapper(mongo_wrapper);
 
     /*
     ShampooRobot robot = ShampooRobot(simDriver.assignRobotIndex(), map);
