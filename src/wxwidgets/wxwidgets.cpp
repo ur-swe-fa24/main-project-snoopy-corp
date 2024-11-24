@@ -35,7 +35,6 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     simDriver.setMongoWrapper(mongo_wrapper);
 
     const auto f = [this](){
-        std::cout << "Update thread " << std::this_thread::get_id() << std::endl;
         while(!this->quitRequested){
             this->simDriver.update_all();
             std::this_thread::sleep_for (std::chrono::seconds(3));
@@ -139,7 +138,8 @@ void MainFrame::OnExit( wxCommandEvent& event )
 
 // Modifies default closing procedures to add thread cleanup
 void MainFrame::OnClose(wxCloseEvent& event){
-    // Stop the Update Thread before closing
+    // Disable the Frame and Stop the Update Thread before closing
+    Disable();
     quitRequested.store(true);
     updateThread.join();
     event.Skip();
