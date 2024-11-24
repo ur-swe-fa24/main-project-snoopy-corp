@@ -28,7 +28,7 @@ MongoDBWrapper::MongoDBWrapper(
 
 // Insert or update a robot's data
 void MongoDBWrapper::upsertRobotData(nlohmann::json robotData) {
-    bool isActive = robotData["Status"] != "Deleted";
+    bool isActive = robotData["Status"] != "Removed";
     auto& collection = isActive ? active_collection_ : removed_collection_;
     try {
         // Build the filter to find the robot by ID

@@ -35,7 +35,7 @@
         // Mark the ID as used and add the robot to the fleet
         usedIds.insert(id);
         robots.push_back(std::move(robot));
-        mongo_wrapper->get().upsertRobotData(robot.toJson());
+        if (mongo_wrapper) mongo_wrapper->get().upsertRobotData(robot.toJson());
         pthread_rwlock_unlock(&robotsLock);
     }
 
@@ -58,7 +58,7 @@
         for(Robot& r : robots){
             if(r.getId() == id){
                 robots.erase(robots.begin() + index);
-                mongo_wrapper->get().moveRobotToRemoved(id);
+                if (mongo_wrapper) mongo_wrapper->get().moveRobotToRemoved(id);
                 pthread_rwlock_unlock(&robotsLock);
                 return r;
             }
@@ -132,6 +132,14 @@
             update(r);
         }
         pthread_rwlock_unlock(&robotsLock);
+        if (mongo_wrapper){
+            pthread_rwlock_rdlock(&robotsLock);
+            nlohmann::json robots = getFleet();
+                for (nlohmann::json robo : robots) {
+                    mongo_wrapper->get().upsertRobotData(robo);
+                }
+            pthread_rwlock_unlock(&robotsLock);
+        }
     }
 
     void SimulationDriver::update(Robot& r){
@@ -218,5 +226,5 @@ int SimulationDriver::fixRobot(int id){
         robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
-        mongo_wrapper->get().logError(robotErr);
+        if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
     }
