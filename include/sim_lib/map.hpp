@@ -32,6 +32,8 @@ class Map{
         std::string getRoomName(std::string roomId) { return rooms[roomId]["Room"]; }
         bool roomExists(const std::string& roomId) const;
 
+
+        std::string getFloorType(std::string roomId) { return rooms[roomId]["FloorType"]; }
         // Note that there are no methods to update/set floorType.
 };
 

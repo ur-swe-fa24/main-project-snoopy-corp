@@ -151,6 +151,7 @@
             // std::cout << r.getId() << " has status inactive" << "\n";
             if(r.getQueue().size() != 0)
             {
+                r.incrementTasksAttempted();
                 r.move(r.getQueue().front());
                 // std::cout << r.getId() << " has post-move location: " << r.getLocation() << "\n";
 
@@ -162,13 +163,17 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
+
+                r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {
                     r.popQueue();
                     if(r.getQueue().size() == 0)
                         r.setStatus(Status::Inactive);
-                    else
+                    else{
+                        r.incrementTasksAttempted();
                         r.move(r.getQueue().front());
+                    }
                 }
                 else r.setStatus(Status::Inactive);
             }
@@ -221,10 +226,41 @@ int SimulationDriver::fixRobot(int id){
         return 0;
 }           
 
-    void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
-        float time = (std::chrono::system_clock::now() - start).count()/1000;
-        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
-                      std::to_string((int)time % 60) + " seconds";
-        robotErr["ErrorNotes"] = errorNotes;
-        if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
+
+
+
+void SimulationDriver::assignmentModule(std::vector<int> tasks){
+    for(int task : tasks){
+        std::string task_string = std::to_string(task);
+        int min_time = INT_MAX;
+        int min_robot_id = -1;
+        for(auto r : robots){
+            std::vector<std::string> valid_floors = type_mappings[r.getType()];
+            bool valid_type = false;
+            for(auto f : valid_floors){
+                if(selectedMap.getFloorType(task_string) == f) {
+                    valid_type = true;
+                    break;
+                }
+            }
+            if(valid_type){   // TYPE MATCHES FLOOR TYPE
+                if(r.timeRemaining() < min_time){
+                    min_time = r.timeRemaining();
+                    min_robot_id = r.getId();
+                }
+            }
+        }
+        std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
+        << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        this->getRobot(min_robot_id)->addTask(task);
     }
+    return;
+}           
+
+void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
+    float time = (std::chrono::system_clock::now() - start).count()/1000;
+    robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+                    std::to_string((int)time % 60) + " seconds";
+    robotErr["ErrorNotes"] = errorNotes;
+    if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
+}
