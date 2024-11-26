@@ -30,7 +30,11 @@ using json = nlohmann::json;
 
 
     float Robot::getEfficiency(){
-        return tasks_completed / tasks_attempted;
+        if(tasks_attempted > 0){
+            float efficiency = (float) tasks_completed / tasks_attempted;
+            return efficiency;
+        }
+        else return 0;
     }
 
     int Robot::getId() const{
@@ -77,6 +81,13 @@ using json = nlohmann::json;
     }
     void Robot::addTask(int room){
         queue.push(room);
+        return;
+    }
+
+    void Robot::addTask(std::vector<int> rooms){
+        for(int e : rooms){
+            queue.push(e);
+        }
         return;
     }
 

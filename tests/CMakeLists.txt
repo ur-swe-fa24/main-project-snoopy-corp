@@ -9,6 +9,7 @@ ENDIF (${Catch2_FOUND})
 add_executable(map_test Map_Tests.cpp)
 add_executable(clean_test cleaning_tests.cpp)
 add_executable(mongodb_test mongodb_tests.cpp)
+add_executable(assignment_test assignment_tests.cpp)
 
 target_compile_features(map_test PRIVATE cxx_std_17)
 target_compile_features(clean_test PRIVATE cxx_std_17)
@@ -22,6 +23,12 @@ target_link_libraries(map_test
 )
 
 target_link_libraries(clean_test
+  PRIVATE
+    Catch2::Catch2WithMain
+    sim_lib
+)
+
+target_link_libraries(assignment_test
   PRIVATE
     Catch2::Catch2WithMain
     sim_lib

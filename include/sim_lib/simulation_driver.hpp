@@ -11,6 +11,9 @@
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
 #include "../database/mongoDBWrapper.hpp"
+#include <climits>
+#include <magic_enum.hpp>
+
 
 class SimulationDriver{
 
@@ -33,6 +36,7 @@ class SimulationDriver{
         int chargeRobot(int id);
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
         void setMongoWrapper(MongoDBWrapper& wrapper) {mongo_wrapper = wrapper;}
+        void assignmentModule(std::vector<int> tasks);
 
     private:
         std::vector<Robot> robots;
@@ -45,6 +49,12 @@ class SimulationDriver{
         void constructRobot();
         void reportSimError(nlohmann::json robotErr, std::string errorNotes);
         
+        std::unordered_map<RobotType, std::vector<std::string>> type_mappings = {
+            {RobotType::Scrubber, {"Wood", "Tile"}},
+            {RobotType::Vacuum, {"Wood", "Tile", "Carpet"}},
+            {RobotType::Shampoo, {"Carpet"}}
+        };
 };
+
 
 #endif

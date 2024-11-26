@@ -15,7 +15,10 @@ TEST_CASE("Cleaning Unit Tests") {
         {"4", {{"Room", "Bathroom_2"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
         {"5", {{"Room", "Bathroom_3"}, {"Cleaning Status", "-50"}, {"FloorType", "Tile"}}},
         {"6", {{"Room", "DEMO"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}},
-        {"7", {{"Room", "DEMO2"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}}
+        {"7", {{"Room", "DEMO2"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}},
+        {"8", {{"Room", "DEMO3"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"9", {{"Room", "DEMO4"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"10", {{"Room", "DEMO5"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}}
 
 
     };
@@ -134,6 +137,21 @@ TEST_CASE("Cleaning Unit Tests") {
         }
         REQUIRE(s.getRobot(8)->getStatus() == Status::Inactive);
 
+    }
+
+    SECTION("Tasks completed and attempted metrics"){
+        VacuumRobot r_9 = VacuumRobot(9, 0);
+        s.addRobot(r_9);
+        s.getRobot(9)->addTask(8);
+        s.getRobot(9)->addTask(9);
+        REQUIRE(s.getRobot(9)->getEfficiency() == 0);
+        for(int i = 0; i < 15; i++){
+            s.update_all();
+        }
+        REQUIRE(s.getRobot(9)->getTA() == 2);
+        REQUIRE(s.getRobot(9)->getTC() == 1);
+
+        REQUIRE(s.getRobot(9)->getEfficiency() == Catch::Approx(0.5));
     }
 
 }
