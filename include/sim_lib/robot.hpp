@@ -32,6 +32,10 @@ class Robot{
         // Robot& operator=(Robot&& other);
         
         float getEfficiency();
+        void incrementTasksAttempted() { tasks_attempted += 1; }
+        void incrementTasksCompleted() { tasks_completed += 1; }
+        int getTA() { return tasks_attempted; }
+        int getTC() { return tasks_completed; }
         int getId() const;
         Status getStatus();
         int getLocation();
@@ -39,11 +43,13 @@ class Robot{
         int getProgressQueue();
         std::queue<int> getQueue();
         void addTask(int room);
+        void addTask(std::vector<int> rooms);
         int getBatteryLevel();
         void incrementBatteryLevel(int amt);
         void setBatteryLevel(int amt) { battery_level = amt; }
         void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         static std::string typeToString(RobotType type);
+
         static std::string statusToString(Status status);  
         static std::string getRobotTypeFullName(char type);
         std::string toString();
@@ -65,7 +71,7 @@ class Robot{
         void incrementPauseTicks() { pause_ticks -= 1; }
         int getPauseTicks() { return pause_ticks; }
         void chargeRobot() { battery_level += 2; }
-
+        int timeRemaining() { return queue.size()*10; }
     protected:
         int id;
         RobotType type;
