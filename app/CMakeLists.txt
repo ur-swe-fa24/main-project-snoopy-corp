@@ -55,7 +55,7 @@ target_link_libraries(
         mongo::mongocxx_shared
 )
 target_link_libraries(database
-    PRIVATE
+    PUBLIC
         sim_lib
         ${wxWidgets_LIBRARIES} 
         spdlog::spdlog_header_only

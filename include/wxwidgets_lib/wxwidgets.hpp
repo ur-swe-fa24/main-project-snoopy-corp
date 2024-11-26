@@ -9,6 +9,7 @@
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/robot.hpp"
+#include "database/mongoDBWrapper.hpp"
 
 // Container class for the window, or frame in MainFrame
 class MyWidget: public wxApp {
@@ -30,9 +31,13 @@ private:
     wxListView *robotListView;
 
     Map map;
+    MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "Robots", "active_robots", "removed_robots", "error_log");
     SimulationDriver simDriver;
+    std::atomic<bool> quitRequested{false};
+    std::thread updateThread;
     int integer = 0;
 
+    void OnClose(wxCloseEvent &e); // Close the Frame
     void OnExit( wxCommandEvent& event ); //Exits program
     void switchToEngineer( wxCommandEvent& event ); // Switches screen to engineer perspective
     void switchToManager( wxCommandEvent& event ); // Switches screen to manager perspective
