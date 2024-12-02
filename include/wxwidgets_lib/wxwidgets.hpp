@@ -9,6 +9,7 @@
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/robot.hpp"
+#include "wxdashboard.hpp"
 
 // Container class for the window, or frame in MainFrame
 class MyWidget: public wxApp {
@@ -22,6 +23,7 @@ public:
 	MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size); 
 
 private:
+    wxPanel *mainPanel;
     wxPanel *engineerPanel;
     wxPanel *engineerTopPanel;
     wxPanel *engineerBottomPanel;
@@ -35,10 +37,12 @@ private:
 
     void OnExit( wxCommandEvent& event ); //Exits program
     void switchToEngineer( wxCommandEvent& event ); // Switches screen to engineer perspective
-    void switchToManager( wxCommandEvent& event ); // Switches screen to manager perspective
+    void switchToLiveDashboard( wxCommandEvent& event ); // Switches screen to manager perspective
     void addRobot( wxCommandEvent& event ); // Add robot information to list
     void deleteRobot( wxCommandEvent& event ); // Delete robot from list and simulation driver
     int findListItem( wxString id ); // Private helper function for deleteRobot
+    void refresh( wxCommandEvent& event ); // Refresh robot list to reflect current status
+    void updateRobot( wxCommandEvent& event ); 
     void addRobotTest(wxString type);
     void populateList();
   
@@ -47,10 +51,12 @@ private:
 
 // Define unique IDs for buttons
 enum {
-    ID_ToManager = 1001,
+    ID_ToLiveDashboard = 1001,
     ID_ToEngineer = 1002,
     ID_AddRobot = 1003,
     ID_DeleteRobot = 1004,
+    ID_Refresh = 1005,
+    ID_UpdateRobot = 1006,
     ID_Exit = wxID_EXIT // You can reuse wxWidgets pre-defined IDs if needed
 };
 

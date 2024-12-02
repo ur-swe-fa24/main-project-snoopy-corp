@@ -13,9 +13,11 @@ bool MyWidget::OnInit() {
 BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_Exit, MainFrame::OnExit ) 
     EVT_BUTTON ( ID_ToEngineer, MainFrame::switchToEngineer ) 
-    EVT_BUTTON ( ID_ToManager, MainFrame::switchToManager ) 
+    EVT_BUTTON ( ID_ToLiveDashboard, MainFrame::switchToLiveDashboard ) 
     EVT_BUTTON ( ID_AddRobot, MainFrame::addRobot )
     EVT_BUTTON ( ID_DeleteRobot, MainFrame::deleteRobot )
+    EVT_BUTTON ( ID_Refresh, MainFrame::refresh ) 
+    EVT_BUTTON ( ID_UpdateRobot, MainFrame::updateRobot ) 
 END_EVENT_TABLE() 
 
 // Properties of main window
@@ -49,7 +51,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     
     
     // Defines main panel to hold everything
-    wxPanel *mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
+    mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     
     // Defines engineer screen and its contents
     engineerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
@@ -57,6 +59,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     engineerTopPanel = new wxPanel(engineerPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     engineerBottomPanel = new wxPanel(engineerPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
 
+    //------------------
     // Create list for engineer panel to demonstrate robot information
     robotListView = new wxListView(engineerTopPanel);
     robotListView->AppendColumn("Id");
@@ -83,8 +86,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxBoxSizer* engineerBottomSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* addRobot = new wxButton(engineerBottomPanel, ID_AddRobot, "Add Robot");
     wxButton* deleteRobot = new wxButton(engineerBottomPanel, ID_DeleteRobot, "Delete Robot", wxPoint(50,50));
+    wxButton* refresh = new wxButton(engineerBottomPanel, ID_Refresh, "Refresh", wxPoint(100,100));
     engineerBottomSizer->Add(addRobot, 1, wxALL, FromDIP(10));
     engineerBottomSizer->Add(deleteRobot, 1, wxALL, FromDIP(10));
+    engineerBottomSizer->Add(refresh, 1, wxALL, FromDIP(10));
     engineerBottomPanel->SetSizer(engineerBottomSizer);
 
     //addRobotTest("Scrubber");
@@ -92,9 +97,9 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Pulls engineer screens together
     wxBoxSizer* engineerSizer = new wxBoxSizer(wxVERTICAL);
-    wxButton* toManager = new wxButton(engineerPanel, ID_ToManager, "Go to Manager");
-    engineerSizer->Add(toManager, 0, wxTOP | wxLEFT, 10);
-    engineerSizer->Add(engineerTopPanel, 1, wxALL | wxEXPAND, 10);
+    wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Go to Live Dashboard");
+    engineerSizer->Add(toLiveDashboard, 0, wxTOP | wxLEFT, 10);
+    engineerSizer->Add(engineerTopPanel, 3, wxALL | wxEXPAND, 10);
     engineerSizer->Add(engineerBottomPanel, 1, wxALL | wxEXPAND, 10);
     engineerPanel->SetSizer(engineerSizer);
 
@@ -133,10 +138,13 @@ void MainFrame::switchToEngineer(wxCommandEvent& event) {
 }
 
 // Button function to switch to manager screen
-void MainFrame::switchToManager(wxCommandEvent& event) {
-    engineerPanel->Hide();
-    managerPanel->Show();
-    mainSizer->Layout(); // Update layout to reflect changes
+void MainFrame::switchToLiveDashboard(wxCommandEvent& event) {
+    WxDashboard popup(this);
+    popup.ShowModal();
+    
+    //engineerPanel->Hide();
+    //managerPanel->Show();
+    //mainSizer->Layout(); // Update layout to reflect changes
 }
 
 // Button function to add robot to list
@@ -195,6 +203,25 @@ int MainFrame::findListItem(wxString id) {
     }
     return itemIndex;
 }
+
+// Refresh robot list to reflect current status
+void MainFrame::refresh(wxCommandEvent& event) {
+    json robotFleet = simDriver.getFleet();
+
+    for (int i = 0; i < robotFleet.size(); i++) {
+        robotListView->SetItem(i, 1, robotFleet[i]["Type"].dump());
+        robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
+        robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
+        robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
+        robotListView->SetItem(i, 5, robotFleet[i]["Tasks Completed"].dump());
+        robotListView->SetItem(i, 6, robotFleet[i]["Progress Task"].dump());
+    }
+}
+
+void MainFrame::updateRobot(wxCommandEvent& event) {
+
+}
+
 
 
 // Temporary function to demonstrate list
