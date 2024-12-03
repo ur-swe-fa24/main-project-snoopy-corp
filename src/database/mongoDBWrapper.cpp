@@ -110,8 +110,7 @@ void MongoDBWrapper::logError(nlohmann::json errorData) {
     }
 }
 
-// Retrieve robot data or error log as JSON without the "_id" field
-nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& collectionType) {
+nlohmann::json MongoDBWrapper::getAllDataAsJson(const std::string& collectionType) {
     try {
         // Select the appropriate collection
         mongocxx::collection* collection;
@@ -127,25 +126,28 @@ nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& col
             return nlohmann::json(); // Return empty JSON for invalid collection type
         }
 
-        // Build the filter to find the robot or error log by ID
-        bsoncxx::builder::basic::document filterBuilder;
-        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", id));
-
-        // Retrieve the document
-        auto document = collection->find_one(filterBuilder.view());
-        if (document) {
+        // Retrieve all documents in the collection
+        auto cursor = collection->find({});  // Empty filter to find all documents
+        
+        nlohmann::json allData = nlohmann::json::array();  // Initialize an empty array to store all data
+        
+        for (const auto& document : cursor) {
             // Convert BSON to JSON
-            nlohmann::json documentData = nlohmann::json::parse(bsoncxx::to_json(document->view()));
+            nlohmann::json documentData = nlohmann::json::parse(bsoncxx::to_json(document));
 
             // Remove the "_id" field
             if (documentData.contains("_id")) documentData.erase("_id");
 
-            spdlog::info("Retrieved data for ID {} from {} collection without '_id'.", id, fromErrorLog ? "error_log" : (fromActiveCollection ? "active" : "removed"));
-            return documentData;
-        } else {
-            spdlog::warn("Data for ID {} not found in {} collection.", id, fromErrorLog ? "error_log" : (fromActiveCollection ? "active" : "removed"));
-            return nlohmann::json(); // Return empty JSON if not found
+            allData.push_back(documentData);  // Add each document to the allData array
         }
+
+        if (!allData.empty()) {
+            spdlog::info("Retrieved all data from {} collection without '_id'.", collectionType);
+        } else {
+            spdlog::warn("No data found in {} collection.", collectionType);
+        }
+
+        return allData;  // Return the array of all documents
     } 
     catch (const mongocxx::exception& e) {
         spdlog::error("Error retrieving data: {}", e.what());
@@ -156,5 +158,6 @@ nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& col
         return nlohmann::json(); // Return empty JSON on error
     }
 }
+
 
 

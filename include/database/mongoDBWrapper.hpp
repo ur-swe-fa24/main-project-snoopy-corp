@@ -32,7 +32,7 @@ public:
     // Add Error log
     void logError(nlohmann::json robotData);
     // Retrieve data from Mongodb as json
-    nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& collectionType);
+    nlohmann::json MongoDBWrapper::getAllDataAsJson(const std::string& collectionType);
                         
 
 private:
