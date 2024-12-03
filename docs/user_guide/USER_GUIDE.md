@@ -1,6 +1,14 @@
-# Snoopy Corp Cleaning Robot Fleet Management Software User Guide - Version 4.0
+# Snoopy Corp Cleaning Robot Fleet Management Software User Guide - Version `.0
 ## Brett Barnes, Dhruvam Desai, Adelina Gutic, Skyler He
 
+
+## Running
+
+1. Build the project using CMake
+2. Run ./myWxExe
+3. Select the role you are operating as
+
+## Testing 
 ### Unit Testing:
 To test speficic components:
 1.  Build the project
@@ -9,7 +17,7 @@ To test speficic components:
 4. Run the generated test binaries (e.g. ./clean_test)
 5. All assertions should pass!
 
-### Graphical Components:
+### Testing Graphical Components:
 
 To run wxWidgets:  
 1. Build the project
