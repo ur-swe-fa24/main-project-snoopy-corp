@@ -114,3 +114,34 @@ dbWrapper.logError(errorData);
 - Required fields: `Time`, `ID`, `Location`, `ErrorNotes`.
 - If any field is missing, the function logs an error message and exits.
 
+### **4. Retrieving json data from Mongodb**
+The function returns all data from a specific collection type as a JSON object, excluding the MongoDB `"_id"` field, which can be displayed in wxWidget
+- **Input Parameters**:
+  - `collectionType` (string): The collection from which to retrieve data. You can choose one of the following:
+    - `"error_log"`: Retrieve data from the error log collection.
+    - `"active"`: Retrieve data from the active collection.
+    - `"removed"`: Retrieve data from the removed collection.
+
+- **Returns**:
+  - A `nlohmann::json` object containing the robot's data or the error log data without the `_id` field.
+  - If no data is found for the given ID, it returns an empty JSON object.
+
+
+#### Example Code:
+```cpp
+// Fetch data from the error log collection for robot ID 123
+nlohmann::json errorLogData = dbWrapper.getAllDataAsJson("error_log");
+
+// Fetch data from the active collection for robot ID 456
+nlohmann::json activeData = dbWrapper.getAllDataAsJson("active");
+
+// Fetch data from the removed collection for robot ID 789
+nlohmann::json removedData = dbWrapper.getAllDataAsJson("removed");
+
+// Check if data was retrieved
+if (!errorLogData.empty()) {
+    // Process or display the error log data
+} else {
+    // Handle case where no data was found
+}
+```
