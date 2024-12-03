@@ -11,31 +11,43 @@
 #include "dashboard/dashboard.hpp"
 #include "sim_lib/map.hpp"
 #include "database/mongoDBWrapper.hpp"  // Include the MongoDBWrapper
+#include "wxwidgets_lib/wxwidgets.hpp"
 
 int main() {
-    // mongocxx::instance instance{};  // Initialize MongoDB instance for the entire application
+    mongocxx::instance instance{};  // Initialize MongoDB instance for the entire application
 
-    // // Initialize MongoDB wrapper to log robot actions
-    // MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "robot_db", "robot_data");
+    // Initialize MongoDB wrapper to log robot actions
+    MongoDBWrapper mongo_wrapper("mongodb://localhost:27017", "robot_db", "robot_data", "removed_robots", "error_log");
 
     // Set up initial map and simulation driver
-    // nlohmann::json roomsEx1 = {
-    //     {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
-    //     {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
-    //     {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Tile"}}}
-    // };
-    // Map m("map1", roomsEx1);
-    // SimulationDriver s(m);
+    nlohmann::json roomsEx1 = {
+        {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
+        {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
+        {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Tile"}}}
+    };
+    Map m("map1", roomsEx1);
+    SimulationDriver s(m);
 
     // Thread to go each second and call the clean method
-    // Each 'second', call the clean method on each robot that has status Active
-    // TODO: Need to lock the robots vector with a mutex whenever getting it so delete robot doesn't affect updates here
-    // std::atomic<bool> simulationThread = true;
-    // std::thread update_stuff {[&s, &simulationThread](){
-    //     while (simulationThread){
-    //         s.update_all();
-    //         std::this_thread::sleep_for (std::chrono::seconds(2));
-    //     }}};
+    // Each 3 'seconds', call the update method on each robot and update the database
+    std::atomic<bool> simulationThread = true;
+    std::thread update_stuff {[&s, &mongo_wrapper, &simulationThread](){
+        while (simulationThread){
+            s.update_all();
+            nlohmann::json robots = s.getFleet();
+            for (nlohmann::json robo : robots) {
+                mongo_wrapper.upsertRobotData(robo);
+            }
+            std::this_thread::sleep_for (std::chrono::seconds(2));
+        }}};
+    std::this_thread::sleep_for (std::chrono::seconds(5));
+    simulationThread = false;
+    update_stuff.join();
+
+    // std::thread dash{
+    //     [](){wxIMPLEMENT_APP(MyWidget);}
+    // }
+    // WxWIDGETS MUST BE ON MAIN THREAD AND OTHERS IN THE ONINIT OF SIMULATION DRIVER
 
 
     // std::string input;

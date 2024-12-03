@@ -60,7 +60,7 @@ class Robot{
         // Temporarily Public, will turn Private soon through update function
         void move(int room_num);
         bool clean();    //returns false if an error occurs when trying to clean this tick, pure virtual so makes Robot abstract
-        void reportError();
+        nlohmann::json reportError();
         float getRandom();
         float genFailRate();
         float getFailRate() { return failure_rate; }

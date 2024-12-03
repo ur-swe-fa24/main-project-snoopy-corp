@@ -6,9 +6,11 @@
 #include <nlohmann/json.hpp>
 #include <mutex>
 #include <thread>
+#include <optional>
 #include "robot.hpp"
 #include "map.hpp"
 #include "../dashboard/dashboard.hpp"
+#include "../database/mongoDBWrapper.hpp"
 #include <climits>
 #include <magic_enum.hpp>
 
@@ -25,7 +27,6 @@ class SimulationDriver{
         int getRobotIndex() { return robot_index; }
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
-        void start_dashboard();
         Robot* getRobot(int id);
         std::vector<nlohmann::json> getFleet();
         void update_all();
@@ -35,14 +36,21 @@ class SimulationDriver{
         int chargeRobot(int id);
         std::vector<int> assignmentModule(std::vector<int> tasks);
 
+        std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+        void setMongoWrapper(MongoDBWrapper& wrapper) {mongo_wrapper = wrapper;}
+
+
     private:
         std::vector<Robot> robots;
         std::unordered_set<int> usedIds;   // Track all used robot IDs
         pthread_rwlock_t robotsLock;
         Map selectedMap;
+        std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper;
         int robot_index = 0;
         Robot DEFAULT_ROBOT;
         void constructRobot();
+        void reportSimError(nlohmann::json robotErr, std::string errorNotes);
+        
         std::unordered_map<RobotType, std::vector<std::string>> type_mappings = {
             {RobotType::Scrubber, {"Wood", "Tile"}},
             {RobotType::Vacuum, {"Wood", "Tile", "Carpet"}},
