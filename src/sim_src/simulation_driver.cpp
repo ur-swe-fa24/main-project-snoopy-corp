@@ -101,7 +101,7 @@
             robot_index++;
         }
         usedIds.insert(robot_index);
-        return robot_index++;
+        return robot_index;
     }
 
     Robot* SimulationDriver::getRobot(int id) {
