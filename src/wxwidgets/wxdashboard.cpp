@@ -1,6 +1,6 @@
 #include "wxwidgets_lib/wxdashboard.hpp"
 
-WxDashboard::wxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Pop-Up Panel", wxDefaultPosition, wxSize(300, 200)) {
+WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Pop-Up Panel", wxDefaultPosition, wxSize(300, 200)) {
     // Create a panel inside the dialog
     wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     liveDashboard->SetBackgroundColour(wxColor(255, 204, 29));

@@ -69,6 +69,7 @@ target_link_libraries(sim_lib
 # Add wxwidget library with necessary source files
 add_library(wxwidgets_lib
   src/wxwidgets/wxwidgets.cpp
+  src/wxwidgets/wxdashboard.cpp
 )
 
 target_include_directories(wxwidgets_lib
