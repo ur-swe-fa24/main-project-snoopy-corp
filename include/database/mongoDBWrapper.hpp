@@ -31,11 +31,15 @@ public:
     void moveRobotToRemoved(int id);
     // Add Error log
     void logError(nlohmann::json robotData);
+    // Retrieve data from Mongodb as json
+    nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& collectionType);
                         
 
 private:
+    // MongoDB client and database
     mongocxx::client client_;
     mongocxx::database db_;
+    // MongoDB collections
     mongocxx::collection active_collection_;
     mongocxx::collection removed_collection_;
     mongocxx::collection error_collection_;

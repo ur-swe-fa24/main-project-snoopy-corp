@@ -42,7 +42,7 @@ void MongoDBWrapper::upsertRobotData(nlohmann::json robotData) {
         // Perform the upsert operation
         collection.update_one(filterBuilder.view(), updateBuilder.view(), mongocxx::options::update().upsert(true));
 
-        spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
+        // spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
     } 
     catch (const mongocxx::exception& e) {
         spdlog::error("Error during upsert: {}", e.what());
@@ -60,6 +60,7 @@ void MongoDBWrapper::moveRobotToRemoved(int id) {
         if (robot) {
             // Modify the status to "Removed"
             nlohmann::json robotData = nlohmann::json::parse(bsoncxx::to_json(robot->view()));
+            if (robotData.contains("_id")) robotData.erase("_id");
             robotData["Status"] = "Removed";
 
             // Upsert to the removed collection
@@ -108,3 +109,52 @@ void MongoDBWrapper::logError(nlohmann::json errorData) {
         spdlog::error("JSON processing error: {}", e.what());
     }
 }
+
+// Retrieve robot data or error log as JSON without the "_id" field
+nlohmann::json MongoDBWrapper::getRobotDataAsJson(int id, const std::string& collectionType) {
+    try {
+        // Select the appropriate collection
+        mongocxx::collection* collection;
+        
+        if (collectionType == "error_log") {
+            collection = &error_collection_;
+        } else if (collectionType == "active") {
+            collection = &active_collection_;
+        } else if (collectionType == "removed") {
+            collection = &removed_collection_;
+        } else {
+            spdlog::error("Invalid collection type: {}", collectionType);
+            return nlohmann::json(); // Return empty JSON for invalid collection type
+        }
+
+        // Build the filter to find the robot or error log by ID
+        bsoncxx::builder::basic::document filterBuilder;
+        filterBuilder.append(bsoncxx::builder::basic::kvp("ID", id));
+
+        // Retrieve the document
+        auto document = collection->find_one(filterBuilder.view());
+        if (document) {
+            // Convert BSON to JSON
+            nlohmann::json documentData = nlohmann::json::parse(bsoncxx::to_json(document->view()));
+
+            // Remove the "_id" field
+            if (documentData.contains("_id")) documentData.erase("_id");
+
+            spdlog::info("Retrieved data for ID {} from {} collection without '_id'.", id, fromErrorLog ? "error_log" : (fromActiveCollection ? "active" : "removed"));
+            return documentData;
+        } else {
+            spdlog::warn("Data for ID {} not found in {} collection.", id, fromErrorLog ? "error_log" : (fromActiveCollection ? "active" : "removed"));
+            return nlohmann::json(); // Return empty JSON if not found
+        }
+    } 
+    catch (const mongocxx::exception& e) {
+        spdlog::error("Error retrieving data: {}", e.what());
+        return nlohmann::json(); // Return empty JSON on error
+    } 
+    catch (const std::exception& e) {
+        spdlog::error("JSON processing error: {}", e.what());
+        return nlohmann::json(); // Return empty JSON on error
+    }
+}
+
+
