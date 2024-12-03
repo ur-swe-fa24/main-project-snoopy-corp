@@ -42,7 +42,7 @@ void MongoDBWrapper::upsertRobotData(nlohmann::json robotData) {
         // Perform the upsert operation
         collection.update_one(filterBuilder.view(), updateBuilder.view(), mongocxx::options::update().upsert(true));
 
-        spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
+        // spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
     } 
     catch (const mongocxx::exception& e) {
         spdlog::error("Error during upsert: {}", e.what());
