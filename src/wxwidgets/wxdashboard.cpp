@@ -1,9 +1,9 @@
 #include "wxwidgets_lib/wxdashboard.hpp"
 
-WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Pop-Up Panel", wxDefaultPosition, wxSize(300, 200)) {
+WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(1000, 700)) {
     // Create a panel inside the dialog
-    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    liveDashboard->SetBackgroundColour(wxColor(255, 204, 29));
+    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(1000, 700));
+    liveDashboard->SetBackgroundColour(wxColor(255, 204, 229));
     robotListView = new wxListView(liveDashboard);
     
     // Create list to show robot items
@@ -22,4 +22,8 @@ WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Pop-Up 
     robotListView->AppendColumn("Current Room Status");
     robotListView->SetColumnWidth(6, 180);
 
+    // Defines top half of engineer panel
+    wxBoxSizer* robotViewSizer = new wxBoxSizer(wxVERTICAL);
+    robotViewSizer->Add(robotListView, 1, wxALL | wxEXPAND, 10);
+    liveDashboard->SetSizer(robotViewSizer);
 }

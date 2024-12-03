@@ -1,4 +1,4 @@
-// Start of wxWidgets Program
+// Live Robot Dashboard Pop-Up Class
 #ifndef WXDASHBOARD_HPP
 #define WXDASHBOARD_HPP
 #include <wx/wx.h>
@@ -13,8 +13,9 @@ class WxDashboard : public wxDialog {
 public:
     WxDashboard(wxWindow* parent);
 
-private:
     wxListView *robotListView;
+private:
+    
 
 };
 
