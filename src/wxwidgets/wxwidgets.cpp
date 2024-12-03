@@ -18,11 +18,12 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_DeleteRobot, MainFrame::deleteRobot )
     EVT_BUTTON ( ID_Refresh, MainFrame::refresh ) 
     EVT_BUTTON ( ID_UpdateRobot, MainFrame::updateRobot ) 
+    EVT_CLOSE( MainFrame::OnClose )
 END_EVENT_TABLE() 
 
 // Properties of main window
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
-: wxFrame((wxFrame *) NULL, -1, title, pos, size) 
+: wxFrame((wxFrame *) NULL, -1, title, pos, size)
 {
     // Temporary, to be removed ------------------------------------------------------------------------------------------------------
     json roomsEx0 = {
@@ -30,9 +31,19 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
         {"2", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
         {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Tile"}}}
     };
-
+    static mongocxx::instance instance{};
     map = Map("map1", roomsEx0);
     simDriver = SimulationDriver(map);
+    simDriver.setMongoWrapper(mongo_wrapper);
+
+    const auto f = [this](){
+        while(!this->quitRequested){
+            this->simDriver.update_all();
+            std::this_thread::sleep_for (std::chrono::seconds(3));
+        }
+        return;
+    };
+    updateThread = std::thread{f};
 
     /*
     ShampooRobot robot = ShampooRobot(simDriver.assignRobotIndex(), map);
@@ -128,6 +139,15 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 void MainFrame::OnExit( wxCommandEvent& event )
 {
     Close(TRUE); 
+}
+
+// Modifies default closing procedures to add thread cleanup
+void MainFrame::OnClose(wxCloseEvent& event){
+    // Disable the Frame and Stop the Update Thread before closing
+    Disable();
+    quitRequested.store(true);
+    updateThread.join();
+    event.Skip();
 }
 
 // Button function to switch to engineer screen

@@ -63,6 +63,7 @@ include(${wxWidgets_USE_FILE})
 target_link_libraries(sim_lib
   nlohmann_json::nlohmann_json
   magic_enum
+  database
 )
 
 # Add wxwidget library with necessary source files
@@ -78,6 +79,7 @@ target_link_libraries(wxwidgets_lib
   ${wxWidgets_LIBRARIES}
   nlohmann_json::nlohmann_json
   magic_enum
+  database
 )
 
 add_subdirectory(app)
