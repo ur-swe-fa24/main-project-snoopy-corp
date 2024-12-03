@@ -101,7 +101,7 @@
             robot_index++;
         }
         usedIds.insert(robot_index);
-        return robot_index++;
+        return robot_index;
     }
 
     Robot* SimulationDriver::getRobot(int id) {
@@ -157,7 +157,12 @@
 
                 r.setStatus(Status::Active);
             }
-            else r.chargeRobot();
+            else if(r.getBatteryLevel() < 60){
+                if(r.getBatteryLevel() == 59)
+                    r.setBatteryLevel(60);
+                else
+                    r.chargeRobot();
+            }
         }
         else if(r.getStatus() == Status::Active)
         {
@@ -168,19 +173,25 @@
                 if(r.getQueue().size() != 0)
                 {
                     r.popQueue();
-                    if(r.getQueue().size() == 0)
+                    if(r.getQueue().size() == 0){
                         r.setStatus(Status::Inactive);
+                        r.move(-1);
+                    }
                     else{
                         r.incrementTasksAttempted();
                         r.move(r.getQueue().front());
                     }
                 }
-                else r.setStatus(Status::Inactive);
+                else {
+                    r.setStatus(Status::Inactive);
+                    r.move(-1);
+                }
             }
             else{
                 // std::cout << "clean about to be called; ";
                 bool successfulClean = r.clean();
                 if(!successfulClean){
+                    r.move(-1);
                     int choice = rand() % 2;
                     switch(choice){     // SEND ERROR TO MONGODB
                         case 1:
@@ -209,7 +220,7 @@
             if(r.getPauseTicks() > 0) r.incrementPauseTicks();
             else r.setStatus(Status::Inactive);
         }
-        //else: error case
+        pthread_rwlock_unlock(&robotsLock); 
     }
 
 int SimulationDriver::fixRobot(int id){
@@ -236,7 +247,8 @@ int SimulationDriver::fixRobot(int id){
 
 
 
-void SimulationDriver::assignmentModule(std::vector<int> tasks){
+std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
+    std::vector<int> unAssignedTasks = {};
     for(int task : tasks){
         std::string task_string = std::to_string(task);
         int min_time = INT_MAX;
@@ -257,9 +269,16 @@ void SimulationDriver::assignmentModule(std::vector<int> tasks){
                 }
             }
         }
-        std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
-        << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
-        this->getRobot(min_robot_id)->addTask(task);
+        // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
+        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        if(min_robot_id == -1){
+            unAssignedTasks.push_back(task);
+            // std::cout << "IMPOSSIBLE TASK! " << "\n";
+        }
+        else
+            this->getRobot(min_robot_id)->addTask(task);    //add task
     }
-    return;
+    // std::cout << "size: " << unAssignedTasks.size() << "\n";
+    return unAssignedTasks;
 }
+
