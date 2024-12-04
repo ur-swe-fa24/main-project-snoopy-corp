@@ -7,7 +7,7 @@ using json = nlohmann::json;
 
 Map::Map(){}
 //Map::Map(std::string name, std::map<std::string, std::vector<std::string>> rooms) : name(name), rooms(rooms) {}
-Map::Map(std::string name, json rooms) : name(name), rooms(rooms) {}
+Map::Map(std::string name, json rooms) : name(name), rooms(rooms), numRooms(rooms.size()) {}
 
 void Map::updateRoomCleanliness(std::string roomId, std::string cleaningStatus) {
     rooms[roomId]["Cleaning Status"] = cleaningStatus;

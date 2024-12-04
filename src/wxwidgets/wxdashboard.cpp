@@ -22,7 +22,6 @@ WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Ro
     robotListView->AppendColumn("Current Room Status");
     robotListView->SetColumnWidth(6, 180);
 
-    // Defines top half of engineer panel
     wxBoxSizer* robotViewSizer = new wxBoxSizer(wxVERTICAL);
     robotViewSizer->Add(robotListView, 1, wxALL | wxEXPAND, 10);
     liveDashboard->SetSizer(robotViewSizer);
