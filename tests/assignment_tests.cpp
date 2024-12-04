@@ -14,9 +14,9 @@ TEST_CASE("Cleaning Unit Tests") {
         {"2", {{"Room", "Office"}, {"Cleaning Status", "0"}, {"FloorType", "Carpet"}}},
         {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
         {"4", {{"Room", "Bathroom_2"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
-        {"5", {{"Room", "Bathroom_3"}, {"Cleaning Status", "-50"}, {"FloorType", "Tile"}}},
-        {"6", {{"Room", "PoolHouse"}, {"Cleaning Status", "-35"}, {"FloorType", "Tile"}}},
-        {"7", {{"Room", "Basement"}, {"Cleaning Status", "-35"}, {"FloorType", "Wood"}}},
+        {"5", {{"Room", "Bathroom_3"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"6", {{"Room", "PoolHouse"}, {"Cleaning Status", "0"}, {"FloorType", "Tile"}}},
+        {"7", {{"Room", "Basement"}, {"Cleaning Status", "0"}, {"FloorType", "Wood"}}},
         {"8", {{"Room", "LivingRom"}, {"Cleaning Status", "0"}, {"FloorType", "Carpet"}}},
         {"9", {{"Room", "Bedroom1"}, {"Cleaning Status", "0"}, {"FloorType", "Carpet"}}},
         {"10", {{"Room", "Bedroom2"}, {"Cleaning Status", "0"}, {"FloorType", "Carpet"}}},
@@ -28,6 +28,7 @@ TEST_CASE("Cleaning Unit Tests") {
 
     Map m1 = Map("m1", rooms);
     SimulationDriver s = SimulationDriver(m1);
+    SimulationDriver t = SimulationDriver(m1);
 
     VacuumRobot v0 = VacuumRobot(0,0);
     VacuumRobot v1 = VacuumRobot(1,0);
@@ -41,10 +42,32 @@ TEST_CASE("Cleaning Unit Tests") {
     s.addRobot(c2);
     s.addRobot(c3);
     s.addRobot(h4);
+
+    t.addRobot(h5);
     // s.addRobot(h5);
-    SECTION(""){
+    SECTION("Robots Assigned Correctly"){
         s.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12});
         REQUIRE(s.getRobot(0)->timeRemaining() >= 20);
     }
+
+    SECTION("Rooms Cleaned Correctly"){
+        s.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12});
+        for(int i = 0; i < 25; i++)
+        {
+            s.update_all();
+        }
+        REQUIRE(s.getSelectedMap().getRoomCleanliness("1") == "10");
+        REQUIRE(s.getSelectedMap().getRoomCleanliness("5") == "10");
+    }
+
+    SECTION("Uncleanable rooms not assigned"){
+        // std::vector<int> unAssigned = t.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12});
+        int s_size = s.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12,13}).size();
+        REQUIRE(s_size == 0);
+
+        int t_size = t.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12,13}).size();
+        REQUIRE(t_size == 8);
+    }
+
 
 }
