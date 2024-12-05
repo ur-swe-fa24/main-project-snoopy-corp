@@ -256,10 +256,18 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             liveDashboard->robotListView->InsertItem(integer, robotJson["ID"].dump());
             liveDashboard->robotListView->SetItem(integer, 1, robotJson["Type"].dump());
             liveDashboard->robotListView->SetItem(integer, 2, robotJson["Status"].dump());
-            liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
+            if(robotJson["Location"].dump() == "-1")
+                liveDashboard->robotListView->SetItem(integer, 3, "Charging Station");
+            else
+                liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
             liveDashboard->robotListView->SetItem(integer, 5, robotJson["Tasks completed"].dump());
-            liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
+             if(robotJson["Location"].dump() == "-1")
+                liveDashboard->robotListView->SetItem(integer, 6, "N/A");
+            else
+                liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
+            // liveDashboard->robotListView->SetItem(integer, 6, robotJson["Progress task"].dump());
+
             integer++;
         }
     } else {
@@ -305,10 +313,17 @@ void MainFrame::refresh() {
     for (int i = 0; i < robotFleet.size(); i++) {
         liveDashboard->robotListView->SetItem(i, 1, robotFleet[i]["Type"].dump());
         liveDashboard->robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
-        liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
+        if(robotFleet[i]["Location"].dump() == "-1")
+            liveDashboard->robotListView->SetItem(i, 3, "Charging Station");
+        else
+            liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
         liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Tasks completed"].dump());
-        liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
+        // liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress task"].dump());
+        if(robotFleet[i]["Location"].dump() == "-1")
+                    liveDashboard->robotListView->SetItem(i, 6, "N/A");
+        else
+            liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
     }
 }
 void MainFrame::viewHistoricalData(wxCommandEvent& event) {
