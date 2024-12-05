@@ -27,7 +27,7 @@
     {
         pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
-        if (usedIds.find(id) != usedIds.end()) {
+        while (usedIds.find(id) != usedIds.end()) {
             id++;
         }
         // Update the robot's ID to the unique value
@@ -220,7 +220,7 @@
             if(r.getPauseTicks() > 0) r.incrementPauseTicks();
             else r.setStatus(Status::Inactive);
         }
-        pthread_rwlock_unlock(&robotsLock); 
+        // pthread_rwlock_unlock(&robotsLock); 
     }
 
 int SimulationDriver::fixRobot(int id){
