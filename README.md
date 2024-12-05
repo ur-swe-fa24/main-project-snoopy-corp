@@ -1,4 +1,4 @@
-# CMSC322 Main Project (to be deleted)
+# CMSC322 Main Project 
 
 This main project is your repository for the duration of the semester! **Take care of it!**
 Your team must communicate and coordinate to ensure that this project repo does not get totally borked!
