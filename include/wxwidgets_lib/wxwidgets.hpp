@@ -10,6 +10,7 @@
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/robot.hpp"
 #include "wxdashboard.hpp"
+#include "wxtaskbox.hpp"
 #include "database/mongoDBWrapper.hpp"
 
 // Container class for the window, or frame in MainFrame
@@ -27,11 +28,10 @@ private:
     wxPanel *mainPanel;
     wxPanel *mainMenu;
     wxPanel *engineerPanel;
-    wxPanel *engineerTopPanel;
-    wxPanel *engineerBottomPanel;
+    wxPanel *staffPanel;
     wxPanel *managerPanel;
+    wxPanel *seniorManagerPanel;
     wxBoxSizer* mainSizer;
-    wxListView *robotListView;
     WxDashboard* liveDashboard;
 
     Map map;
@@ -54,7 +54,8 @@ private:
     void deleteRobot( wxCommandEvent& event ); // Delete robot from list and simulation driver
     int findListItem( wxString id ); // Private helper function for deleteRobot
     void refresh(); // Refresh robot list to reflect current status
-    void updateRobot( wxCommandEvent& event ); 
+    void assignTasks( wxCommandEvent& event );
+    void viewHistoricalData(wxCommandEvent& event); // View removed robots
 
 
     DECLARE_EVENT_TABLE()
@@ -69,8 +70,9 @@ enum {
     ID_ToSeniorManager = 1005,
     ID_AddRobot = 1006,
     ID_DeleteRobot = 1007,
-    ID_UpdateRobot = 1008,
-    ID_Exit = wxID_EXIT // You can reuse wxWidgets pre-defined IDs if needed
+    ID_AssignTasks = 1008,
+    ID_ViewHistoricalData = 1009,
+    ID_Exit = wxID_EXIT
 };
 
 wxDECLARE_APP(MyWidget);

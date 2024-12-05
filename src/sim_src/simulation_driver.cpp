@@ -33,7 +33,7 @@
         // Update the robot's ID to the unique value
         robot.setId(id);
         // Mark the ID as used and add the robot to the fleet
-        usedIds.insert(id);
+        usedIds.insert(usedIds.end(), id);
         robots.push_back(std::move(robot));
         if (mongo_wrapper) mongo_wrapper->get().upsertRobotData(robot.toJson());
         pthread_rwlock_unlock(&robotsLock);
@@ -168,7 +168,7 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
-
+                // wxwidget function -- popup notification ("room complete")
                 r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {
