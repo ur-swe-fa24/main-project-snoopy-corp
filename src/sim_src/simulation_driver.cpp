@@ -27,7 +27,7 @@
     {
         pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
-        if (usedIds.find(id) != usedIds.end()) {
+        while (usedIds.find(id) != usedIds.end()) {
             id++;
         }
         // Update the robot's ID to the unique value
