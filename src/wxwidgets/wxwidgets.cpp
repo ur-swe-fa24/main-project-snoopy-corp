@@ -150,7 +150,7 @@ void MainFrame::switchToSeniorManager(wxCommandEvent& event) {
 
 // Button function to open Live Dashboard Pop-Up
 void MainFrame::switchToLiveDashboard(wxCommandEvent& event) {
-    liveDashboard->ShowModal();
+    liveDashboard->Show();
 }
 
 // Button function to add robot to list
@@ -169,8 +169,8 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             liveDashboard->robotListView->SetItem(integer, 2, robotJson["Status"].dump());
             liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
-            liveDashboard->robotListView->SetItem(integer, 5, robotJson["Tasks Completed"].dump());
-            liveDashboard->robotListView->SetItem(integer, 6, robotJson["Progress Task"].dump());
+            liveDashboard->robotListView->SetItem(integer, 5, robotJson["Tasks completed"].dump());
+            liveDashboard->robotListView->SetItem(integer, 6, robotJson["Progress task"].dump());
             integer++;
         }
     } else {
@@ -219,8 +219,8 @@ void MainFrame::refresh() {
         liveDashboard->robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
         liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
-        liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Tasks Completed"].dump());
-        liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress Task"].dump());
+        liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Tasks completed"].dump());
+        liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress task"].dump());
     }
 }
 
