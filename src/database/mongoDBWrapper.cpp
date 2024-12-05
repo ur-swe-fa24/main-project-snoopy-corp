@@ -42,7 +42,7 @@ void MongoDBWrapper::upsertRobotData(nlohmann::json robotData) {
         // Perform the upsert operation
         collection.update_one(filterBuilder.view(), updateBuilder.view(), mongocxx::options::update().upsert(true));
 
-        spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
+        // spdlog::info("Upserted robot with ID {} successfully.", std::to_string(robotData["ID"].get<int>()));
     } 
     catch (const mongocxx::exception& e) {
         spdlog::error("Error during upsert: {}", e.what());
@@ -60,6 +60,7 @@ void MongoDBWrapper::moveRobotToRemoved(int id) {
         if (robot) {
             // Modify the status to "Removed"
             nlohmann::json robotData = nlohmann::json::parse(bsoncxx::to_json(robot->view()));
+            if (robotData.contains("_id")) robotData.erase("_id");
             robotData["Status"] = "Removed";
 
             // Upsert to the removed collection
@@ -108,3 +109,55 @@ void MongoDBWrapper::logError(nlohmann::json errorData) {
         spdlog::error("JSON processing error: {}", e.what());
     }
 }
+
+nlohmann::json MongoDBWrapper::getAllDataAsJson(const std::string& collectionType) {
+    try {
+        // Select the appropriate collection
+        mongocxx::collection* collection;
+        
+        if (collectionType == "error_log") {
+            collection = &error_collection_;
+        } else if (collectionType == "active") {
+            collection = &active_collection_;
+        } else if (collectionType == "removed") {
+            collection = &removed_collection_;
+        } else {
+            spdlog::error("Invalid collection type: {}", collectionType);
+            return nlohmann::json(); // Return empty JSON for invalid collection type
+        }
+
+        // Retrieve all documents in the collection
+        auto cursor = collection->find({});  // Empty filter to find all documents
+        
+        nlohmann::json allData = nlohmann::json::array();  // Initialize an empty array to store all data
+        
+        for (const auto& document : cursor) {
+            // Convert BSON to JSON
+            nlohmann::json documentData = nlohmann::json::parse(bsoncxx::to_json(document));
+
+            // Remove the "_id" field
+            if (documentData.contains("_id")) documentData.erase("_id");
+
+            allData.push_back(documentData);  // Add each document to the allData array
+        }
+
+        if (!allData.empty()) {
+            spdlog::info("Retrieved all data from {} collection without '_id'.", collectionType);
+        } else {
+            spdlog::warn("No data found in {} collection.", collectionType);
+        }
+
+        return allData;  // Return the array of all documents
+    } 
+    catch (const mongocxx::exception& e) {
+        spdlog::error("Error retrieving data: {}", e.what());
+        return nlohmann::json(); // Return empty JSON on error
+    } 
+    catch (const std::exception& e) {
+        spdlog::error("JSON processing error: {}", e.what());
+        return nlohmann::json(); // Return empty JSON on error
+    }
+}
+
+
+
