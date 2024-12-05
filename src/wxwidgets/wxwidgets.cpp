@@ -30,6 +30,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 {
     // To be modified ----------------------------------------------------
     json roomsEx0 = {
+        {"-1", {{"Room", "Home Base"}, {"Cleaning Status", "-1"}, {"FloorType", "Wood"}}},
         {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "4"}, {"FloorType", "Wood"}}},
         {"2", {{"Room", "Office"}, {"Cleaning Status", "8"}, {"FloorType", "Carpet"}}},
         {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "5"}, {"FloorType", "Tile"}}},
@@ -44,7 +45,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     const auto f = [this](){
         while(!this->quitRequested){
             this->simDriver.update_all();
-            //this->refresh();
+            this->refresh();
             std::this_thread::sleep_for (std::chrono::seconds(5));
         }
         return;
@@ -258,7 +259,7 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
             liveDashboard->robotListView->SetItem(integer, 5, robotJson["Tasks completed"].dump());
-            liveDashboard->robotListView->SetItem(integer, 6, robotJson["Progress task"].dump());
+            liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
             integer++;
         }
     } else {
@@ -301,14 +302,13 @@ int MainFrame::findListItem(wxString id) {
 // Refresh robot list to reflect current status
 void MainFrame::refresh() {
     json robotFleet = simDriver.getFleet();
-
     for (int i = 0; i < robotFleet.size(); i++) {
         liveDashboard->robotListView->SetItem(i, 1, robotFleet[i]["Type"].dump());
         liveDashboard->robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
         liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
         liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Tasks completed"].dump());
-        liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress task"].dump());
+        liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
     }
 }
 void MainFrame::viewHistoricalData(wxCommandEvent& event) {
