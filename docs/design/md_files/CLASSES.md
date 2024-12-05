@@ -3,15 +3,17 @@
 
 The class diagram shows the various objects that will be present in our project. 
 
-First is the Main class, which serves as the login function and allows the user to select what type of staff they are. It allows them to then open either the dashboard (read-only databases with visualizations) or the Assignemnt Module (robot assignment services).
-
 The Simulation Driver stores the fleet of robots and serves as the main 'clock' via a thread implementation which will prompt the robots in the fleet to update (clean or move) and store their data in the MongoDB, and will prompt the MongoDBWrapper to push that data to the database.
 
-The Dashboard class has three children; the Live Robot Dashboard and Metrics Dashboard have information for their relevant staff, while the Error Log tracks Robot errors with the relevant info and time.
+The MainFrame class has three variants; the Live Robot Dashboard and Metrics Dashboard have information for their relevant staff, while the Error Log tracks Robot errors with the relevant info and time.
 
 The MongoDBWrapper wraps the database which stores all of the dashboard's information on the back end. When prompted periodically by the Simulation Driver, it will refresh the visual dashboard's information.
 
-The Assignment Module allows the user to assign robots to a given task, whether at the present or some upcoming task in the future.
+MyWidget loads the app.
+
+MainFrame handles the logic for the GUI, and incorporates it with the backend (adding, removing robots, etc). 
+
+The closely related WxDashboard displays the availible robots.
 
 The Map class contains the JSON map of the room as well as the status of each room by index.
 
