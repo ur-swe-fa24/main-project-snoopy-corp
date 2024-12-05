@@ -19,7 +19,8 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_ToLiveDashboard, MainFrame::switchToLiveDashboard ) 
     EVT_BUTTON ( ID_AddRobot, MainFrame::addRobot )
     EVT_BUTTON ( ID_DeleteRobot, MainFrame::deleteRobot )
-    EVT_BUTTON ( ID_AssignTasks, MainFrame::assignTasks ) 
+    EVT_BUTTON ( ID_AssignTasks, MainFrame::assignTasks )
+    EVT_BUTTON ( ID_ViewHistoricalData, MainFrame::viewHistoricalData )
     EVT_CLOSE( MainFrame::OnClose )
 END_EVENT_TABLE() 
 
@@ -44,7 +45,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
         while(!this->quitRequested){
             this->simDriver.update_all();
             //this->refresh();
-            std::this_thread::sleep_for (std::chrono::seconds(3));
+            std::this_thread::sleep_for (std::chrono::seconds(5));
         }
         return;
     };
@@ -62,28 +63,39 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     mainMenu->SetBackgroundColour(wxColor(155, 204, 229));
     
     // Buttons on Main Menu to direct users to their job screens
-    wxBoxSizer* mainMenuSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* mainMenuSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mmButtonSizer = new wxBoxSizer(wxHORIZONTAL);
+    
+    wxStaticText* staticText = new wxStaticText(mainMenu, wxID_ANY, "Select Your Current Role!", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+    wxFont font(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
+    staticText->SetForegroundColour(*wxBLACK);
+    staticText->SetFont(font);
+    
     wxButton* engineerButton = new wxButton(mainMenu, ID_ToEngineer, "Field Engineer");
     wxButton* staffButton = new wxButton(mainMenu, ID_ToStaff, "Building Staff");
     wxButton* managerButton = new wxButton(mainMenu, ID_ToManager, "Manager");
     wxButton* seniorManagerButton = new wxButton(mainMenu, ID_ToSeniorManager, "Senior Manager"); 
 
     // Pull Main Menu together
-    mainMenuSizer->Add(engineerButton, 0, wxTOP | wxLEFT, 10);
-    mainMenuSizer->Add(staffButton, 0, wxTOP | wxLEFT, 10);
-    mainMenuSizer->Add(managerButton, 0, wxTOP | wxLEFT, 10);
-    mainMenuSizer->Add(seniorManagerButton, 0, wxTOP | wxLEFT, 10);
+    mainMenuSizer->Add(staticText, 0, wxEXPAND | wxALL, 10);
+    mainMenuSizer->Add(mmButtonSizer, 0, wxEXPAND | wxALL, 10);
+    mmButtonSizer->Add(engineerButton, 0, wxTOP | wxALL, 10);
+    mmButtonSizer->Add(staffButton, 0, wxTOP | wxALL, 10);
+    mmButtonSizer->Add(managerButton, 0, wxTOP | wxALL, 10);
+    mmButtonSizer->Add(seniorManagerButton, 0, wxTOP | wxALL, 10);
     mainMenu->SetSizer(mainMenuSizer);
 
 
     // Defines engineer screen and its contents
     engineerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     engineerPanel->SetBackgroundColour(wxColor(255, 204, 229));
+    
     wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Go to Live Dashboard");
     wxButton* addRobot = new wxButton(engineerPanel, ID_AddRobot, "Add Robot");
     wxButton* deleteRobot = new wxButton(engineerPanel, ID_DeleteRobot, "Delete Robot");
     wxButton* assignTasks = new wxButton(engineerPanel, ID_AssignTasks, "Assign Tasks");
     wxBoxSizer* engineerSizer = new wxBoxSizer(wxVERTICAL);
+    
     engineerSizer->Add(toLiveDashboard, 0, wxTOP | wxLEFT, 10);
     engineerSizer->Add(addRobot, 1, wxALL, FromDIP(10));
     engineerSizer->Add(deleteRobot, 1, wxALL, FromDIP(10));
@@ -93,19 +105,33 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     // Defines manager screen and its contents
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
+    
+    wxButton* assignTasks1 = new wxButton(managerPanel, ID_AssignTasks, "Assign Tasks");
+    wxButton* toLiveDashboard1 = new wxButton(managerPanel, ID_ToLiveDashboard, "Go to Live Dashboard");
     wxBoxSizer* managerSizer = new wxBoxSizer(wxVERTICAL);
+    
+    managerSizer->Add(toLiveDashboard1, 1, wxALL, FromDIP(10));
+    managerSizer->Add(assignTasks1, 1, wxALL, FromDIP(10));
     managerPanel->SetSizer(managerSizer);
 
     // Defines staff screen and its contents
     staffPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
+    
+    wxButton* assignTasks2 = new wxButton(staffPanel, ID_AssignTasks, "Assign Tasks");
+    wxButton* toLiveDashboard2 = new wxButton(staffPanel, ID_ToLiveDashboard, "Go to Live Dashboard");
     wxBoxSizer* staffSizer = new wxBoxSizer(wxVERTICAL);
+    
+    staffSizer->Add(toLiveDashboard2, 1, wxALL, FromDIP(10));
+    staffSizer->Add(assignTasks2, 1, wxALL, FromDIP(10));
     staffPanel->SetSizer(staffSizer);
 
     // Defines senior manager screen and its contents
     seniorManagerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
+    wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
     wxBoxSizer* seniorManagerSizer = new wxBoxSizer(wxVERTICAL);
+    seniorManagerSizer->Add(viewHistorical, 1, wxALL, FromDIP(10));
     seniorManagerPanel->SetSizer(seniorManagerSizer);
 
     // Create main sizer, add both screens
@@ -285,5 +311,6 @@ void MainFrame::refresh() {
         liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress Task"].dump());
     }
 }
+void MainFrame::viewHistoricalData(wxCommandEvent& event) {
 
-
+}

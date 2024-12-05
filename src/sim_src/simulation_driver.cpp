@@ -27,7 +27,7 @@
     {
         pthread_rwlock_wrlock(&robotsLock);
         int id = robot.getId();
-        if (usedIds.find(id) != usedIds.end()) {
+        while (usedIds.find(id) != usedIds.end()) {
             id++;
         }
         // Update the robot's ID to the unique value
@@ -168,7 +168,7 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
-
+                // wxwidget function -- popup notification ("room complete")
                 r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {

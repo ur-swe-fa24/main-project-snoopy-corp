@@ -55,6 +55,7 @@ private:
     int findListItem( wxString id ); // Private helper function for deleteRobot
     void refresh(); // Refresh robot list to reflect current status
     void assignTasks( wxCommandEvent& event );
+    void viewHistoricalData(wxCommandEvent& event); // View removed robots
 
 
     DECLARE_EVENT_TABLE()
@@ -70,6 +71,7 @@ enum {
     ID_AddRobot = 1006,
     ID_DeleteRobot = 1007,
     ID_AssignTasks = 1008,
+    ID_ViewHistoricalData = 1009,
     ID_Exit = wxID_EXIT
 };
 
