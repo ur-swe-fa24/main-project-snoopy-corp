@@ -250,10 +250,12 @@ int SimulationDriver::fixRobot(int id){
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     std::vector<int> unAssignedTasks = {};
     std::set<int> taskSet = {};
+    alreadyAssigned.insert(-1);
     for(int task : tasks){
         taskSet.insert(task);
     }
     for(int task : taskSet){
+        if(alreadyAssigned.count(task) == 1) break;
         std::string task_string = std::to_string(task);
         int min_time = INT_MAX;
         int min_robot_id = -1;
@@ -280,8 +282,11 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
         }
-        else
+        else{
             this->getRobot(min_robot_id)->addTask(task);    //add task
+            alreadyAssigned.insert(task);
+
+        }
         // pthread_rwlock_unlock(&robotsLock);
     }
     // std::cout << "size: " << unAssignedTasks.size() << "\n";
