@@ -230,9 +230,9 @@ void MainFrame::assignTasks(wxCommandEvent& event) {
         //wxString taskDescription = taskbox.GetTaskDescription();
 
         std::vector<int> tasks = {};
-        for (int i = 0; i < map.getNumRooms(); i++) {
+        for (int i = 1; i < map.getNumRooms(); i++) {
             if (states[i] == 1) {
-                tasks.insert(tasks.end(), i + 1); // Adding room id to tasks vector : Note ids start at 1, not 0
+                tasks.insert(tasks.end(), i); // Adding room id to tasks vector : Note ids start at 1, not 0
             }
         }
 
