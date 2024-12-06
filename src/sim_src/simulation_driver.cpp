@@ -239,7 +239,7 @@ int SimulationDriver::fixRobot(int id){
 
     void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
         float time = (std::chrono::system_clock::now() - start).count()/1000;
-        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
         if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
