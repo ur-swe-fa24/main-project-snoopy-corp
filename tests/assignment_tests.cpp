@@ -77,7 +77,6 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(s.getRobot(0)->timeRemaining() == 10);
         REQUIRE(s.getRobot(1)->timeRemaining() == 0);
 
-
     }
 
 

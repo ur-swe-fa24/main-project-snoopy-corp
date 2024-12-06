@@ -16,7 +16,7 @@ WxTaskbox::WxTaskbox(wxWindow* parent, Map map) : wxDialog(parent, wxID_ANY, "Ro
     //taskSizer->Add(textBox, 0, wxALL | wxEXPAND, 5);
 
     // Dynamically create checkboxes based on number of rooms in map
-    for (int i = 1; i <= map.getNumRooms()-1; i++) {  
+    for (int i = 1; i <= map.getNumRooms(); i++) {  
         std::string id = std::to_string(i);
         wxCheckBox* checkbox = new wxCheckBox(taskPanel, wxID_ANY, map.getRoomName(id)); 
         checkboxes.push_back(checkbox);
