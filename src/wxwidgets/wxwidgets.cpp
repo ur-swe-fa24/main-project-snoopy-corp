@@ -30,7 +30,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 {
     // To be modified ----------------------------------------------------
     json roomsEx0 = {
-        {"-1", {{"Room", "Home Base"}, {"Cleaning Status", "-1"}, {"FloorType", "Wood"}}},
+        // {"-1", {{"Room", "Home Base"}, {"Cleaning Status", "-1"}, {"FloorType", "Wood"}}},
         {"1", {{"Room", "Kitchen"}, {"Cleaning Status", "4"}, {"FloorType", "Wood"}}},
         {"2", {{"Room", "Office"}, {"Cleaning Status", "8"}, {"FloorType", "Carpet"}}},
         {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "5"}, {"FloorType", "Tile"}}},
@@ -232,7 +232,7 @@ void MainFrame::assignTasks(wxCommandEvent& event) {
         std::vector<int> tasks = {};
         for (int i = 0; i < map.getNumRooms(); i++) {
             if (states[i] == 1) {
-                tasks.insert(tasks.end(), i + 1); // Adding room id to tasks vector : Note ids start at 1, not 0
+                tasks.insert(tasks.end(), i+1); // Adding room id to tasks vector : Note ids start at 1, not 0
             }
         }
 
