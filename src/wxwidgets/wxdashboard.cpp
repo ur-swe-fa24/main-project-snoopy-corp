@@ -17,7 +17,7 @@ WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Ro
     robotListView->SetColumnWidth(3, 120);
     robotListView->AppendColumn("Battery Level");
     robotListView->SetColumnWidth(4, 120);
-    robotListView->AppendColumn("Tasks Completed");
+    robotListView->AppendColumn("Queue Length");
     robotListView->SetColumnWidth(5, 120);
     robotListView->AppendColumn("Current Room Status");
     robotListView->SetColumnWidth(6, 180);

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <magic_enum.hpp>
 #include <algorithm>
-#include <iostream>
 #include <random>
 #include <cstdlib>
 
@@ -269,8 +268,8 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
                 }
             }
         }
-        // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
-        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+         //std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
+         //<< this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
         if(min_robot_id == -1){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
