@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <random>
 #include <cstdlib>
-
+#include <set>
 
 
     // Default constructor 
@@ -238,7 +238,7 @@ int SimulationDriver::fixRobot(int id){
 
     void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
         float time = (std::chrono::system_clock::now() - start).count()/1000;
-        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
         if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
@@ -248,7 +248,13 @@ int SimulationDriver::fixRobot(int id){
 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     std::vector<int> unAssignedTasks = {};
+    std::set<int> taskSet = {};
+    alreadyAssigned.insert(-1);
     for(int task : tasks){
+        taskSet.insert(task);
+    }
+    for(int task : taskSet){
+        if(alreadyAssigned.count(task) == 1) break;
         std::string task_string = std::to_string(task);
         int min_time = INT_MAX;
         int min_robot_id = -1;
@@ -268,14 +274,19 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
                 }
             }
         }
-         //std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
-         //<< this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
+        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        // pthread_rwlock_wrlock(&robotsLock);
         if(min_robot_id == -1){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
         }
-        else
+        else{
             this->getRobot(min_robot_id)->addTask(task);    //add task
+            alreadyAssigned.insert(task);
+
+        }
+        // pthread_rwlock_unlock(&robotsLock);
     }
     // std::cout << "size: " << unAssignedTasks.size() << "\n";
     return unAssignedTasks;
