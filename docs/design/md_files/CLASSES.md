@@ -1,5 +1,5 @@
 # Class Diagram
-![class_diagram](/docs/design/modeling_diagrams/class_diagram.puml)
+![class_diagram](docs/design/modeling_diagrams/class_diagram.puml)
 
 The class diagram shows the various objects that will be present in our project. 
 
