@@ -169,6 +169,7 @@ package "Simulation and Map Management" {
     SimulationDriver ..> Robot
     SimulationDriver ..> Map
 
+
 }
 
 
@@ -255,5 +256,3 @@ package "Database Management" {
     SimulationDriver ..> MongoDBWrapper
     MainFrame ..> MongoDBWrapper
 }
-
-@enduml

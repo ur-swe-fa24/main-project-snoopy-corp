@@ -35,6 +35,7 @@ class Robot{
         int getProgressTask();
         int getProgressQueue();
         std::queue<int> getQueue();
+        void clearQueue();
         void addTask(int room);
         void addTask(std::vector<int> rooms);
         int getBatteryLevel();
@@ -57,6 +58,7 @@ class Robot{
         float genFailRate();
         float getFailRate() { return failure_rate; }
         void popQueue();
+        void setQueue(std::queue<int> q) { queue = q; }
         void setStatus(Status s);
         void setId(int newId);
         void setPauseTicks(int s) { pause_ticks = s; }

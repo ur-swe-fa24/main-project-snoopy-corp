@@ -44,6 +44,12 @@ using json = nlohmann::json;
         return progress_task;
     }
 
+    void Robot::clearQueue(){
+        while (!queue.empty()) {
+            queue.pop();
+        }
+    }
+
     int Robot::getProgressQueue(){
         return progress_queue;
     }
@@ -148,6 +154,7 @@ using json = nlohmann::json;
             vec.push_back(tempQueue.front());
             tempQueue.pop();
         }
+        
         auto j = json{
             {"ID", id}, 
             {"Type", std::string(magic_enum::enum_name(type))}, 

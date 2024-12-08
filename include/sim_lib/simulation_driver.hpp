@@ -28,6 +28,7 @@ class SimulationDriver{
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
         Robot* getRobot(int id);
+        Robot* internal_getRobot(int id);
         std::vector<nlohmann::json> getFleet();
         void update_all();
         void update(Robot& r);
@@ -35,7 +36,8 @@ class SimulationDriver{
         int fixRobot(int id);
         int chargeRobot(int id);
         std::vector<int> assignmentModule(std::vector<int> tasks);
-       
+        std::vector<int> re_assignmentModule(std::vector<int> tasks);
+
         std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
         void setMongoWrapper(MongoDBWrapper& wrapper) {mongo_wrapper = wrapper;}
 
