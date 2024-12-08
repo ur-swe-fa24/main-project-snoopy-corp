@@ -16,6 +16,7 @@ class Map{
     private:
         std::string name; // Name of map object
         json rooms;
+        int numRooms;
         //std::map<std::string, std::vector<std::string>> rooms; //temp vector
 
     public:
@@ -32,6 +33,8 @@ class Map{
         std::string getRoomName(std::string roomId) { return rooms[roomId]["Room"]; }
         bool roomExists(const std::string& roomId) const;
 
+        int getNumRooms() { return numRooms; }
+        std::string getFloorType(std::string roomId) { return rooms[roomId]["FloorType"]; }
         // Note that there are no methods to update/set floorType.
 };
 

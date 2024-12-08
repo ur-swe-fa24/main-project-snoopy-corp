@@ -17,7 +17,6 @@ class VacuumRobot : public Robot{
 
     private:
         int TrashbagLevel;
-        bool clean();        
 };
 
 #endif

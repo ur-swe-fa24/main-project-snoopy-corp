@@ -7,16 +7,6 @@
     VacuumRobot::VacuumRobot(int id) : Robot(RobotType::Vacuum, id) {}
     VacuumRobot::VacuumRobot(int id, float failure_rate) : Robot(RobotType::Vacuum, id, failure_rate) {}
 
-    bool VacuumRobot::clean() 
-    {
-        if(getRandom() <= failure_rate){
-            return false;
-        }
-        else{
-            
-            return true;    
-        }
-    }
 
     nlohmann::json VacuumRobot::toJson() {
         nlohmann::json json = Robot::toJson();

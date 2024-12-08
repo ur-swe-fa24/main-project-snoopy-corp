@@ -3,34 +3,29 @@
 using json = nlohmann::json;
 
 
-    // // Default constructor 
-    //initial value of reference to non-const must be an lvalueC/C++(461)
-    // Robot::Robot() : currentMap(Map("DEFAULT_MAP", {{"-1", {{"Room", "DEFAULT"}, {"Cleaning Status", "-1"}, {"FloorType", "DEFAULT"}}}})){}
-
-
-    Robot::Robot() : battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    // Default constructor 
+    Robot::Robot() : battery_level(60), queue{}, status(Status::Inactive), location(-1),
     gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {}
 
-    // Overloaded constructor with type, id, and Map parameters
-    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(10), queue{}, status(Status::Inactive), location(-1),
+    // Overloaded constructor with type, id parameters
+    Robot::Robot(RobotType type, int id) : type(type), id(id), battery_level(60), queue{}, status(Status::Inactive), location(-1),
     gen(std::random_device{}()), float_distribution(0, 1), fail_distribution(0, 0.005) {
         failure_rate = genFailRate();   // robots by default will have a 0-0.5% chance of failing on a given task segment (10 per room)
         if(failure_rate > 0.00495)    failure_rate = 0.1;     //robots have a 1% chance of being defective
     }
-
-    Robot::Robot(RobotType type, int id, float failure_rate) : type(type), id(id), battery_level(10), queue{}, 
+    
+    // Overloaded constructor with type, id, failure_rate parameters
+    Robot::Robot(RobotType type, int id, float failure_rate) : type(type), id(id), battery_level(60), queue{}, 
     status(Status::Inactive), location(-1), gen(std::random_device{}()), float_distribution(0, 1), failure_rate(failure_rate) {}
 
-    // Robot::Robot(const Robot& other) : currentMap(other.currentMap){}
-
-    // Robot& Robot::operator=(Robot&& other){
-    //     int id = std::move(other.id);
-    //     return *this;
-    // }
 
 
     float Robot::getEfficiency(){
-        return tasks_completed / tasks_attempted;
+        if(tasks_attempted > 0){
+            float efficiency = (float) tasks_completed / tasks_attempted;
+            return efficiency;
+        }
+        else return 0;
     }
 
     int Robot::getId() const{
@@ -65,7 +60,7 @@ using json = nlohmann::json;
         return battery_level;
     }
 
-    void Robot::setBatteryLevel(int amt){
+    void Robot::incrementBatteryLevel(int amt){
         battery_level -= amt;
     }
     float Robot::getRandom(){
@@ -77,6 +72,13 @@ using json = nlohmann::json;
     }
     void Robot::addTask(int room){
         queue.push(room);
+        return;
+    }
+
+    void Robot::addTask(std::vector<int> rooms){
+        for(int e : rooms){
+            queue.push(e);
+        }
         return;
     }
 
@@ -119,9 +121,10 @@ using json = nlohmann::json;
     }
 
 
-    void Robot::reportError(){
+    nlohmann::json Robot::reportError(){
         status = Status::Error;
-        // TO BE DETERMINED
+        return json{{"ID", id},
+                    {"Location", location}};
     }
 
     void Robot::move(int room_num) {
@@ -185,7 +188,7 @@ using json = nlohmann::json;
             // {"Map", currentMap.getName()},
             {"Location", location},
             // {"Room Status", getRoomStatus()},
-            {"Tasks completed", tasks_completed},
+            {"Queue Length", queue.size()}, //Time remaining
             {"Task attempted", tasks_attempted},
             {"Progress task", progress_task},
             {"Progress Queue", progress_queue},
@@ -193,5 +196,7 @@ using json = nlohmann::json;
             {"Queue", vec}};
         return j;
     }
+
+
  
 

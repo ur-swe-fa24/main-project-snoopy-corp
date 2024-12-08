@@ -1,5 +1,6 @@
 #include "database/mongoDBWrapper.hpp"
 #include "sim_lib/robot.hpp"
+#include "sim_lib/map.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/catch_approx.hpp>
@@ -20,16 +21,17 @@ TEST_CASE("MongoDBWrapper Unit Tests", "[MongoDBWrapper]") {
     const std::string testDbName = "test_robot_db";
     const std::string activeCollection = "active_robots";
     const std::string removedCollection = "removed_robots";
+    const std::string errorLog = "error_log";
 
     // Create a test MongoDB wrapper
-    MongoDBWrapper mongoWrapper(testUri, testDbName, activeCollection, removedCollection);
+    MongoDBWrapper mongoWrapper(testUri, testDbName, activeCollection, removedCollection, errorLog);
 
     SECTION("Upsert Robot Data") {
-        // nlohmann::json roomsEx1 = {
-        // {"3", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
-        // {"4", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
-        // {"5", {{"Room", "Bathroom"}, {"Cleaning Status", "Clean"}, {"FloorType", "Tile"}}}};
-        // Map map = Map("TestMap", roomsEx1);
+        nlohmann::json roomsEx1 = {
+        {"3", {{"Room", "Kitchen"}, {"Cleaning Status", "Unclean"}, {"FloorType", "Wood"}}},
+        {"4", {{"Room", "Office"}, {"Cleaning Status", "Clean"}, {"FloorType", "Carpet"}}},
+        {"5", {{"Room", "Bathroom"}, {"Cleaning Status", "Clean"}, {"FloorType", "Tile"}}}};
+        Map map = Map("TestMap", roomsEx1);
         Robot robo = Robot(RobotType::Scrubber, 101);
         robo.move(5);
         int robotId = 101;
