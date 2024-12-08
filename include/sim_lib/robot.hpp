@@ -65,6 +65,7 @@ class Robot{
         float genFailRate();
         float getFailRate() { return failure_rate; }
         void popQueue();
+        void setQueue(std::queue<int> q) { queue = q; }
         void setStatus(Status s);
         void setId(int newId);
         void setPauseTicks(int s) { pause_ticks = s; }

@@ -65,7 +65,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     
     // Main menu: Panel that will direct user based on selected job type
     mainMenu = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    mainMenu->SetBackgroundColour(wxColor(155, 204, 229));
+    // mainMenu->SetBackgroundColour(wxColor(155, 204, 229));
     
     // Buttons on Main Menu to direct users to their job screens
     wxBoxSizer* mainMenuSizer = new wxBoxSizer(wxVERTICAL);
@@ -93,7 +93,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines engineer screen and its contents
     engineerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    engineerPanel->SetBackgroundColour(wxColor(255, 204, 229));
+    // engineerPanel->SetBackgroundColour(wxColor(255, 204, 229));
     
     wxButton* goHome = new wxButton(engineerPanel, ID_GoHome, "Home");
     wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Live Dashboard");
@@ -116,7 +116,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines manager screen and its contents
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
+    // managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
     
     wxButton* goHome1 = new wxButton(managerPanel, ID_GoHome, "Home");
     wxButton* assignTasks1 = new wxButton(managerPanel, ID_AssignTasks, "Assign Tasks");
@@ -133,7 +133,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines staff screen and its contents
     staffPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
+    // staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
     
     wxButton* goHome2 = new wxButton(staffPanel, ID_GoHome, "Home");
     wxButton* assignTasks2 = new wxButton(staffPanel, ID_AssignTasks, "Assign Tasks");
@@ -150,7 +150,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines senior manager screen and its contents
     seniorManagerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
+    // seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
     wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
     wxButton* goHome3 = new wxButton(seniorManagerPanel, ID_GoHome, "Home");
     wxButton* feedback = new wxButton(seniorManagerPanel, ID_Feedback, "Give Feedback");

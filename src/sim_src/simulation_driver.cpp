@@ -126,9 +126,11 @@
     };
 
     void SimulationDriver::update_all(){
+        std::cout << "update all called \n";
         pthread_rwlock_wrlock(&robotsLock);
         for(Robot& r : robots){
             update(r);
+            std::cout << "updating: " << r.toString() << "\n";
         }
         pthread_rwlock_unlock(&robotsLock);
         if (mongo_wrapper){
@@ -190,8 +192,30 @@
                 // std::cout << "clean about to be called; ";
                 bool successfulClean = r.clean();
                 if(!successfulClean){
+                    // std::queue<int> tempQueue = r.getQueue();
+                    // std::vector<int> reassignment = {};
+                    // std::cout << "To be potentially reassigned: ";
+                    // while (!tempQueue.empty()) {
+                    //     reassignment.push_back(tempQueue.front());
+                    //     std::cout << tempQueue.front() << ", ";
+                    //     tempQueue.pop();
+                    // }
+                    // std::cout << "\n";
+                    // std::vector<int> reassigned = re_assignmentModule(reassignment);
+                    // std::cout << "Actually reassigned: ";
+                    // if(reassigned.size() > 0){
+                    //     for(int r : reassigned){
+                    //         tempQueue.push(r);
+                    //         std::cout << r << ", ";
+                    //     }
+                    // }
+                    // std::cout << "\n" << "HERE ";
+                    // r.setQueue(tempQueue);
+                    std::cout << "HERE2 ";
                     r.move(-1);
                     int choice = rand() % 2;
+                    std::cout << "HERE3 ";
+
                     switch(choice){     // SEND ERROR TO MONGODB
                         case 1:
                             reportSimError(r.reportError(), "Cannot clean room due to Robot Damage");
@@ -247,6 +271,7 @@ int SimulationDriver::fixRobot(int id){
 
 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
+    std::cout << "Size of incoming: " << tasks.size();
     std::vector<int> unAssignedTasks = {};
     std::set<int> taskSet = {};
     alreadyAssigned.insert(-1);
@@ -267,7 +292,7 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
                     break;
                 }
             }
-            if(valid_type){   // TYPE MATCHES FLOOR TYPE
+            if(valid_type && r.getStatus() != Status::Error && r.getStatus() != Status::BeingFixed){   // TYPE MATCHES FLOOR TYPE & ROBOT WORKS
                 if(r.timeRemaining() < min_time){
                     min_time = r.timeRemaining();
                     min_robot_id = r.getId();
@@ -288,7 +313,54 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
         }
         // pthread_rwlock_unlock(&robotsLock);
     }
-    // std::cout << "size: " << unAssignedTasks.size() << "\n";
+    std::cout << "size: " << unAssignedTasks.size() << "\n";
+    return unAssignedTasks;
+}
+
+std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
+    std::cout << "Size of incoming: " << tasks.size() << "\n";
+    std::vector<int> unAssignedTasks = {};
+    std::set<int> taskSet = {};
+    // alreadyAssigned.insert(-1);
+    for(int task : tasks){
+        taskSet.insert(task);
+    }
+    for(int task : taskSet){
+        // if(alreadyAssigned.count(task) == 1) break;
+        std::string task_string = std::to_string(task);
+        int min_time = INT_MAX;
+        int min_robot_id = -1;
+        for(auto r : robots){
+            std::vector<std::string> valid_floors = type_mappings[r.getType()];
+            bool valid_type = false;
+            for(auto f : valid_floors){
+                if(selectedMap.getFloorType(task_string) == f) {
+                    valid_type = true;
+                    break;
+                }
+            }
+            if(valid_type && r.getStatus() != Status::Error && r.getStatus() != Status::BeingFixed){   // TYPE MATCHES FLOOR TYPE & ROBOT WORKS
+                if(r.timeRemaining() < min_time){
+                    min_time = r.timeRemaining();
+                    min_robot_id = r.getId();
+                }
+            }
+        }
+        // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
+        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        // pthread_rwlock_wrlock(&robotsLock);
+        if(min_robot_id == -1){
+            std::cout << "not reassigned";
+        }
+        else{
+            this->getRobot(min_robot_id)->addTask(task);    //add task
+            std::cout << "Assigned: " << task << "\n";
+            // alreadyAssigned.insert(task);
+
+        }
+        // pthread_rwlock_unlock(&robotsLock);
+    }
+    std::cout << "size of unassigned: " << unAssignedTasks.size() << "\n";
     return unAssignedTasks;
 }
 
