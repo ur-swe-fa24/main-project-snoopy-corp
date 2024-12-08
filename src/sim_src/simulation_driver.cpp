@@ -10,13 +10,13 @@
 
 
     // Default constructor 
-    SimulationDriver::SimulationDriver() : mongo_wrapper(std::nullopt){
+    SimulationDriver::SimulationDriver() : mongo_wrapper(std::nullopt), start(std::chrono::system_clock::now()){
         if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
     }
 
-    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(std::nullopt) {
+    SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(std::nullopt), start(std::chrono::system_clock::now()) {
             if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
@@ -237,7 +237,7 @@ int SimulationDriver::fixRobot(int id){
 }           
 
     void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
-        float time = (std::chrono::system_clock::now() - start).count()/1000;
+        float time = (std::chrono::duration<float>(std::chrono::system_clock::now() - start)).count();
         robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
