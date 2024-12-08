@@ -230,7 +230,7 @@ int SimulationDriver::fixRobot(int id){
                 // pthread_rwlock_unlock(&robotsLock);
                 r.setStatus(Status::BeingFixed);
                 r.setBatteryLevel(60);
-                r.setPauseTicks(50);
+                r.setPauseTicks(10);
             }
         }
         pthread_rwlock_unlock(&robotsLock);
