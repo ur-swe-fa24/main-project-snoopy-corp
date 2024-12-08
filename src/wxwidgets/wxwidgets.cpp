@@ -336,8 +336,8 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             // Historical Dashboard
             historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
             //wxString mystring = wxString::Format(wxT("%i"), robot.getTC()); //tasks completed int -> wxstring
-            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Task completed"].dump());
-            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task attempted"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Task attempted"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task completed"].dump());
             //wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency()); //efficiency int -> wxstring
             historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Efficiency"].dump());
 
@@ -416,8 +416,8 @@ void MainFrame::refresh() {
 
         // Historical Dashboard
         //wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
-        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Task completed"].dump()); //tasks completed int -> wxstring
-        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task attempted"].dump());
+        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Task attempted"].dump()); //tasks completed int -> wxstring
+        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task completed"].dump());
         //wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
         historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
     }
