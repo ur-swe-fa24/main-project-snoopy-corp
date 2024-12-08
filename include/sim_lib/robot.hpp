@@ -21,15 +21,8 @@ class Robot{
 
     public: 
         Robot();
-        // Robot(RobotType type, int id);
         Robot(RobotType type, int id);
         Robot(RobotType type, int id, float failure_rate);
-
-        // Copy constructor
-        // Robot(const Robot& other);
-
-        // Move operator
-        // Robot& operator=(Robot&& other);
         
         float getEfficiency();
         void incrementTasksAttempted() { tasks_attempted += 1; }
@@ -48,7 +41,6 @@ class Robot{
         int getBatteryLevel();
         void incrementBatteryLevel(int amt);
         void setBatteryLevel(int amt) { battery_level = amt; }
-        void update();  // calls the robot's internal logic to clean, reportError, etc. - basically a time update from the simulation driver
         static std::string typeToString(RobotType type);
 
         static std::string statusToString(Status status);  
@@ -77,16 +69,15 @@ class Robot{
     protected:
         int id;
         RobotType type;
-        Status status = Status::Active;
+        Status status = Status::Inactive;
         int location = 0;   // an index of where it is on the currently loaded map
-        int tasks_completed; // lifetime counter 
-        int tasks_attempted; // lifetime counter
-        int progress_task;  // progresss through current task (out of 10)
-        int progress_queue; // progress through current queue, can get length of the queue itself to see how much left
-        std::queue<int> queue;
-        int battery_level;
-        float failure_rate;
-             //triggered when clean() returns false
+        int tasks_completed = 0; // lifetime counter 
+        int tasks_attempted = 0; // lifetime counter
+        int progress_task = 0;  // progresss through current task (out of 10)
+        int progress_queue = 0; // progress through current queue, can get length of the queue itself to see how much left
+        std::queue<int> queue; // Queue of tasks
+        int battery_level; // Battery level of robot
+        float failure_rate; //Trigger for robot clean returning false and having clean error
 
         std::mt19937 gen;
         std::uniform_real_distribution<float> float_distribution;
