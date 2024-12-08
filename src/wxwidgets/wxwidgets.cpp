@@ -286,14 +286,13 @@ void MainFrame::viewHistoricalData(wxCommandEvent& event) {
 // Button function to open error dashboard
 void MainFrame::viewErrorDashboard( wxCommandEvent& event ) {
     json errors = mongo_wrapper.getAllDataAsJson("error_log");
-    if (errorDashboard->errorListView->GetItemCount() != errors.size()) {
-        for (int i = ((errorDashboard->errorListView->GetItemCount()) - 1); i < errors.size(); i++) {
-            errorDashboard->errorListView->InsertItem(i, errors["ErrorNotes"].dump());
-            errorDashboard->errorListView->SetItem(i, 1, errors["ID"].dump());
-            errorDashboard->errorListView->SetItem(i, 2, errors["Location"].dump());
-            errorDashboard->errorListView->SetItem(i, 3, errors["Time"].dump());
-        }
-    }
+    
+    /*
+    errorDashboard->errorListView->InsertItem(i, errors["ErrorNotes"].dump());
+    errorDashboard->errorListView->SetItem(i, 1, errors["ID"].dump());
+    errorDashboard->errorListView->SetItem(i, 2, errors["Location"].dump());
+    errorDashboard->errorListView->SetItem(i, 3, errors["Time"].dump());
+    */
 
     std::cout << errorDashboard->errorListView->GetItemCount() << std::endl;
     std::cout << errors << std::endl;
@@ -345,9 +344,9 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
             //wxString mystring = wxString::Format(wxT("%i"), robot.getTC()); //tasks completed int -> wxstring
             historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Task attempted"].dump());
-            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task completed"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Tasks completed"].dump());
             //wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency()); //efficiency int -> wxstring
-            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Efficiency"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 3, robotJson["Efficiency"].dump());
 
             integer++;
         }
@@ -431,9 +430,9 @@ void MainFrame::refresh() {
         // Historical Dashboard
         //wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
         historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Task attempted"].dump()); //tasks completed int -> wxstring
-        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task completed"].dump());
+        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Tasks completed"].dump());
         //wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
-        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
+        historicalDashboard->historicalListView->SetItem(i, 3, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
     }
 }
 
