@@ -1,8 +1,8 @@
 #include "wxwidgets_lib/wxdashboard.hpp"
 
-WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(1000, 700)) {
+WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(860, 350)) {
     // Create a panel inside the dialog
-    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(1000, 700));
+    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(860, 350));
     liveDashboard->SetBackgroundColour(wxColor(255, 204, 229));
     robotListView = new wxListView(liveDashboard);
     
@@ -17,7 +17,7 @@ WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Ro
     robotListView->SetColumnWidth(3, 120);
     robotListView->AppendColumn("Battery Level");
     robotListView->SetColumnWidth(4, 120);
-    robotListView->AppendColumn("Tasks Completed");
+    robotListView->AppendColumn("Queue Length");
     robotListView->SetColumnWidth(5, 120);
     robotListView->AppendColumn("Current Room Status");
     robotListView->SetColumnWidth(6, 180);

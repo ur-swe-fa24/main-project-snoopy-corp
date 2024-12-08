@@ -71,6 +71,7 @@ add_library(wxwidgets_lib
   src/wxwidgets/wxwidgets.cpp
   src/wxwidgets/wxdashboard.cpp
   src/wxwidgets/wxtaskbox.cpp
+  src/wxwidgets/wxhistoricalData.cpp
 )
 
 target_include_directories(wxwidgets_lib
