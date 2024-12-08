@@ -188,7 +188,7 @@ using json = nlohmann::json;
             // {"Map", currentMap.getName()},
             {"Location", location},
             // {"Room Status", getRoomStatus()},
-            {"Tasks completed", tasks_completed},
+            {"Queue Length", queue.size()}, //Time remaining
             {"Task attempted", tasks_attempted},
             {"Progress task", progress_task},
             {"Progress Queue", progress_queue},

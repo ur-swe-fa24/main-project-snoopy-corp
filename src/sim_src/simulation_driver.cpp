@@ -4,7 +4,6 @@
 #include <iostream>
 #include <magic_enum.hpp>
 #include <algorithm>
-#include <iostream>
 #include <random>
 #include <cstdlib>
 #include <set>
