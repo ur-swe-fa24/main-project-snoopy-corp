@@ -1,22 +1,23 @@
 # Class Diagram
 ![class_diagram](/docs/design/png_files/class_diagram.png)
 
-The class diagram shows the various objects that will be present in our project. 
+The UML diagram represents the design of a simulation and control system for robots, with components for database management, simulation drivers, a wxWidgets-based GUI, and specific robot types.
 
-The Simulation Driver stores the fleet of robots and serves as the main 'clock' via a thread implementation which will prompt the robots in the fleet to update (clean or move) and store their data in the MongoDB, and will prompt the MongoDBWrapper to push that data to the database.
+### Key Components:
+1. **Simulation and Map Management**:
+   - `SimulationDriver`: Core simulation engine handling robot interactions, map updates, and task scheduling.
+   - `Map`: Represents the environment, supporting features like cleaning status and robot allocation.
 
-The MainFrame class has three variants; the Live Robot Dashboard and Metrics Dashboard have information for their relevant staff, while the Error Log tracks Robot errors with the relevant info and time.
+2. **Robot Hierarchy**:
+   - `Robot`: Base class defining shared robot attributes (e.g., ID, type, status) and behaviors.
+   - Specialized robots: Includes `ScrubberRobot`, `ShampooRobot`, and `VacuumRobot`, each with specific functionalities.
 
-The MongoDBWrapper wraps the database which stores all of the dashboard's information on the back end. When prompted periodically by the Simulation Driver, it will refresh the visual dashboard's information.
+3. **Database Management**:
+   - `MongoDBWhisper`: Manages MongoDB connections, ensuring simulation data is stored and retrieved effectively.
 
-MyWidget loads the app.
+4. **wxWidgets GUI and Dashboard**:
+   - `MainFrame`: Central interface for user interaction, linking dashboards and data views.
+   - Views include `WxDashboard`, `WxServiceData`, and `WxTaskbox`, each focusing on distinct operational aspects.
 
-MainFrame handles the logic for the GUI, and incorporates it with the backend (adding, removing robots, etc). 
-
-The closely related WxDashboard displays the availible robots.
-
-The Map class contains the JSON map of the room as well as the status of each room by index.
-
-The Robot class and its three children represent the actual robots.
-
-Finally, the various enum types are used to represent objects in the real world (such as a robot's type, its current status, or the floor type).
+5. **Enums**:
+   - Includes enumerations for robot types, states, and floor types, standardizing system variables.
