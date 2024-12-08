@@ -1,3 +1,4 @@
+
 @startuml class_diagram
 skinparam groupInheritance 3
 
@@ -256,3 +257,6 @@ package "Database Management" {
     SimulationDriver ..> MongoDBWrapper
     MainFrame ..> MongoDBWrapper
 }
+
+@enduml
+

@@ -12,6 +12,7 @@
 #include "wxdashboard.hpp"
 #include "wxtaskbox.hpp"
 #include "wxhistoricalData.hpp"
+#include "wxerrorDashboard.hpp"
 #include "database/mongoDBWrapper.hpp"
 
 // Container class for the window, or frame in MainFrame
@@ -35,6 +36,7 @@ private:
     wxBoxSizer* mainSizer;
     WxDashboard* liveDashboard;
     WxHistoricalData* historicalDashboard;
+    WxErrorDashboard* errorDashboard;
 
     Map map;
     MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "Robots", "active_robots", "removed_robots", "error_log");
@@ -52,6 +54,7 @@ private:
     void switchToManager ( wxCommandEvent& event ); // Switches screen to manager perspective
     void switchToSeniorManager ( wxCommandEvent& event ); // Switches screen to senior manager perspective
     void switchToLiveDashboard( wxCommandEvent& event ); // pops up live dashboard
+    void viewErrorDashboard( wxCommandEvent& event ); // pops up error dashboard
     
     void addRobot( wxCommandEvent& event ); // Add robot information to list
     void deleteRobot( wxCommandEvent& event ); // Delete robot from list and simulation driver
@@ -80,6 +83,7 @@ enum {
     ID_ViewHistoricalData = 1009,
     ID_FixRobot = 1010,
     ID_Feedback = 1011,
+    ID_ToErrorDashboard = 1012,
     ID_Exit = wxID_EXIT
 };
 

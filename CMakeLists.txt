@@ -70,6 +70,7 @@ target_link_libraries(sim_lib
 add_library(wxwidgets_lib
   src/wxwidgets/wxwidgets.cpp
   src/wxwidgets/wxdashboard.cpp
+  src/wxwidgets/wxerrorDashboard.cpp
   src/wxwidgets/wxtaskbox.cpp
   src/wxwidgets/wxhistoricalData.cpp
 )
