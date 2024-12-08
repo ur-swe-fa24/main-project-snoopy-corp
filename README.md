@@ -29,7 +29,7 @@ Check out our [User Guide](/docs/user_guide/USER_GUIDE.md)!
 
 Check out our [Design Documentation](/docs/design/DESIGN.md)!
 
-Check out our [contribution statement](/docs/contributions)!
+Check out our [Contribution Statements](/docs/contributions)!
 
 # (Our Awesome Product) Overview
 
