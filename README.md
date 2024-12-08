@@ -25,15 +25,11 @@ Following this process is critical to earning your assessment mark at each deliv
 
 ## Documentation
 
-+ [docs](docs/README.md)
-    + [Customer Interview Document](docs/notes/customer_interview_document.md)
-    + [Initial Staffing Plan](docs/notes/initial_staffing_plan.md)
-    + [Contribution Statements](docs/contributions)
-        1. [Sprint0 Contribution Adelina Gutic](docs/contributions/Sprint0_Contribution_AdelinaGutic.md)
-        2. [Sprint0 Contribution Brett Barnes](docs/contributions/Sprint0_Contribution_BrettBarnes.md)
-        3. [Sprint0 Contribution Dhruvam Desai](docs/contributions/Sprint0_Contribution_DhruvamDesai.md)
-        4. [Sprint0 Contribution Skyler He](docs/contributions/Sprint0_Contribution_SkylerHe.md)
----
+Check out our [User Guide](/docs/user_guide/USER_GUIDE.md)!
+
+Check out our [Design Documentation](/docs/design/DESIGN.md)!
+
+Check out our [contribution statement](/docs/contributions)!
 
 # (Our Awesome Product) Overview
 
