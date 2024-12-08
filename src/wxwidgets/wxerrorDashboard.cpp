@@ -10,11 +10,11 @@ WxErrorDashboard::WxErrorDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY
     errorListView->AppendColumn("Error Notes");
     errorListView->SetColumnWidth(0, 300);
     errorListView->AppendColumn("ID");
-    errorListView->SetColumnWidth(0, 80);
+    errorListView->SetColumnWidth(1, 80);
     errorListView->AppendColumn("Location");
-    errorListView->SetColumnWidth(0, 150);
+    errorListView->SetColumnWidth(2, 150);
     errorListView->AppendColumn("Time");
-    errorListView->SetColumnWidth(0, 300);
+    errorListView->SetColumnWidth(3, 300);
     
 
     wxBoxSizer* errorViewSizer = new wxBoxSizer(wxVERTICAL);

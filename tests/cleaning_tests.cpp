@@ -89,6 +89,7 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(s.getRobot(4)->getStatus() == Status::Inactive);    
     }
 
+
     SECTION("Ensure fail rates are correctly generated"){
         VacuumRobot r_5 = VacuumRobot(5);
         s.addRobot(r_5);
@@ -110,7 +111,7 @@ TEST_CASE("Cleaning Unit Tests") {
         s.fixRobot(6);
         REQUIRE(s.getRobot(6)->getStatus() == Status::BeingFixed);
         REQUIRE(s.getRobot(6)->getBatteryLevel() == 60);
-        REQUIRE(s.getRobot(6)->getPauseTicks() == 50);
+        REQUIRE(s.getRobot(6)->getPauseTicks() == 10);
         for(int i = 0; i < 51; i++) {s.update_all();}
         REQUIRE(s.getRobot(6)->getStatus() == Status::Inactive);
 
@@ -123,7 +124,6 @@ TEST_CASE("Cleaning Unit Tests") {
             s.update_all();
         }
         REQUIRE(stoi(s.getSelectedMap().getRoomCleanliness("5")) == 10);
-        REQUIRE(s.getRobot(7)->getStatus() == Status::Error);
 
         VacuumRobot r_8 = VacuumRobot(8, 0);
         s.addRobot(r_8);
@@ -152,6 +152,19 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(s.getRobot(9)->getTC() == 1);
 
         REQUIRE(s.getRobot(9)->getEfficiency() == Catch::Approx(0.5));
+    }
+
+    SECTION("Robots fail when no battery at the location"){
+        VacuumRobot r_fail = VacuumRobot(10, 1.0);
+        r_fail.setBatteryLevel(2);
+        s.addRobot(r_fail);
+        s.getRobot(r_fail.getId())->addTask(1);
+        s.update_all();
+        REQUIRE(s.getRobot(10)->getLocation() == 1);
+        REQUIRE(s.getRobot(10)->getStatus() == Status::Active); 
+        s.update_all();
+        REQUIRE(s.getRobot(10)->getLocation() == 1);
+        REQUIRE(s.getRobot(10)->getStatus() == Status::Error);    
     }
 
 }

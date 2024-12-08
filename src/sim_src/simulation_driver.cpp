@@ -156,10 +156,7 @@
     }
 
     void SimulationDriver::update(Robot& r){
-        if(r.getBatteryLevel() <= 0){
-            reportSimError(r.reportError(), "Battery has died :(");
-        }
-        else if(r.getStatus() == Status::Inactive)
+        if(r.getStatus() == Status::Inactive)
         {
             // std::cout << r.getId() << " has status inactive" << "\n";
             if(r.getQueue().size() != 0)
@@ -204,6 +201,7 @@
                 // std::cout << "clean about to be called; ";
                 bool successfulClean = r.clean();
                 if(!successfulClean){
+                    r.decrementBatteryLevel(1);
                     r.setStatus(Status::Error);
                     std::queue<int> tempQueue = r.getQueue();
                     // tempQueue.push(r.getLocation());
@@ -226,9 +224,6 @@
                     std::cout << "\n" << "HERE ";
                     r.setQueue(tempQueue);
                     // r.clearQueue();
-
-                    std::cout << "HERE2 ";
-                    r.move(-1);
                     int choice = rand() % 2;
                     std::cout << "HERE3 ";
 
@@ -240,24 +235,31 @@
                             reportSimError(r.reportError(), "Cannot clean room due to Sensor Error");
                             return;
                     }
+                    r.move(-1);
                 }
                 else{
                     int current_cleanliness = std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation())));
                     current_cleanliness++;
                     selectedMap.updateRoomCleanliness(std::to_string(r.getLocation()), std::to_string(current_cleanliness));
                     
-                    if (r.getBatteryLevel() == 0){
+                    if (r.getBatteryLevel() <= 0){
                         reportSimError(r.reportError(), "Robot Battery Died");
+                        r.setStatus(Status::Error);
                     }
                 }
-                r.incrementBatteryLevel(1);
+                r.decrementBatteryLevel(1);
                 
             }
         }
         else if(r.getStatus() == Status::BeingFixed)
         {
-            if(r.getPauseTicks() > 0) r.incrementPauseTicks();
-            else r.setStatus(Status::Inactive);
+            if(r.getPauseTicks() > 0) {
+                r.decrementPauseTicks();
+            }
+            else {
+                r.setStatus(Status::Inactive);
+                messages.insert(messages.end(), nlohmann::json{{"Type", "Clean Complete"},{"Message", "Robot " + std::to_string(r.getId()) + " has been fixed!"}});
+            }
         }
         // pthread_rwlock_unlock(&robotsLock); 
     }
@@ -269,6 +271,7 @@ int SimulationDriver::fixRobot(int id){
                 // pthread_rwlock_unlock(&robotsLock);
                 r.setStatus(Status::BeingFixed);
                 r.setBatteryLevel(60);
+                r.move(-1);
                 r.setPauseTicks(10);
             }
         }
@@ -283,8 +286,9 @@ int SimulationDriver::fixRobot(int id){
         robotErr["ErrorNotes"] = errorNotes;
         if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
         robotErr["Message"] = "Error has occured for robot " + 
-                        std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + robotErr["location"].dump()
-                        + " due to " + errorNotes;
+                        std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + 
+                        selectedMap.getRoomName(std::to_string(std::stoi(robotErr["Location"].dump())))
+                        + " because " + errorNotes;
         robotErr["Type"] = "Error";
         messages.insert(messages.end(), robotErr);
     }

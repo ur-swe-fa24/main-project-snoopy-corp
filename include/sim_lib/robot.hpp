@@ -39,7 +39,7 @@ class Robot{
         void addTask(int room);
         void addTask(std::vector<int> rooms);
         int getBatteryLevel();
-        void incrementBatteryLevel(int amt);
+        void decrementBatteryLevel(int amt);
         void setBatteryLevel(int amt) { battery_level = amt; }
         static std::string typeToString(RobotType type);
 
@@ -62,7 +62,7 @@ class Robot{
         void setStatus(Status s);
         void setId(int newId);
         void setPauseTicks(int s) { pause_ticks = s; }
-        void incrementPauseTicks() { pause_ticks -= 1; }
+        void decrementPauseTicks() { pause_ticks -= 1; }
         int getPauseTicks() { return pause_ticks; }
         void chargeRobot() { battery_level += 2; }
         int timeRemaining() { return queue.size()*10; }

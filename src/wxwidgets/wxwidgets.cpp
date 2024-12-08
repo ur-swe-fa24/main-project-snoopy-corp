@@ -286,13 +286,6 @@ void MainFrame::viewHistoricalData(wxCommandEvent& event) {
 // Button function to open error dashboard
 void MainFrame::viewErrorDashboard( wxCommandEvent& event ) {
     json errors = mongo_wrapper.getAllDataAsJson("error_log");
-    
-    /*
-    errorDashboard->errorListView->InsertItem(i, errors["ErrorNotes"].dump());
-    errorDashboard->errorListView->SetItem(i, 1, errors["ID"].dump());
-    errorDashboard->errorListView->SetItem(i, 2, errors["Location"].dump());
-    errorDashboard->errorListView->SetItem(i, 3, errors["Time"].dump());
-    */
 
     std::cout << errorDashboard->errorListView->GetItemCount() << std::endl;
     std::cout << errors << std::endl;
@@ -365,9 +358,9 @@ void MainFrame::deleteRobot(wxCommandEvent& event) {
             liveDashboard->robotListView->DeleteItem(itemIndex); // Delete the item
             historicalDashboard->historicalListView->DeleteItem(itemIndex);
             integer--;
-            wxMessageBox("Item with ID " + dialog.GetValue() + " deleted.", "Success");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " deleted.", "Success");
         } else {
-            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " not found.", "Error");
         }
     } 
 }
@@ -395,9 +388,9 @@ void MainFrame::fixRobot(wxCommandEvent& event) {
         if (itemIndex != -1) {
             int id = std::stoi(std::string((dialog.GetValue()).mb_str()));
             int number = simDriver.fixRobot(id);
-            wxMessageBox("Item with ID " + dialog.GetValue() + " is being fixed.", "Success");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " is being fixed.", "Success");
         } else {
-            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " not found.", "Error");
         }
     }
 }
@@ -437,10 +430,16 @@ void MainFrame::refresh(std::vector<nlohmann::json> messages) {
 
     // Messages Popups
     for (nlohmann::json message : messages){
-        wxMessageBox(message.dump(4));
+        
         if (message["Type"] == "Error"){
-            // Adding error to errorDashboard
+            int i = errorDashboard->errorListView->GetItemCount();
+            errorDashboard->errorListView->InsertItem(i, message["ErrorNotes"].dump());
+            errorDashboard->errorListView->SetItem(i, 1, message["ID"].dump());
+            errorDashboard->errorListView->SetItem(i, 2, message["Location"].dump());
+            errorDashboard->errorListView->SetItem(i, 3, message["Time"].dump());
         }
+
+        wxMessageBox(message["Message"].template get<std::string>(), message["Type"].template get<std::string>());
     }
 }
 
