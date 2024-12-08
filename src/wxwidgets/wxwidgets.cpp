@@ -65,7 +65,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     
     // Main menu: Panel that will direct user based on selected job type
     mainMenu = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    mainMenu->SetBackgroundColour(wxColor(155, 204, 229));
+    // mainMenu->SetBackgroundColour(wxColor(155, 204, 229));
     
     // Buttons on Main Menu to direct users to their job screens
     wxBoxSizer* mainMenuSizer = new wxBoxSizer(wxVERTICAL);
@@ -93,7 +93,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines engineer screen and its contents
     engineerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    engineerPanel->SetBackgroundColour(wxColor(255, 204, 229));
+    // engineerPanel->SetBackgroundColour(wxColor(255, 204, 229));
     
     wxButton* goHome = new wxButton(engineerPanel, ID_GoHome, "Home");
     wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Live Dashboard");
@@ -116,7 +116,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines manager screen and its contents
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
+    // managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
     
     wxButton* goHome1 = new wxButton(managerPanel, ID_GoHome, "Home");
     wxButton* assignTasks1 = new wxButton(managerPanel, ID_AssignTasks, "Assign Tasks");
@@ -133,7 +133,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines staff screen and its contents
     staffPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
+    // staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
     
     wxButton* goHome2 = new wxButton(staffPanel, ID_GoHome, "Home");
     wxButton* assignTasks2 = new wxButton(staffPanel, ID_AssignTasks, "Assign Tasks");
@@ -150,7 +150,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines senior manager screen and its contents
     seniorManagerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
+    // seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
     wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
     wxButton* goHome3 = new wxButton(seniorManagerPanel, ID_GoHome, "Home");
     wxButton* feedback = new wxButton(seniorManagerPanel, ID_Feedback, "Give Feedback");
@@ -301,15 +301,22 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             json robotJson = robot.toJson();
             
             // Live Dashboard
+            std::string t = robotJson["Type"].dump();
+            std::string s = robotJson["Status"].dump();
+
             liveDashboard->robotListView->InsertItem(integer, robotJson["ID"].dump());
-            liveDashboard->robotListView->SetItem(integer, 1, robotJson["Type"].dump());
-            liveDashboard->robotListView->SetItem(integer, 2, robotJson["Status"].dump());
+            liveDashboard->robotListView->SetItem(integer, 1, t.substr(1, t.size()-2));
+            liveDashboard->robotListView->SetItem(integer, 2, s.substr(1, s.size()-2));
             if(robotJson["Location"].dump() == "-1")
                 liveDashboard->robotListView->SetItem(integer, 3, "Charging Station");
             else
-                liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
+                liveDashboard->robotListView->SetItem(integer, 3, map.getRoomName(robotJson["Location"].dump()));
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
-            liveDashboard->robotListView->SetItem(integer, 5, robotJson["Queue Length"].dump());
+            if(s.substr(1, s.size()-2) == "Active")
+                liveDashboard->robotListView->SetItem(integer, 5, std::to_string(stoi(robotJson["Queue Length"].dump()) - 1)); 
+            else
+                liveDashboard->robotListView->SetItem(integer, 5, robotJson["Queue Length"].dump()); 
+
              if(robotJson["Location"].dump() == "-1")
                 liveDashboard->robotListView->SetItem(integer, 6, "N/A");
             else
@@ -378,14 +385,20 @@ void MainFrame::refresh() {
     for (int i = 0; i < robotFleet.size(); i++) {
         
         // Live Dashboard
-        liveDashboard->robotListView->SetItem(i, 1, robotFleet[i]["Type"].dump());
-        liveDashboard->robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
+        std::string t = robotFleet[i]["Type"].dump();
+        std::string s = robotFleet[i]["Status"].dump();
+
+        liveDashboard->robotListView->SetItem(i, 1, t.substr(1, t.size()-2));
+        liveDashboard->robotListView->SetItem(i, 2, s.substr(1, s.size()-2));
         if(robotFleet[i]["Location"].dump() == "-1")
             liveDashboard->robotListView->SetItem(i, 3, "Charging Station");
         else
-            liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
+            liveDashboard->robotListView->SetItem(i, 3, map.getRoomName(robotFleet[i]["Location"].dump()));
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
-        liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Queue Length"].dump()); 
+        if(s.substr(1, s.size()-2) == "Active")
+            liveDashboard->robotListView->SetItem(i, 5, std::to_string(stoi(robotFleet[i]["Queue Length"].dump()) - 1)); 
+        else
+            liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Queue Length"].dump()); 
         if(robotFleet[i]["Location"].dump() == "-1")
                     liveDashboard->robotListView->SetItem(i, 6, "N/A");
         else
