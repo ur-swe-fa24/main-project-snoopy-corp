@@ -42,6 +42,7 @@ class Robot{
         int getProgressTask();
         int getProgressQueue();
         std::queue<int> getQueue();
+        void clearQueue();
         void addTask(int room);
         void addTask(std::vector<int> rooms);
         int getBatteryLevel();

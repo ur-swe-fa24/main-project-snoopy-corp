@@ -115,6 +115,15 @@
         return nullptr;
     }
 
+    Robot* SimulationDriver::internal_getRobot(int id) {
+        for(int i = 0; i < robots.size(); i++){
+            if(robots[i].getId()==id){
+                return &robots[i];
+            }
+        }
+        return nullptr;
+    }
+
     std::vector<nlohmann::json> SimulationDriver::getFleet() {
         pthread_rwlock_rdlock(&robotsLock);
         std::vector<nlohmann::json> info;
@@ -192,25 +201,29 @@
                 // std::cout << "clean about to be called; ";
                 bool successfulClean = r.clean();
                 if(!successfulClean){
-                    // std::queue<int> tempQueue = r.getQueue();
-                    // std::vector<int> reassignment = {};
-                    // std::cout << "To be potentially reassigned: ";
-                    // while (!tempQueue.empty()) {
-                    //     reassignment.push_back(tempQueue.front());
-                    //     std::cout << tempQueue.front() << ", ";
-                    //     tempQueue.pop();
-                    // }
-                    // std::cout << "\n";
-                    // std::vector<int> reassigned = re_assignmentModule(reassignment);
-                    // std::cout << "Actually reassigned: ";
-                    // if(reassigned.size() > 0){
-                    //     for(int r : reassigned){
-                    //         tempQueue.push(r);
-                    //         std::cout << r << ", ";
-                    //     }
-                    // }
-                    // std::cout << "\n" << "HERE ";
-                    // r.setQueue(tempQueue);
+                    r.setStatus(Status::Error);
+                    std::queue<int> tempQueue = r.getQueue();
+                    // tempQueue.push(r.getLocation());
+                    std::vector<int> reassignment = {};
+                    std::cout << "To be potentially reassigned: ";
+                    while (!tempQueue.empty()) {
+                        reassignment.push_back(tempQueue.front());
+                        std::cout << tempQueue.front() << ", ";
+                        tempQueue.pop();
+                    }
+                    std::cout << "\n";
+                    std::vector<int> reassigned = re_assignmentModule(reassignment);
+                    std::cout << "Actually reassigned: ";
+                    if(reassigned.size() > 0){
+                        for(int r : reassigned){
+                            tempQueue.push(r);
+                            std::cout << r << ", ";
+                        }
+                    }
+                    std::cout << "\n" << "HERE ";
+                    r.setQueue(tempQueue);
+                    // r.clearQueue();
+
                     std::cout << "HERE2 ";
                     r.move(-1);
                     int choice = rand() % 2;
@@ -271,6 +284,7 @@ int SimulationDriver::fixRobot(int id){
 
 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
+    pthread_rwlock_wrlock(&robotsLock);
     std::cout << "Size of incoming: " << tasks.size();
     std::vector<int> unAssignedTasks = {};
     std::set<int> taskSet = {};
@@ -307,13 +321,14 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
         }
         else{
-            this->getRobot(min_robot_id)->addTask(task);    //add task
+            this->internal_getRobot(min_robot_id)->addTask(task);    //add task
             alreadyAssigned.insert(task);
 
         }
         // pthread_rwlock_unlock(&robotsLock);
     }
     std::cout << "size: " << unAssignedTasks.size() << "\n";
+    pthread_rwlock_unlock(&robotsLock);
     return unAssignedTasks;
 }
 
@@ -350,11 +365,13 @@ std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
         // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
         // pthread_rwlock_wrlock(&robotsLock);
         if(min_robot_id == -1){
-            std::cout << "not reassigned";
+            std::cout << task << " not reassigned \n";
+            unAssignedTasks.push_back(task);
+
         }
         else{
-            this->getRobot(min_robot_id)->addTask(task);    //add task
-            std::cout << "Assigned: " << task << "\n";
+            this->internal_getRobot(min_robot_id)->addTask(task);    //add task
+            std::cout << "Assigned: " << task << "to robot: " << min_robot_id << "\n";
             // alreadyAssigned.insert(task);
 
         }

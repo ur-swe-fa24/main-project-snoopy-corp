@@ -28,6 +28,7 @@ class SimulationDriver{
         int assignRobotIndex();
         Map getSelectedMap() { return selectedMap; }
         Robot* getRobot(int id);
+        Robot* internal_getRobot(int id);
         std::vector<nlohmann::json> getFleet();
         void update_all();
         void update(Robot& r);
