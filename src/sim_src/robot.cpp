@@ -193,6 +193,8 @@ using json = nlohmann::json;
             {"Progress task", progress_task},
             {"Progress Queue", progress_queue},
             {"Battery Level", battery_level},
+            {"Tasks completed", tasks_completed},
+            {"Efficiency", getEfficiency()},
             {"Queue", vec}};
         return j;
     }

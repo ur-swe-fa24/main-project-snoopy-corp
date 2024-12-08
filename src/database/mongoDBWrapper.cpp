@@ -125,11 +125,12 @@ nlohmann::json MongoDBWrapper::getAllDataAsJson(const std::string& collectionTyp
             spdlog::error("Invalid collection type: {}", collectionType);
             return nlohmann::json(); // Return empty JSON for invalid collection type
         }
+        nlohmann::json allData = nlohmann::json::array();  // Initialize an empty array to store all data
+
 
         // Retrieve all documents in the collection
         auto cursor = collection->find({});  // Empty filter to find all documents
         
-        nlohmann::json allData = nlohmann::json::array();  // Initialize an empty array to store all data
         
         for (const auto& document : cursor) {
             // Convert BSON to JSON

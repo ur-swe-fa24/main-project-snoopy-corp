@@ -3,7 +3,7 @@
 
 // Starts main application
 bool MyWidget::OnInit() {
-	MainFrame *MainWin = new MainFrame(_("Welcome to Snoopy Corp!"), wxDefaultPosition, wxSize(550, 300));
+	MainFrame *MainWin = new MainFrame(_("Welcome to Snoopy Corp!"), wxDefaultPosition, wxSize(550, 350));
 	MainWin->Show(true);
 	//SetTopWindow(MainWin); // set as the main window 
 	return true;
@@ -24,6 +24,7 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_FixRobot, MainFrame::fixRobot )
     EVT_BUTTON ( ID_GoHome, MainFrame::goHome )
     EVT_BUTTON ( ID_Feedback, MainFrame::feedback )
+    EVT_BUTTON ( ID_ToErrorDashboard, MainFrame::viewErrorDashboard )
     EVT_CLOSE( MainFrame::OnClose )
 END_EVENT_TABLE() 
 
@@ -57,6 +58,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     liveDashboard = new WxDashboard(this);
     historicalDashboard = new WxHistoricalData(this);
+    errorDashboard  = new WxErrorDashboard(this);
 
     // ------------------------------------------------------------------
     
@@ -97,6 +99,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     
     wxButton* goHome = new wxButton(engineerPanel, ID_GoHome, "Home");
     wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Live Dashboard");
+    wxButton* toErrorDashboard = new wxButton(engineerPanel, ID_ToErrorDashboard, "Error Dashboard");
     wxButton* addRobot = new wxButton(engineerPanel, ID_AddRobot, "Add Robot");
     wxButton* deleteRobot = new wxButton(engineerPanel, ID_DeleteRobot, "Delete Robot");
     wxButton* assignTasks = new wxButton(engineerPanel, ID_AssignTasks, "Assign Tasks");
@@ -108,6 +111,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     engHorizontalSizer->AddStretchSpacer(1);
     engHorizontalSizer->Add(goHome, 0, wxALL, FromDIP(10));
     engineerSizer->Add(engHorizontalSizer, 1, wxEXPAND | wxALL, FromDIP(10));
+    engineerSizer->Add(toErrorDashboard, 0, wxALL, FromDIP(10));
     engineerSizer->Add(addRobot, 1, wxALL, FromDIP(10));
     engineerSizer->Add(deleteRobot, 1, wxALL, FromDIP(10));
     engineerSizer->Add(assignTasks, 1, wxALL, FromDIP(10));
@@ -258,12 +262,10 @@ void MainFrame::switchToLiveDashboard(wxCommandEvent& event) {
 
 // Button function to assign tasks to a robot
 void MainFrame::assignTasks(wxCommandEvent& event) {
-    // Create the dialog and pass the number of checkboxes
-    WxTaskbox dialog(this, map);
+    WxTaskbox dialog(this, map); // Create the dialog and pass the number of checkboxes
 
     if (dialog.ShowModal() == wxID_OK) {
-        // Retrieve checkbox states
-        std::vector<bool> states = dialog.GetCheckboxStates();
+        std::vector<bool> states = dialog.GetCheckboxStates(); // Retrieve checkbox states
 
         std::vector<int> tasks = {};
         for (int i = 0; i < map.getNumRooms(); i++) {
@@ -271,16 +273,32 @@ void MainFrame::assignTasks(wxCommandEvent& event) {
                 tasks.insert(tasks.end(), i+1); // Adding room id to tasks vector : Note ids start at 1, not 0
             }
         }
-
         simDriver.assignmentModule(tasks);
     }
 }
 
 // Button function to open historical data (removed robots)
 void MainFrame::viewHistoricalData(wxCommandEvent& event) {
-    //json removed = mongo_wrapper.getAllDataAsJson("removed");
     historicalDashboard->Show();
 
+}
+
+// Button function to open error dashboard
+void MainFrame::viewErrorDashboard( wxCommandEvent& event ) {
+    json errors = mongo_wrapper.getAllDataAsJson("error_log");
+    if (errorDashboard->errorListView->GetItemCount() != errors.size()) {
+        for (int i = ((errorDashboard->errorListView->GetItemCount()) - 1); i < errors.size(); i++) {
+            errorDashboard->errorListView->InsertItem(i, errors["ErrorNotes"].dump());
+            errorDashboard->errorListView->SetItem(i, 1, errors["ID"].dump());
+            errorDashboard->errorListView->SetItem(i, 2, errors["Location"].dump());
+            errorDashboard->errorListView->SetItem(i, 3, errors["Time"].dump());
+        }
+    }
+
+    std::cout << errorDashboard->errorListView->GetItemCount() << std::endl;
+    std::cout << errors << std::endl;
+    std::cout << errors.size() << std::endl;
+    errorDashboard->Show();
 }
 
 // Button function to add robot to list
@@ -310,18 +328,18 @@ void MainFrame::addRobot(wxCommandEvent& event) {
                 liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
             liveDashboard->robotListView->SetItem(integer, 5, robotJson["Queue Length"].dump());
-             if(robotJson["Location"].dump() == "-1")
+            if(robotJson["Location"].dump() == "-1")
                 liveDashboard->robotListView->SetItem(integer, 6, "N/A");
             else
                 liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
 
             // Historical Dashboard
             historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
-            wxString mystring = wxString::Format(wxT("%i"), robot.getTC());
-            historicalDashboard->historicalListView->SetItem(integer, 1, mystring);
+            //wxString mystring = wxString::Format(wxT("%i"), robot.getTC()); //tasks completed int -> wxstring
+            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Task completed"].dump());
             historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task attempted"].dump());
-            wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency());
-            historicalDashboard->historicalListView->SetItem(integer, 1, mystring1);
+            //wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency()); //efficiency int -> wxstring
+            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Efficiency"].dump());
 
             integer++;
         }
@@ -344,12 +362,10 @@ void MainFrame::deleteRobot(wxCommandEvent& event) {
         } else {
             wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
         }
-    } else {
-        //std::cout << "oh no" << std::endl;
-    }
+    } 
 }
 
-// Helper function for deleteRobot
+// Helper function for deleteRobot && fixRobot
 int MainFrame::findListItem(wxString id) {
     int itemIndex = -1;
     int itemCount = liveDashboard->robotListView->GetItemCount();
@@ -367,8 +383,15 @@ int MainFrame::findListItem(wxString id) {
 void MainFrame::fixRobot(wxCommandEvent& event) {
     wxTextEntryDialog dialog(this, "Enter robot ID to be fixed", "Fix Robot");
     if (dialog.ShowModal() == wxID_OK) {
-        int id = std::stoi(std::string((dialog.GetValue()).mb_str()));
-        int number = simDriver.fixRobot(id);
+        int itemIndex = findListItem(dialog.GetValue());
+        
+        if (itemIndex != -1) {
+            int id = std::stoi(std::string((dialog.GetValue()).mb_str()));
+            int number = simDriver.fixRobot(id);
+            wxMessageBox("Item with ID " + dialog.GetValue() + " is being fixed.", "Success");
+        } else {
+            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+        }
     }
 }
 
@@ -392,19 +415,19 @@ void MainFrame::refresh() {
             liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
 
         // Historical Dashboard
-        historicalDashboard->historicalListView->InsertItem(i, robotFleet[i]["ID"].dump());
-        wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
-        historicalDashboard->historicalListView->SetItem(i, 1, mystring);
+        //wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
+        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Task completed"].dump()); //tasks completed int -> wxstring
         historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task attempted"].dump());
-        wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
-        historicalDashboard->historicalListView->SetItem(i, 1, mystring1);
+        //wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
+        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
     }
 }
 
+// Button function to allow users to provide feedback
 void MainFrame::feedback( wxCommandEvent& event ) {
     wxTextEntryDialog dialog(this, "How can we improve our services?", "Send in Feedback");
     if (dialog.ShowModal() == wxID_OK) {
         std::cout << "Thank you for your feedback!" << std::endl;
-        std::cout << dialog.GetValue() << std::endl;
+        //std::cout << dialog.GetValue() << std::endl;
     }
 }
