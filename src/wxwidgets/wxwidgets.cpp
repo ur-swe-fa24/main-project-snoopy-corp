@@ -307,7 +307,7 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             if(robotJson["Location"].dump() == "-1")
                 liveDashboard->robotListView->SetItem(integer, 3, "Charging Station");
             else
-                liveDashboard->robotListView->SetItem(integer, 3, robotJson["Location"].dump());
+                liveDashboard->robotListView->SetItem(integer, 3, map.getRoomName(robotJson["Location"].dump()));
             liveDashboard->robotListView->SetItem(integer, 4, robotJson["Battery Level"].dump());
             liveDashboard->robotListView->SetItem(integer, 5, robotJson["Queue Length"].dump());
              if(robotJson["Location"].dump() == "-1")
@@ -383,7 +383,7 @@ void MainFrame::refresh() {
         if(robotFleet[i]["Location"].dump() == "-1")
             liveDashboard->robotListView->SetItem(i, 3, "Charging Station");
         else
-            liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
+            liveDashboard->robotListView->SetItem(i, 3, map.getRoomName(robotFleet[i]["Location"].dump()));
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
         liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Queue Length"].dump()); 
         if(robotFleet[i]["Location"].dump() == "-1")
