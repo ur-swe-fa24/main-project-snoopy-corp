@@ -1,3 +1,4 @@
+
 @startuml class_diagram
 skinparam groupInheritance 3
 
@@ -230,6 +231,7 @@ package "wxWidgets GUI and Dashboards" {
         - std::vector<wxCheckBox*> checkboxes
     }
 
+<<<<<<< HEAD
     MyWidget --> MainFrame 
     MainFrame *-- WxDashboard 
     MainFrame *-- WxHistoricalData
@@ -257,3 +259,116 @@ package "Database Management" {
 }
 
 @enduml
+=======
+
+Dashboard <|-- ErrorLog
+Dashboard <|-- LiveRobotDash
+Dashboard <|-- MetricsDash
+
+Dashboard ..> MongoDBWrapper
+Dashboard ..> Robot
+SimulationDriver ..> Map
+Map ..> FloorType
+
+
+class SimulationDriver{
+        +SimulationDriver()
+        +explicit SimulationDriver(Map selectedMap)
+        +void addRobot(Robot robot)
+        +Robot& removeRobot(int id)
+        +void clear()
+        +void toString()
+        +int getRobotIndex() 
+        +int assignRobotIndex()
+        +Map getSelectedMap() 
+        +void start_dashboard()
+        +Robot* getRobot(int id)
+        +std::vector<nlohmann::json> getFleet()
+        +void update_all()
+        +void update(Robot& r)
+        +RobotType stringToRobotType(std::string type)
+        +int fixRobot(int id)
+        +int chargeRobot(int id)
+        +std::vector<int> assignmentModule(std::vector<int> tasks)
+
+        +std::chrono::system_clock::time_point start = std::chrono::system_clock::now()
+        +void setMongoWrapper(MongoDBWrapper& wrapper)
+
+
+        -std::vector<Robot> robots
+        -std::unordered_set<int> usedIds
+        -pthread_rwlock_t robotsLock
+        -Map selectedMap
+        -std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper
+        -int robot_index = 0
+        -Robot DEFAULT_ROBOT
+        -void constructRobot()
+        -void reportSimError(nlohmann::json robotErr, std::string errorNotes)
+}
+
+SimulationDriver ..> Robot
+
+class WxDashboard{
+    +WxDashboard(wxWindow* parent)
+    +wxListView *robotListView
+}
+
+class MyWidget{
+    +virtual bool OnInit()
+}
+
+WxDashboard <|-- MainFrame
+MongoDBWrapper <|-- MainFrame
+SimulationDriver <|-- MainFrame
+
+
+class MainFrame{
+    +MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
+    -wxPanel *mainPanel
+    -wxPanel *mainMenu
+    -wxPanel *engineerPanel
+    -wxPanel *engineerTopPanel
+    -wxPanel *engineerBottomPanel
+    -wxPanel *managerPanel
+    -wxBoxSizer* mainSizer
+    -wxListView *robotListView
+    -WxDashboard* liveDashboard
+
+    -Map map
+    -MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "Robots", "active_robots", "removed_robots", "error_log")
+    -SimulationDriver simDriver
+    -std::atomic<bool> quitRequested{false}
+    -std::thread updateThread
+    -int integer = 0
+
+    -void OnClose(wxCloseEvent &e)
+    -void OnExit( wxCommandEvent& event )
+    
+    -void switchToEngineer( wxCommandEvent& event )
+    -void switchToStaff ( wxCommandEvent& event )
+    -void switchToManager ( wxCommandEvent& event )
+    -void switchToSeniorManager ( wxCommandEvent& event )
+    -void switchToLiveDashboard( wxCommandEvent& event )
+    
+    -void addRobot( wxCommandEvent& event )
+    -void deleteRobot( wxCommandEvent& event )
+    -int findListItem( wxString id )
+    -void refresh()
+    -void updateRobot( wxCommandEvent& event )
+}
+
+class MongoDBWrapper{
+    +MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name,const std::string& error_collection_name)
+    +void upsertRobotData(nlohmann::json robotData);
+    +void moveRobotToRemoved(int id);
+    +void logError(nlohmann::json robotData)
+    +nlohmann::json getAllDataAsJson(const std::string& collectionType);
+    -mongocxx::client client_;
+    -mongocxx::database db_;
+    -mongocxx::collection active_collection_;
+    -mongocxx::collection removed_collection_;
+    -mongocxx::collection error_collection_;
+
+}
+SimulationDriver ..> MongoDBWrapper
+>>>>>>> b4500f6b6231358136a7a5c51c55c9574ad115c7
