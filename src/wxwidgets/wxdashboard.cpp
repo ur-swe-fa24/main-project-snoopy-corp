@@ -1,8 +1,8 @@
 #include "wxwidgets_lib/wxdashboard.hpp"
 
-WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(1000, 700)) {
+WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(860, 350)) {
     // Create a panel inside the dialog
-    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(1000, 700));
+    wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(860, 350));
     liveDashboard->SetBackgroundColour(wxColor(255, 204, 229));
     robotListView = new wxListView(liveDashboard);
     

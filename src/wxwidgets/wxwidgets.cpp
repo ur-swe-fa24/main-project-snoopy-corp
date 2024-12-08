@@ -23,6 +23,7 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_ViewHistoricalData, MainFrame::viewHistoricalData )
     EVT_BUTTON ( ID_FixRobot, MainFrame::fixRobot )
     EVT_BUTTON ( ID_GoHome, MainFrame::goHome )
+    EVT_BUTTON ( ID_Feedback, MainFrame::feedback )
     EVT_CLOSE( MainFrame::OnClose )
 END_EVENT_TABLE() 
 
@@ -55,7 +56,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     updateThread = std::thread{f};
 
     liveDashboard = new WxDashboard(this);
-    removedDashboard = new WxHistoricalData(this);
+    historicalDashboard = new WxHistoricalData(this);
 
     // ------------------------------------------------------------------
     
@@ -103,9 +104,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxBoxSizer* engineerSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* engHorizontalSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    engHorizontalSizer->Add(goHome, 0, wxTOP | wxRIGHT, 10);
-    engHorizontalSizer->Add(toLiveDashboard, 0, wxTOP | wxLEFT, 10);
-    engineerSizer->Add(engHorizontalSizer, 1, wxALL, FromDIP(10));
+    engHorizontalSizer->Add(toLiveDashboard, 0, wxALL, FromDIP(10));
+    engHorizontalSizer->AddStretchSpacer(1);
+    engHorizontalSizer->Add(goHome, 0, wxALL, FromDIP(10));
+    engineerSizer->Add(engHorizontalSizer, 1, wxEXPAND | wxALL, FromDIP(10));
     engineerSizer->Add(addRobot, 1, wxALL, FromDIP(10));
     engineerSizer->Add(deleteRobot, 1, wxALL, FromDIP(10));
     engineerSizer->Add(assignTasks, 1, wxALL, FromDIP(10));
@@ -116,11 +118,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     managerPanel->SetBackgroundColour(wxColor(255, 194, 229));    
     
+    wxButton* goHome1 = new wxButton(managerPanel, ID_GoHome, "Home");
     wxButton* assignTasks1 = new wxButton(managerPanel, ID_AssignTasks, "Assign Tasks");
     wxButton* toLiveDashboard1 = new wxButton(managerPanel, ID_ToLiveDashboard, "Live Dashboard");
     wxBoxSizer* managerSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* horzManagerSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    managerSizer->Add(toLiveDashboard1, 1, wxALL, FromDIP(10));
+    horzManagerSizer->Add(toLiveDashboard1, 0, wxALL, FromDIP(10));
+    horzManagerSizer->AddStretchSpacer(1);
+    horzManagerSizer->Add(goHome1, 0, wxALL, FromDIP(10));
+    managerSizer->Add(horzManagerSizer, 1, wxEXPAND | wxALL, FromDIP(10));
     managerSizer->Add(assignTasks1, 1, wxALL, FromDIP(10));
     managerPanel->SetSizer(managerSizer);
 
@@ -128,11 +135,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     staffPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     staffPanel->SetBackgroundColour(wxColor(255, 184, 229));    
     
+    wxButton* goHome2 = new wxButton(staffPanel, ID_GoHome, "Home");
     wxButton* assignTasks2 = new wxButton(staffPanel, ID_AssignTasks, "Assign Tasks");
     wxButton* toLiveDashboard2 = new wxButton(staffPanel, ID_ToLiveDashboard, "Live Dashboard");
     wxBoxSizer* staffSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* horzStaffSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    staffSizer->Add(toLiveDashboard2, 1, wxALL, FromDIP(10));
+    horzStaffSizer->Add(toLiveDashboard2, 0, wxALL, FromDIP(10));
+    horzStaffSizer->AddStretchSpacer(1);
+    horzStaffSizer->Add(goHome2, 0, wxALL, FromDIP(10));
+    staffSizer->Add(horzStaffSizer, 1, wxEXPAND | wxALL, FromDIP(10));
     staffSizer->Add(assignTasks2, 1, wxALL, FromDIP(10));
     staffPanel->SetSizer(staffSizer);
 
@@ -140,8 +152,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     seniorManagerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
     seniorManagerPanel->SetBackgroundColour(wxColor(200, 204, 229));    
     wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
+    wxButton* goHome3 = new wxButton(seniorManagerPanel, ID_GoHome, "Home");
+    wxButton* feedback = new wxButton(seniorManagerPanel, ID_Feedback, "Give Feedback");
     wxBoxSizer* seniorManagerSizer = new wxBoxSizer(wxVERTICAL);
-    seniorManagerSizer->Add(viewHistorical, 1, wxALL, FromDIP(10));
+    wxBoxSizer* horzSeniorManagerSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    horzSeniorManagerSizer->Add(viewHistorical, 1, wxALL, FromDIP(10));
+    horzSeniorManagerSizer->AddStretchSpacer(1);
+    horzSeniorManagerSizer->Add(goHome3, 0, wxALL, FromDIP(10));
+    seniorManagerSizer->Add(horzSeniorManagerSizer, 1, wxEXPAND | wxALL, FromDIP(10));
+    seniorManagerSizer->Add(feedback, 0, wxTOP | wxALL, FromDIP(10));
     seniorManagerPanel->SetSizer(seniorManagerSizer);
 
     // Create main sizer, add both screens
@@ -181,6 +201,7 @@ void MainFrame::OnClose(wxCloseEvent& event){
     event.Skip();
 }
 
+// Button function to return to home screen
 void MainFrame::goHome(wxCommandEvent& event) {
     mainMenu->Show();
     engineerPanel->Hide();
@@ -257,7 +278,8 @@ void MainFrame::assignTasks(wxCommandEvent& event) {
 
 // Button function to open historical data (removed robots)
 void MainFrame::viewHistoricalData(wxCommandEvent& event) {
-    json removed = mongo_wrapper.getAllDataAsJson("removed");
+    //json removed = mongo_wrapper.getAllDataAsJson("removed");
+    historicalDashboard->Show();
 
 }
 
@@ -265,13 +287,20 @@ void MainFrame::viewHistoricalData(wxCommandEvent& event) {
 void MainFrame::addRobot(wxCommandEvent& event) {
     wxTextEntryDialog dialog(this, "Must be Scrubber, Vacuum, or Shampoo", "Enter Robot Type");
     if (dialog.ShowModal() == wxID_OK) {
-        if (!((dialog.GetValue()).ToStdString() == "Shampoo") && !((dialog.GetValue()).ToStdString() == "Scrubber") && !((dialog.GetValue()).ToStdString() == "Vacuum")) {
+        if (!((dialog.GetValue()).ToStdString() == "Shampoo") && !((dialog.GetValue()).ToStdString() == "Scrubber") && !((dialog.GetValue()).ToStdString() == "Vacuum") && !((dialog.GetValue()).ToStdString() == "Error")) {
             
         } else {
-            Robot robot = Robot(simDriver.stringToRobotType((dialog.GetValue()).ToStdString()), 1);
+            Robot robot;
+            if ((dialog.GetValue()).ToStdString() == "Error") {
+                robot = Robot(simDriver.stringToRobotType("Vacuum"), 1, 1);
+            } else {
+                robot = Robot(simDriver.stringToRobotType((dialog.GetValue()).ToStdString()), 1);
+            }
             simDriver.addRobot(robot);
 
             json robotJson = robot.toJson();
+            
+            // Live Dashboard
             liveDashboard->robotListView->InsertItem(integer, robotJson["ID"].dump());
             liveDashboard->robotListView->SetItem(integer, 1, robotJson["Type"].dump());
             liveDashboard->robotListView->SetItem(integer, 2, robotJson["Status"].dump());
@@ -285,7 +314,14 @@ void MainFrame::addRobot(wxCommandEvent& event) {
                 liveDashboard->robotListView->SetItem(integer, 6, "N/A");
             else
                 liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
-            // liveDashboard->robotListView->SetItem(integer, 6, robotJson["Progress task"].dump());
+
+            // Historical Dashboard
+            historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
+            wxString mystring = wxString::Format(wxT("%i"), robot.getTC());
+            historicalDashboard->historicalListView->SetItem(integer, 1, mystring);
+            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task attempted"].dump());
+            wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency());
+            historicalDashboard->historicalListView->SetItem(integer, 1, mystring1);
 
             integer++;
         }
@@ -302,6 +338,7 @@ void MainFrame::deleteRobot(wxCommandEvent& event) {
         if (itemIndex != -1) {
             simDriver.removeRobot(stoi(dialog.GetValue().ToStdString()));
             liveDashboard->robotListView->DeleteItem(itemIndex); // Delete the item
+            historicalDashboard->historicalListView->DeleteItem(itemIndex);
             integer--;
             wxMessageBox("Item with ID " + dialog.GetValue() + " deleted.", "Success");
         } else {
@@ -339,6 +376,8 @@ void MainFrame::fixRobot(wxCommandEvent& event) {
 void MainFrame::refresh() {
     json robotFleet = simDriver.getFleet();
     for (int i = 0; i < robotFleet.size(); i++) {
+        
+        // Live Dashboard
         liveDashboard->robotListView->SetItem(i, 1, robotFleet[i]["Type"].dump());
         liveDashboard->robotListView->SetItem(i, 2, robotFleet[i]["Status"].dump());
         if(robotFleet[i]["Location"].dump() == "-1")
@@ -347,11 +386,25 @@ void MainFrame::refresh() {
             liveDashboard->robotListView->SetItem(i, 3, robotFleet[i]["Location"].dump());
         liveDashboard->robotListView->SetItem(i, 4, robotFleet[i]["Battery Level"].dump());
         liveDashboard->robotListView->SetItem(i, 5, robotFleet[i]["Queue Length"].dump()); 
-        // liveDashboard->robotListView->SetItem(i, 6, robotFleet[i]["Progress task"].dump());
         if(robotFleet[i]["Location"].dump() == "-1")
                     liveDashboard->robotListView->SetItem(i, 6, "N/A");
         else
             liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
+
+        // Historical Dashboard
+        historicalDashboard->historicalListView->InsertItem(i, robotFleet[i]["ID"].dump());
+        wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
+        historicalDashboard->historicalListView->SetItem(i, 1, mystring);
+        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task attempted"].dump());
+        wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
+        historicalDashboard->historicalListView->SetItem(i, 1, mystring1);
     }
 }
 
+void MainFrame::feedback( wxCommandEvent& event ) {
+    wxTextEntryDialog dialog(this, "How can we improve our services?", "Send in Feedback");
+    if (dialog.ShowModal() == wxID_OK) {
+        std::cout << "Thank you for your feedback!" << std::endl;
+        std::cout << dialog.GetValue() << std::endl;
+    }
+}

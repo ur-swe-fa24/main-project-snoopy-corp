@@ -34,7 +34,7 @@ private:
     wxPanel *seniorManagerPanel;
     wxBoxSizer* mainSizer;
     WxDashboard* liveDashboard;
-    WxHistoricalData* removedDashboard;
+    WxHistoricalData* historicalDashboard;
 
     Map map;
     MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "Robots", "active_robots", "removed_robots", "error_log");
@@ -60,6 +60,7 @@ private:
     void assignTasks( wxCommandEvent& event );
     void viewHistoricalData(wxCommandEvent& event); // View removed robots
     void fixRobot(wxCommandEvent& event); // Fix robot when it gives error message
+    void feedback(wxCommandEvent& event); // Allows user to provide feedback
 
 
     DECLARE_EVENT_TABLE()
@@ -78,6 +79,7 @@ enum {
     ID_AssignTasks = 1008,
     ID_ViewHistoricalData = 1009,
     ID_FixRobot = 1010,
+    ID_Feedback = 1011,
     ID_Exit = wxID_EXIT
 };
 
