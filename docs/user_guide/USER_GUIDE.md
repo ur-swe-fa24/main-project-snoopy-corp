@@ -1,4 +1,4 @@
-# Snoopy Corp Cleaning Robot Fleet Management Software User Guide - Version `.0
+# Snoopy Corp User Guide 
 ## Brett Barnes, Dhruvam Desai, Adelina Gutic, Skyler He
 
 

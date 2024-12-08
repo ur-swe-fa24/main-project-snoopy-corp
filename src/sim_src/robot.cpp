@@ -93,39 +93,6 @@ using json = nlohmann::json;
         return;
     }
 
-    void Robot::update(){
-        // std::cout << "update called ";
-        // if(status == Status::Inactive)
-        // {
-        //     if(queue.size() != 0)
-        //     {
-        //         move(queue.front());
-        //         setStatus(Status::Active);
-        //     }
-        // }
-        // else if(status == Status::Active)
-        // {
-        //     if(std::stoi(currentMap.getRoomCleanliness(std::to_string(location))) >= 10)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
-        //     {
-        //         if(queue.size() != 0)
-        //         {
-        //             queue.pop();
-        //             if(queue.size() == 0)
-        //                 status = Status::Inactive;
-        //             else
-        //                 move(queue.front());
-        //         }
-        //     }
-        //     else{
-        //         // std::cout << "clean about to be called; ";
-        //         bool successfulClean = clean();
-        //         if(!successfulClean) reportError();
-        //         else battery_level--;
-        //     }
-        // }
-        // //else: error case
-    }
-
 
     nlohmann::json Robot::reportError(){
         status = Status::Error;
