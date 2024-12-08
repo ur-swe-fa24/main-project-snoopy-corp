@@ -4,10 +4,9 @@
 #include <iostream>
 #include <magic_enum.hpp>
 #include <algorithm>
-#include <iostream>
 #include <random>
 #include <cstdlib>
-
+#include <set>
 
 
     // Default constructor 
@@ -33,7 +32,7 @@
         // Update the robot's ID to the unique value
         robot.setId(id);
         // Mark the ID as used and add the robot to the fleet
-        usedIds.insert(id);
+        usedIds.insert(usedIds.end(), id);
         robots.push_back(std::move(robot));
         if (mongo_wrapper) mongo_wrapper->get().upsertRobotData(robot.toJson());
         pthread_rwlock_unlock(&robotsLock);
@@ -168,7 +167,7 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
-
+                // wxwidget function -- popup notification ("room complete")
                 r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {
@@ -220,7 +219,7 @@
             if(r.getPauseTicks() > 0) r.incrementPauseTicks();
             else r.setStatus(Status::Inactive);
         }
-        pthread_rwlock_unlock(&robotsLock); 
+        // pthread_rwlock_unlock(&robotsLock); 
     }
 
 int SimulationDriver::fixRobot(int id){
@@ -230,7 +229,7 @@ int SimulationDriver::fixRobot(int id){
                 // pthread_rwlock_unlock(&robotsLock);
                 r.setStatus(Status::BeingFixed);
                 r.setBatteryLevel(60);
-                r.setPauseTicks(50);
+                r.setPauseTicks(10);
             }
         }
         pthread_rwlock_unlock(&robotsLock);
@@ -239,7 +238,7 @@ int SimulationDriver::fixRobot(int id){
 
     void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
         float time = (std::chrono::system_clock::now() - start).count()/1000;
-        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and" + 
+        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
         if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
@@ -249,7 +248,13 @@ int SimulationDriver::fixRobot(int id){
 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     std::vector<int> unAssignedTasks = {};
+    std::set<int> taskSet = {};
+    alreadyAssigned.insert(-1);
     for(int task : tasks){
+        taskSet.insert(task);
+    }
+    for(int task : taskSet){
+        if(alreadyAssigned.count(task) == 1) break;
         std::string task_string = std::to_string(task);
         int min_time = INT_MAX;
         int min_robot_id = -1;
@@ -271,12 +276,17 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
         }
         // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
         // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
+        // pthread_rwlock_wrlock(&robotsLock);
         if(min_robot_id == -1){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
         }
-        else
+        else{
             this->getRobot(min_robot_id)->addTask(task);    //add task
+            alreadyAssigned.insert(task);
+
+        }
+        // pthread_rwlock_unlock(&robotsLock);
     }
     // std::cout << "size: " << unAssignedTasks.size() << "\n";
     return unAssignedTasks;

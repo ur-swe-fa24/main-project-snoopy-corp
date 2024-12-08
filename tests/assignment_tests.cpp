@@ -69,5 +69,15 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(t_size == 8);
     }
 
+    SECTION("Same room multiple times"){
+        t.assignmentModule({2,2,2,2});
+        REQUIRE(t.getRobot(5)->timeRemaining() == 10);
+
+        s.assignmentModule({3,3,3,3});
+        REQUIRE(s.getRobot(0)->timeRemaining() == 10);
+        REQUIRE(s.getRobot(1)->timeRemaining() == 0);
+
+    }
+
 
 }
