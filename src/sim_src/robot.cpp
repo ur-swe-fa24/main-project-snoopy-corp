@@ -44,6 +44,12 @@ using json = nlohmann::json;
         return progress_task;
     }
 
+    void Robot::clearQueue(){
+        while (!queue.empty()) {
+            queue.pop();
+        }
+    }
+
     int Robot::getProgressQueue(){
         return progress_queue;
     }
@@ -85,39 +91,6 @@ using json = nlohmann::json;
     void Robot::setStatus(Status s){
         status = s;
         return;
-    }
-
-    void Robot::update(){
-        // std::cout << "update called ";
-        // if(status == Status::Inactive)
-        // {
-        //     if(queue.size() != 0)
-        //     {
-        //         move(queue.front());
-        //         setStatus(Status::Active);
-        //     }
-        // }
-        // else if(status == Status::Active)
-        // {
-        //     if(std::stoi(currentMap.getRoomCleanliness(std::to_string(location))) >= 10)    //if(currentMap.GET_ROOM_STATUS(this->getLocation()) == 10)
-        //     {
-        //         if(queue.size() != 0)
-        //         {
-        //             queue.pop();
-        //             if(queue.size() == 0)
-        //                 status = Status::Inactive;
-        //             else
-        //                 move(queue.front());
-        //         }
-        //     }
-        //     else{
-        //         // std::cout << "clean about to be called; ";
-        //         bool successfulClean = clean();
-        //         if(!successfulClean) reportError();
-        //         else battery_level--;
-        //     }
-        // }
-        // //else: error case
     }
 
 
@@ -181,6 +154,7 @@ using json = nlohmann::json;
             vec.push_back(tempQueue.front());
             tempQueue.pop();
         }
+        
         auto j = json{
             {"ID", id}, 
             {"Type", std::string(magic_enum::enum_name(type))}, 

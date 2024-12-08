@@ -1,490 +1,262 @@
-' @startuml class_diagram
-' skinparam groupInheritance 3
-
-
-
-' class Dashboard{
-'     +Dashboard()                  
-'     +Dashboard(Robot robot)
-'     +Dashboard(std::vector<Robot> robots) 
-'     +void create_chart(std::vector<Robot> robots, std::string data_name) const
-'     +std::string get_feedback() const
-'     -std::vector<Robot> robots
-' }
-
-' class ErrorLog {
-'     +ErrorLog(Robot robot) 
-'     +ErrorLog(std::vector<Robot> robots) 
-'     -std::string description 
-'     -int timpestamp 
-' }
-
-' class LiveRobotDash{
-'     +LiveRobotDash(Robot robot)
-'     -Status status 
-'     -Map curr_map 
-'     -int location 
-'     -int progress_task 
-'     -int progress_queue 
-'     -int queue_length 
-' }
-
-' class MetricsDash{
-'     +MetricsDash(Robot robot) 
-'     +MetricsDash(std::vector<Robot> robot) 
-'     -float efficiency 
-'     -float erroWr_rate 
-'     -int runtime 
-' }
-
-' enum FloorType{
-'     WOOD
-'     TILE
-'     CARPET
-' }
-
-' enum RobotType{
-'     SCRUBBER
-'     SHAMPOO
-'     VACUUM
-' }
-
-' enum Status{
-'     ACTIVE
-'     INACTIVE
-'     ERROR
-' }
-
-' class Map{
-'     +std::string name   
-'     +std::map<std::string, JSON room>
-
-'     - Map();
-'     -Map(std::string name, std::map<std::string, JSON rooms)
-'     -std::string getName() { return name; }
-'     -void setName(std::string mapName) { name = mapName; }
-
-'     -void updateRoomCleanliness(std::string roomId, std::string cleaningStatus)
-'     -std::string getRoomCleanliness(std::string roomId) { return rooms[roomId][1]; }
-'     -void updateRoomName(std::string roomId, std::string roomName)
-'     -std::string getRoomName(std::string roomId) { return rooms[roomId][0]; }
-' }
-
-' class Robot{
-'     +Robot() 
-'         ' +Robot(RobotType type, int id) 
-'         +Robot(RobotType type, int id, Map currentMap) 
-'         +Robot(RobotType type, int id, Map& currentMap, float failure_rate)
-'         +Robot(const Robot& other)
-'         +Robot& operator=(Robot&& other)
-'         +float getEfficiency() 
-'         +int getId() 
-'         +Status getStatus() 
-'         +int getLocation() 
-'         +int getProgressTask() 
-'         +int getProgressQueue() 
-'         +std::vector<int> getQueue() 
-'         +int getBatteryLevel() 
-'         +void update()  
-'         +std::string toString() 
-'         +Map& getMap()
-'         +std::string getMapName() 
-'         +RobotType getType() { return type  }
-'         +std::string getRoomStatus() 
-'         -bool clean()     
-'         -void reportError()  
-'         -float getRandom()   
-'         -void move(int room_num) 
-
-'         #std::mt19937 gen
-'         #std::uniform_real_distribution<float> float_distribution
-'         #std::uniform_real_distribution<float> fail_distribution
-
-'         #int id
-'         #RobotType type
-'         #Status status = Status::Active
-'         #int location = 0
-'         #int tasks_completed
-'         #int tasks_attempted
-'         #int progress_task
-'         #int progress_queue
-'         #std::queue<int> queue
-'         #int battery_level
-'         #Map currentMap
-' }
-
-' Robot ..> RobotType
-' Robot ..> Status
-
-' class ScrubberRobot{
-'     +ScrubberRobot() 
-'     +ScrubberRobot(int id) 
-'     +ScrubberRobot(int id, Map currentMap) 
-'     -int WaterLevel 
-'     -bool clean() 
-' }
-
-
-' class ShampooRobot{
-'     +ShampooRobot()  
-'     +ShampooRobot(int id)  
-'     +ShampooRobot(int id, Map currentMap)  
-'     -int ShampooLevel  
-'     -bool clean()  
-' }
-
-' class VacuumRobot{
-'     +VacuumRobot()  
-'     +VacuumRobot(int id, Map currentMap)  
-'     +VacuumRobot(int id)  
-'     -int TrashbagLevel  
-'     -bool clean()   
-' }
-
-' Robot <|-- ScrubberRobot
-' Robot <|-- ShampooRobot
-' Robot <|-- VacuumRobot
-
-
-' Dashboard <|-- ErrorLog
-' Dashboard <|-- LiveRobotDash
-' Dashboard <|-- MetricsDash
-
-' Dashboard ..> MongoDBWrapper
-' Dashboard ..> Robot
-' Robot ..> Map
-' Map ..> FloorType
-' class MongoDBWrapper{
-'     +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name)   
-'     +void insertRobotData(int id, const std::string& type, const std::string& status, 
-'                          int location, const std::string& map, const std::string& currentRoomStatus)   
-
-'     -mongocxx::client client_   
-'     -mongocxx::database db_   
-'     -mongocxx::collection collection_   
-' }
-
-' class AssignmentModule{
-'     -Map curr_map
-'     -long time
-'     -void close()
-'     +boolean assign(std::vector<Robot> fleet, std::vector<int> rooms)
-'     - Calendar calendar
-'     - SimulationDriver sd
-
-
-' }
-
-' AssignmentModule ..> Robot
-' AssignmentModule ..> SimulationDriver
-' SimulationDriver ..> MongoDBWrapper
-
-' class SimulationDriver{
-'         +SimulationDriver()
-'         +explicit SimulationDriver(std::vector<Robot> robots)
-'         +explicit SimulationDriver(Map selectedMap)
-'         +explicit SimulationDriver(std::vector<Robot> robots, Map selectedMap)
-'         +void addRobot(Robot robot)
-'         +Robot removeRobot(int id)
-'         +void clear()
-'         +void toString()
-'         +int getRobotIndex() { return robot_index; }
-'         +int assignRobotIndex()
-'         +Map getSelectedMap() { return selectedMap; }
-'         +void start_dashboard()
-'         +Robot* getRobot(int id)
-'         +std::vector<Robot> getFleet()
-
-'         -std::vector<Robot> robots
-'         -Map selectedMap
-'         -int robot_index = 0
-' }
-
-' class Main{
-'     + string staff_type
-'     -open_dashboard(string staff_type)
-'     -open_module(string staff_type)
-' }
-
-' Main ..> Dashboard
-' Main ..> AssignmentModule
-' SimulationDriver ..> Robot
-
 
 @startuml class_diagram
 skinparam groupInheritance 3
 
+package "Enums" {
+    enum FloorType {
+        WOOD
+        TILE
+        CARPET
+    }
 
-enum FloorType{
-    WOOD
-    TILE
-    CARPET
+    enum RobotType {
+        SCRUBBER
+        SHAMPOO
+        VACUUM
+    }
+
+    enum Status {
+        ACTIVE
+        INACTIVE
+        ERROR
+        BEINGFIXED
+    }
 }
 
-enum RobotType{
-    SCRUBBER
-    SHAMPOO
-    VACUUM
+package "Robot Hierarchy" {
+    class Robot {
+        - int id
+        - RobotType type
+        - Status status = Status::Active
+        - int location
+        - int tasks_completed
+        - int tasks_attempted
+        - int progress_task
+        - int progress_queue
+        - std::queue<int> queue
+        - int battery_level
+        - float failure_rate
+        - std::mt19937 gen
+        - std::uniform_real_distribution<float> float_distribution
+        - std::uniform_real_distribution<float> fail_distribution
+        - int pause_ticks
+
+        + Robot()
+        + Robot(RobotType type, int id)
+        + Robot(RobotType type, int id, float failure_rate)
+        + float getEfficiency()
+        + void incrementTasksAttempted()
+        + void incrementTasksCompleted()
+        + int getTA()
+        + int getTC()
+        + int getId() const
+        + Status getStatus()
+        + int getLocation()
+        + int getProgressTask()
+        + int getProgressQueue()
+        + std::queue<int> getQueue()
+        + void addTask(int room)
+        + void addTask(std::vector<int> rooms)
+        + int getBatteryLevel()
+        + void incrementBatteryLevel(int amt)
+        + void setBatteryLevel(int amt)
+        + void update()
+        + static std::string typeToString(RobotType type)
+        + static std::string statusToString(Status status)
+        + static std::string getRobotTypeFullName(char type)
+        + std::string toString()
+        + RobotType getType()
+        + float getFailureRate()
+        + virtual nlohmann::json toJson()
+        + void move(int room_num)
+        + bool clean()
+        + nlohmann::json reportError()
+        + float getRandom()
+        + float genFailRate()
+        + float getFailRate()
+        + void popQueue()
+        + void setStatus(Status s)
+        + void setId(int newId)
+        + void setPauseTicks(int s)
+        + void incrementPauseTicks()
+        + int getPauseTicks()
+        + void chargeRobot()
+        + int timeRemaining()
+    }
+
+
+
+    class ScrubberRobot {
+        +ScrubberRobot(int id)
+        +ScrubberRobot(int id, float failure_rate)
+        +nlohmann::json toJson() override
+        -int WaterLevel
+    }
+
+    class ShampooRobot {
+        +ShampooRobot(int id)
+        +ShampooRobot(int id, float failure_rate)
+        +nlohmann::json toJson() override
+        -int ShampooLevel
+    }
+
+    class VacuumRobot {
+        +VacuumRobot(int id)
+        +VacuumRobot(int id, float failure_rate)
+        +nlohmann::json toJson() override
+        -int TrashbagLevel
+    }
+
+    Robot <|-- ScrubberRobot
+    Robot <|-- ShampooRobot
+    Robot <|-- VacuumRobot
+
+    Robot ..> RobotType
+    Robot ..> Status
 }
 
-enum Status{
-    ACTIVE
-    INACTIVE
-    ERROR
-    BEINGFIXED
-}
+package "Simulation and Map Management" {
+    class Map {
+        -std::string name
+        -json rooms
+        -int numRooms
+        +Map()
+        +Map(std::string name, std::map<std::string, JSON rooms)
+        +std::string getName()
+        +void setName(std::string mapName)
+        +void updateRoomCleanliness(std::string roomId, std::string cleaningStatus)
+        +std::string getRoomCleanliness(std::string roomId)
+        +void updateRoomName(std::string roomId, std::string roomName)
+        +std::string getFloorType(std::string roomId)
+    }
+    Map ..> FloorType
 
-class Map{
-    -std::string name   
-    -std::map<std::string, JSON room>
 
-    +Map();
-    +Map(std::string name, std::map<std::string, JSON rooms)
-    +std::string getName()
-    +void setName(std::string mapName)
+    class SimulationDriver {
+        - std::vector<Robot> robots
+        - std::unordered_set<int> usedIds
+        - pthread_rwlock_t robotsLock
+        - Map selectedMap
+        - std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper
+        - int robot_index
+        - Robot DEFAULT_ROBOT
+        - std::set<int> alreadyAssigned
+        - std::unordered_map<RobotType, std::vector<std::string>> type_mappings
 
-    +void updateRoomCleanliness(std::string roomId, std::string cleaningStatus)
-    +std::string getRoomCleanliness(std::string roomId)
-    +void updateRoomName(std::string roomId, std::string roomName)
-    +std::string getRoomName(std::string roomId)
-    +bool roomExists(const std::string& roomId) const
-    +std::string getFloorType(std::string roomId) 
+        + SimulationDriver()
+        + SimulationDriver(Map selectedMap)
+        + void addRobot(Robot& robot)
+        + Robot& removeRobot(int id)
+        + void clear()
+        + void toString()
+        + int getRobotIndex()
+        + int assignRobotIndex()
+        + Map getSelectedMap()
+        + Robot* getRobot(int id)
+        + std::vector<nlohmann::json> getFleet()
+        + void update_all()
+        + void update(Robot& r)
+        + RobotType stringToRobotType(std::string type)
+        + int fixRobot(int id)
+        + int chargeRobot(int id)
+        + std::vector<int> assignmentModule(std::vector<int> tasks)
+        + void setMongoWrapper(MongoDBWrapper& wrapper)
+        - void constructRobot()
+        - void reportSimError(nlohmann::json robotErr, std::string errorNotes)
 
-}
+        + std::chrono::system_clock::time_point start
+    }
 
-class Robot{
-    +Robot() 
-        +Robot(RobotType type, int id) 
-        +Robot(RobotType type, int id, float failure_rate)
-        +Robot(const Robot& other)
-        +Robot& operator=(Robot&& other)
-        +float getEfficiency() 
-        +void incrementTasksAttempted()
-        +void incrementTasksCompleted()
-        +int getTA() 
-        +int getTC() 
-        +int getId() 
-        +Status getStatus() 
-        +int getLocation() 
-        +int getProgressTask() 
-        +int getProgressQueue() 
-        +std::vector<int> getQueue() 
-        +void addTask(int room)
-        +void addTask(std::vector<int> rooms)
-        +int getBatteryLevel() 
-        +void incrementBatteryLevel(int amt)
-        +void setBatteryLevel(int amt)
-        +void update()  
-        +std::string toString() 
-        +static std::string typeToString(RobotType type)
-        +static std::string statusToString(Status status)
-        +static std::string getRobotTypeFullName(char type)
-        +std::string toString()
-        +RobotType getType()
-        +float getFailureRate()
-        +virtual nlohmann::json toJson()
-        +std::string getRoomStatus() 
-        +bool clean()     
-        +nlohmann::json reportError()  
-        +float getRandom()   
-        +void move(int room_num) 
-        +float genFailRate()
-        +float getFailRate() 
-        +void popQueue()
-        +void setStatus(Status s)
-        +void setId(int newId)
-        +void setPauseTicks(int s)
-        +void incrementPauseTicks() 
-        +int getPauseTicks()
-        +void chargeRobot()
-        +int timeRemaining() 
-        #std::mt19937 gen
-        #std::uniform_real_distribution<float> float_distribution
-        #std::uniform_real_distribution<float> fail_distribution
+    SimulationDriver ..> Robot
+    SimulationDriver ..> Map
 
-        #int id
-        #RobotType type
-        #Status status = Status::Active
-        #int location = 0
-        #int tasks_completed
-        #int tasks_attempted
-        #int progress_task
-        #int progress_queue
-        #std::queue<int> queue
-        #int battery_level
-        #float failure_rate
-        #std::mt19937 gen
-        #std::uniform_real_distribution<float> float_distribution
-        #std::uniform_real_distribution<float> fail_distribution
-}
 
-Robot ..> RobotType
-Robot ..> Status
-
-class ScrubberRobot{
-    +ScrubberRobot() 
-    +ScrubberRobot(int id) 
-    +ScrubberRobot(int id, float failure_rate) 
-    -int WaterLevel 
-    -bool clean() 
 }
 
 
-class ShampooRobot{
-    +ShampooRobot()  
-    +ShampooRobot(int id)  
-    +ShampooRobot(int id, float failure_rate)  
-    -int ShampooLevel  
-    -bool clean()  
-}
+package "wxWidgets GUI and Dashboards" {
+    class MyWidget {
+        + bool OnInit()
+    }
 
-class VacuumRobot{
-    +VacuumRobot()  
-    +VacuumRobot(int id)  
-    +VacuumRobot(int id, float failure_rate)  
-    -int TrashbagLevel  
-    -bool clean()   
-}
+    class MainFrame {
+        + MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
+        + void OnClose(wxCloseEvent &e)
+        + void OnExit(wxCommandEvent &event)
+        + void goHome(wxCommandEvent &event)
+        + void switchToEngineer(wxCommandEvent &event)
+        + void switchToStaff(wxCommandEvent &event)
+        + void switchToManager(wxCommandEvent &event)
+        + void switchToSeniorManager(wxCommandEvent &event)
+        + void switchToLiveDashboard(wxCommandEvent &event)
+        + void addRobot(wxCommandEvent &event)
+        + void deleteRobot(wxCommandEvent &event)
+        + int findListItem(wxString id)
+        + void refresh()
+        + void assignTasks(wxCommandEvent &event)
+        + void viewHistoricalData(wxCommandEvent &event)
+        + void fixRobot(wxCommandEvent &event)
+        + void feedback(wxCommandEvent &event)
 
-Robot <|-- ScrubberRobot
-Robot <|-- ShampooRobot
-Robot <|-- VacuumRobot
-
-
-Dashboard <|-- ErrorLog
-Dashboard <|-- LiveRobotDash
-Dashboard <|-- MetricsDash
-
-Dashboard ..> MongoDBWrapper
-Dashboard ..> Robot
-SimulationDriver ..> Map
-Map ..> FloorType
-class MongoDBWrapper{
-    +MongoDBWrapper(const std::string& uri, \nconst std::string& db_name, const std::string& collection_name)   
-    +void insertRobotData(int id, const std::string& type, const std::string& status, 
-                         int location, const std::string& map, const std::string& currentRoomStatus)   
-
-    -mongocxx::client client_   
-    -mongocxx::database db_   
-    -mongocxx::collection collection_   
-}
-
-' class AssignmentModule{
-'     -Map curr_map
-'     -long time
-'     -void close()
-'     +boolean assign(std::vector<Robot> fleet, std::vector<int> rooms)
-'     - Calendar calendar
-'     - SimulationDriver sd
+        - wxPanel *mainPanel
+        - wxPanel *mainMenu
+        - wxPanel *engineerPanel
+        - wxPanel *staffPanel
+        - wxPanel *managerPanel
+        - wxPanel *seniorManagerPanel
+        - wxBoxSizer* mainSizer
+        - WxDashboard* liveDashboard
+        - WxHistoricalData* historicalDashboard
+        - Map map
+        - MongoDBWrapper mongo_wrapper
+        - SimulationDriver simDriver
+        - std::atomic<bool> quitRequested
+        - std::thread updateThread
+        - int integer
+    }
 
 
-' }
+    class WxDashboard {
+        + WxDashboard(wxWindow* parent)
+        + wxListView *robotListView
+    }
 
-' AssignmentModule ..> Robot
-' AssignmentModule ..> SimulationDriver
-SimulationDriver ..> MongoDBWrapper
+    class WxHistoricalData {
+        + WxHistoricalData(wxWindow* parent)
+        + wxListView *historicalListView
+    }
 
-class SimulationDriver{
-        +SimulationDriver()
-        +explicit SimulationDriver(Map selectedMap)
-        +void addRobot(Robot robot)
-        +Robot& removeRobot(int id)
-        +void clear()
-        +void toString()
-        +int getRobotIndex() 
-        +int assignRobotIndex()
-        +Map getSelectedMap() 
-        +void start_dashboard()
-        +Robot* getRobot(int id)
-        +std::vector<nlohmann::json> getFleet()
-        +void update_all()
-        +void update(Robot& r)
-        +RobotType stringToRobotType(std::string type)
-        +int fixRobot(int id)
-        +int chargeRobot(int id)
-        +std::vector<int> assignmentModule(std::vector<int> tasks)
+    class WxTaskbox {
+        + WxTaskbox(wxWindow* parent, Map map)
+        + std::vector<bool> GetCheckboxStates() const
+        - std::vector<wxCheckBox*> checkboxes
+    }
 
-        +std::chrono::system_clock::time_point start = std::chrono::system_clock::now()
-        +void setMongoWrapper(MongoDBWrapper& wrapper)
-
-
-        -std::vector<Robot> robots
-        -std::unordered_set<int> usedIds
-        -pthread_rwlock_t robotsLock
-        -Map selectedMap
-        -std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper
-        -int robot_index = 0
-        -Robot DEFAULT_ROBOT
-        -void constructRobot()
-        -void reportSimError(nlohmann::json robotErr, std::string errorNotes)
-}
-
-SimulationDriver ..> Robot
-
-class WxDashboard{
-    +WxDashboard(wxWindow* parent)
-    +wxListView *robotListView
-}
-
-class MyWidget{
-    +virtual bool OnInit()
-}
-
-WxDashboard <|-- MainFrame
-MongoDBWrapper <|-- MainFrame
-SimulationDriver <|-- MainFrame
-
-
-class MainFrame{
-    +MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
-    -wxPanel *mainPanel
-    -wxPanel *mainMenu
-    -wxPanel *engineerPanel
-    -wxPanel *engineerTopPanel
-    -wxPanel *engineerBottomPanel
-    -wxPanel *managerPanel
-    -wxBoxSizer* mainSizer
-    -wxListView *robotListView
-    -WxDashboard* liveDashboard
-
-    -Map map
-    -MongoDBWrapper mongo_wrapper = MongoDBWrapper("mongodb://localhost:27017", "Robots", "active_robots", "removed_robots", "error_log")
-    -SimulationDriver simDriver
-    -std::atomic<bool> quitRequested{false}
-    -std::thread updateThread
-    -int integer = 0
-
-    -void OnClose(wxCloseEvent &e)
-    -void OnExit( wxCommandEvent& event )
-    
-    -void switchToEngineer( wxCommandEvent& event )
-    -void switchToStaff ( wxCommandEvent& event )
-    -void switchToManager ( wxCommandEvent& event )
-    -void switchToSeniorManager ( wxCommandEvent& event )
-    -void switchToLiveDashboard( wxCommandEvent& event )
-    
-    -void addRobot( wxCommandEvent& event )
-    -void deleteRobot( wxCommandEvent& event )
-    -int findListItem( wxString id )
-    -void refresh()
-    -void updateRobot( wxCommandEvent& event )
-}
-
-class MongoDBWrapper{
-    +MongoDBWrapper(
-            const std::string& uri, 
-            const std::string& db_name, 
-            const std::string& active_collection_name, 
-            const std::string& removed_collection_name,
-            const std::string& error_collection_name
-    )
-    +void upsertRobotData(nlohmann::json robotData);
-    +void moveRobotToRemoved(int id);
-    +void logError(nlohmann::json robotData)
-    -mongocxx::client client_;
-    -mongocxx::database db_;
-    -mongocxx::collection active_collection_;
-    -mongocxx::collection removed_collection_;
-    -mongocxx::collection error_collection_;
+    MyWidget --> MainFrame 
+    MainFrame *-- WxDashboard 
+    MainFrame *-- WxHistoricalData
+    MainFrame *-- WxTaskbox
 
 }
+
+
+
+
+
+package "Database Management" {
+    class MongoDBWrapper {
+        +MongoDBWrapper(const std::string& uri, const std::string& db_name, const std::string& active_collection_name, const std::string& removed_collection_name, const std::string& error_collection_name)
+        +void upsertRobotData(nlohmann::json robotData)
+        +void moveRobotToRemoved(int id)
+        +void logError(nlohmann::json robotData)
+        +nlohmann::json getAllDataAsJson(const std::string& collectionType)
+        -mongocxx::client client_
+        -mongocxx::database db_
+    }
+
+    SimulationDriver ..> MongoDBWrapper
+    MainFrame ..> MongoDBWrapper
+}
+
+@enduml
+
