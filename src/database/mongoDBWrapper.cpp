@@ -126,6 +126,16 @@ nlohmann::json MongoDBWrapper::getAllDataAsJson(const std::string& collectionTyp
             return nlohmann::json(); // Return empty JSON for invalid collection type
         }
 
+        // Static variable to track whether data has been retrieved before
+        static bool firstRetrieval = true;
+
+        // Clear the collection only if this is the first retrieval
+        if (firstRetrieval) {
+            spdlog::info("First time retrieval, clearing the collection: {}", collectionType);
+            collection->delete_many({});  // Clear all data in the collection
+            firstRetrieval = false;  // Set the flag to false after clearing the collection
+        }
+
         // Retrieve all documents in the collection
         auto cursor = collection->find({});  // Empty filter to find all documents
         
