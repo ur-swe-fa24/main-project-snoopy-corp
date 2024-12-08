@@ -134,7 +134,7 @@
         return info;
     };
 
-    void SimulationDriver::update_all(){
+    std::vector<nlohmann::json> SimulationDriver::update_all(){
         std::cout << "update all called \n";
         pthread_rwlock_wrlock(&robotsLock);
         for(Robot& r : robots){
@@ -150,6 +150,9 @@
                 }
             pthread_rwlock_unlock(&robotsLock);
         }
+        std::vector<nlohmann::json> messsages_copy = messages;
+        messages.clear();
+        return messsages_copy;
     }
 
     void SimulationDriver::update(Robot& r){
@@ -178,7 +181,7 @@
         {
             if(std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation()))) >= 10)
             {
-                // wxwidget function -- popup notification ("room complete")
+                messages.insert(messages.end(), nlohmann::json{{"Type", "Clean Complete"},{"Message", "Robot " + std::to_string(r.getId()) + " has finished cleaning " + selectedMap.getRoomName(std::to_string(r.getLocation()))}});
                 r.incrementTasksCompleted();
                 if(r.getQueue().size() != 0)
                 {
@@ -279,6 +282,11 @@ int SimulationDriver::fixRobot(int id){
                       std::to_string((int)time % 60) + " seconds";
         robotErr["ErrorNotes"] = errorNotes;
         if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
+        robotErr["Message"] = "Error has occured for robot " + 
+                        std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + robotErr["location"].dump()
+                        + " due to " + errorNotes;
+        robotErr["Type"] = "Error";
+        messages.insert(messages.end(), robotErr);
     }
 
 

@@ -47,8 +47,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     const auto f = [this](){
         while(!this->quitRequested){
-            this->simDriver.update_all();
-            this->refresh();
+            std::vector<nlohmann::json> messages = this->simDriver.update_all();
+            this->refresh(messages);
             std::this_thread::sleep_for (std::chrono::seconds(5));
         }
         return;
@@ -380,7 +380,7 @@ void MainFrame::fixRobot(wxCommandEvent& event) {
 }
 
 // Refresh robot list to reflect current status
-void MainFrame::refresh() {
+void MainFrame::refresh(std::vector<nlohmann::json> messages) {
     json robotFleet = simDriver.getFleet();
     for (int i = 0; i < robotFleet.size(); i++) {
         
@@ -411,6 +411,14 @@ void MainFrame::refresh() {
         historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task attempted"].dump());
         wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
         historicalDashboard->historicalListView->SetItem(i, 1, mystring1);
+    }
+
+    // Messages Popups
+    for (nlohmann::json message : messages){
+        wxMessageBox(message.dump(4));
+        if (message["Type"] == "Error"){
+            // Adding error to errorDashboard
+        }
     }
 }
 
