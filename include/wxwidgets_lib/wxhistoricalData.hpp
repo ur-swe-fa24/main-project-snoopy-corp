@@ -1,4 +1,4 @@
-// Live Robot Dashboard Pop-Up Class
+// Utilization / Historical Dashboard Pop-Up Class
 #ifndef WXHISTORICALDATA_HPP
 #define WXHISTORICALDATA_HPP
 #include <wx/wx.h>

@@ -1,4 +1,4 @@
-// Live Robot Dashboard Pop-Up Class
+// Assign Tasks Dialog box Pop-Up Class
 #ifndef WXTASKBOX_HPP
 #define WXTASKBOX_HPP
 #include <wx/wx.h>
