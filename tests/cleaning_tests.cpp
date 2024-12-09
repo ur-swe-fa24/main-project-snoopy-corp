@@ -113,6 +113,7 @@ TEST_CASE("Cleaning Unit Tests") {
         REQUIRE(s.getRobot(6)->getStatus() == Status::Inactive);
 
         VacuumRobot r_7 = VacuumRobot(7,0);
+        r_7.setTrashBagLevel(-100);
         s.addRobot(r_7);
         s.getRobot(7)->addTask(5);
 
@@ -124,6 +125,7 @@ TEST_CASE("Cleaning Unit Tests") {
 
         VacuumRobot r_8 = VacuumRobot(8, 0);
         s.addRobot(r_8);
+        r_8.setTrashBagLevel(-100);
         s.getRobot(8)->addTask(6);
         for(int i = 0; i < 80; i++){
             s.update_all();

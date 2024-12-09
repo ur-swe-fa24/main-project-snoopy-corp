@@ -9,6 +9,11 @@ class ShampooRobot : public Robot{
         ShampooRobot(int id);
         ShampooRobot(int id, float failure_rate);
         nlohmann::json toJson() override;
+        bool decrementBatteryLevel(int amt) override;
+        void loadRobot() override {ShampooLevel = 15;}
+
+        void setShampooLevel(int level) {ShampooLevel = level;} // Setter for Shmapoo Level
+        int getShampooLevel() {return ShampooLevel;} // Getter for Shampoo Level
 
     private:
         int ShampooLevel; // Shampoo Level for the the scrubber robot

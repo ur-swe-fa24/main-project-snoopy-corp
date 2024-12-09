@@ -47,7 +47,7 @@ class SimulationDriver{
         std::optional<std::reference_wrapper<MongoDBWrapper>> mongo_wrapper; // Pointer for the mongo wrapper that's initially null
         int robot_index = 0; // Largest robot index for available indices
         Robot DEFAULT_ROBOT; // A default robot for testing
-        void reportSimError(nlohmann::json robotErr, std::string errorNotes);
+        void reportSimError(nlohmann::json robotErr);
         std::set<int> alreadyAssigned; // Set of tasks that are already assigned
         std::unordered_map<RobotType, std::vector<std::string>> type_mappings = {
             {RobotType::Scrubber, {"Wood", "Tile"}},

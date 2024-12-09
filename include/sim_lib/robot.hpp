@@ -35,7 +35,7 @@ class Robot{
         void addTask(int room);
         void addTask(std::vector<int> rooms);
         int getBatteryLevel();
-        void decrementBatteryLevel(int amt);
+        virtual bool decrementBatteryLevel(int amt);
         static std::string typeToString(RobotType type);
         static std::string statusToString(Status status);  
         static std::string getRobotTypeFullName(char type);
@@ -61,8 +61,9 @@ class Robot{
         void setPauseTicks(int s) { pause_ticks = s; } // Setter for Pause Ticks
         void decrementPauseTicks() { pause_ticks -= 1; } // Decrements Pause Ticks by 1
         int getPauseTicks() { return pause_ticks; } // Getter for Pause Ticks
-        void chargeRobot() { battery_level += 2; } // Increase Battery Level by 2
+        virtual void chargeRobot() { battery_level += 2; } // Increase Battery Level by 2
         int timeRemaining() { return queue.size()*10; } // Return time remaining from queue size
+        virtual void loadRobot() {battery_level = 60;} // Reloads the robot to full battery (override adjusts subclass specific variables)
     protected:
         int id; // Id of the robot where each id of active robot is unique
         RobotType type; // Type of the Robot determining floor types it can work
@@ -75,6 +76,7 @@ class Robot{
         std::queue<int> queue; // Queue of tasks
         int battery_level; // Battery level of robot
         float failure_rate; //Trigger for robot clean returning false and having clean error
+        std::string err_message = ""; // The error message stored until retrieved when an error occurs
 
         std::mt19937 gen; // Random Number Generation
         std::uniform_real_distribution<float> float_distribution; // Distribution to return a random number

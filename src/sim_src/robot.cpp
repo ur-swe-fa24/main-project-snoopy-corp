@@ -75,9 +75,15 @@ using json = nlohmann::json;
         return battery_level;
     }
 
-    // Decrease the batter of the robot by given amount
-    void Robot::decrementBatteryLevel(int amt){
+    // Decrease the battery of the robot by given amount and error if battery goes below 0
+    bool Robot::decrementBatteryLevel(int amt){
         battery_level -= amt;
+        if (battery_level < 0) {
+            err_message = "Robot Battery Died";
+            battery_level = 0;
+            return false;
+        }
+        return true;
     }
 
     // Generate a random float based on the distribution
@@ -114,7 +120,8 @@ using json = nlohmann::json;
     nlohmann::json Robot::reportError(){
         status = Status::Error;
         return json{{"ID", id},
-                    {"Location", location}};
+                    {"Location", location},
+                    {"ErrorNotes", err_message}};
     }
 
     // Move the robot's location to given room number
@@ -135,6 +142,13 @@ using json = nlohmann::json;
     // Attempt robot cleaning with a random chance of failiure
     bool Robot::clean(){
         if(getRandom() <= failure_rate){
+            int choice = rand() % 2;
+            switch(choice){
+                case 1:
+                    err_message = "Cannot clean room due to Robot Damage";
+                default:
+                    err_message = "Cannot clean room due to Sensor Error";
+            }
             return false;
         }
         else

@@ -186,9 +186,7 @@
             }
             else{
                 // std::cout << "clean about to be called; ";
-                bool successfulClean = r.clean();
-                if(!successfulClean){
-                    r.decrementBatteryLevel(1);
+                if(!r.decrementBatteryLevel(1) or !r.clean()){
                     r.setStatus(Status::Error);
                     std::queue<int> tempQueue = r.getQueue();
                     // tempQueue.push(r.getLocation());
@@ -211,30 +209,14 @@
                     std::cout << "\n" << "HERE ";
                     r.setQueue(tempQueue);
                     // r.clearQueue();
-                    int choice = rand() % 2;
-                    std::cout << "HERE3 ";
-
-                    switch(choice){     // SEND ERROR TO MONGODB
-                        case 1:
-                            reportSimError(r.reportError(), "Cannot clean room due to Robot Damage");
-                            return;
-                        default:
-                            reportSimError(r.reportError(), "Cannot clean room due to Sensor Error");
-                            return;
-                    }
-                    r.move(-1);
+                    reportSimError(r.reportError());
+                    return;
                 }
                 else{
                     int current_cleanliness = std::stoi(selectedMap.getRoomCleanliness(std::to_string(r.getLocation())));
                     current_cleanliness++;
                     selectedMap.updateRoomCleanliness(std::to_string(r.getLocation()), std::to_string(current_cleanliness));
-                    
-                    if (r.getBatteryLevel() <= 0){
-                        reportSimError(r.reportError(), "Robot Battery Died");
-                    }
-                }
-                r.decrementBatteryLevel(1);
-                
+                }                
             }
         }
         else if(r.getStatus() == Status::BeingFixed)
@@ -267,18 +249,17 @@ int SimulationDriver::fixRobot(int id){
         return 0;
 }           
 
-// Reports a given error from simulation adding time data to it given robot error in JSON and the details
-// of error as a string and also creates a message to be passed upwards to UI for the dialog box and error dashboard
-void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
+// Reports a given error from simulation adding time data to it given robot error in JSON
+// and also creates a message to be passed upwards to UI for the dialog box and error dashboard
+void SimulationDriver::reportSimError(nlohmann::json robotErr) {
     float time = (std::chrono::duration<float>(std::chrono::system_clock::now() - start)).count();
     robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
                     std::to_string((int)time % 60) + " seconds";
-    robotErr["ErrorNotes"] = errorNotes;
     if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
     robotErr["Message"] = "Error has occured for robot " + 
                     std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + 
                     selectedMap.getRoomName(std::to_string(std::stoi(robotErr["Location"].dump())))
-                    + " because " + errorNotes;
+                    + " because " + robotErr["ErrorNotes"].get<std::string>();
     robotErr["Type"] = "Error";
     messages.insert(messages.end(), robotErr);
 }
