@@ -1,11 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "sim_lib/_sim_lib.hpp"
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/catch_approx.hpp>
-#include <iostream>
-#include <string>
-#include <queue>
 
 TEST_CASE("Cleaning Unit Tests") {
 
@@ -61,7 +56,6 @@ TEST_CASE("Cleaning Unit Tests") {
     }
 
     SECTION("Uncleanable rooms not assigned"){
-        // std::vector<int> unAssigned = t.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12});
         int s_size = s.assignmentModule({1,2,3,4,5,6,7,8,9,10,11,12,13}).size();
         REQUIRE(s_size == 0);
 
