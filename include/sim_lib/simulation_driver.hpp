@@ -30,7 +30,7 @@ class SimulationDriver{
         Robot* getRobot(int id);
         Robot* internal_getRobot(int id);
         std::vector<nlohmann::json> getFleet();
-        void update_all();
+        std::vector<nlohmann::json> update_all();
         void update(Robot& r);
         RobotType stringToRobotType(std::string type);
         int fixRobot(int id);
@@ -58,6 +58,7 @@ class SimulationDriver{
             {RobotType::Vacuum, {"Wood", "Tile", "Carpet"}},
             {RobotType::Shampoo, {"Carpet"}}
         };
+        std::vector<nlohmann::json> messages;
 };
 
 

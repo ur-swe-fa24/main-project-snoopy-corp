@@ -52,8 +52,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     const auto f = [this](){
         while(!this->quitRequested){
-            this->simDriver.update_all();
-            this->refresh();
+            std::vector<nlohmann::json> messages = this->simDriver.update_all();
+            this->refresh(messages);
             std::this_thread::sleep_for (std::chrono::seconds(4));
         }
         return;
@@ -292,14 +292,6 @@ void MainFrame::viewHistoricalData(wxCommandEvent& event) {
 // Button function to open error dashboard
 void MainFrame::viewErrorDashboard( wxCommandEvent& event ) {
     json errors = mongo_wrapper.getAllDataAsJson("error_log");
-    if (errorDashboard->errorListView->GetItemCount() != errors.size()) {
-        for (int i = ((errorDashboard->errorListView->GetItemCount()) - 1); i < errors.size(); i++) {
-            errorDashboard->errorListView->InsertItem(i, errors["ErrorNotes"].dump());
-            errorDashboard->errorListView->SetItem(i, 1, errors["ID"].dump());
-            errorDashboard->errorListView->SetItem(i, 2, errors["Location"].dump());
-            errorDashboard->errorListView->SetItem(i, 3, errors["Time"].dump());
-        }
-    }
 
     std::cout << errorDashboard->errorListView->GetItemCount() << std::endl;
     std::cout << errors << std::endl;
@@ -351,9 +343,9 @@ void MainFrame::addRobot(wxCommandEvent& event) {
             historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
             //wxString mystring = wxString::Format(wxT("%i"), robot.getTC()); //tasks completed int -> wxstring
             historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Task attempted"].dump());
-            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Task completed"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 2, robotJson["Tasks completed"].dump());
             //wxString mystring1 = wxString::Format(wxT("%f"), robot.getEfficiency()); //efficiency int -> wxstring
-            historicalDashboard->historicalListView->SetItem(integer, 1, robotJson["Efficiency"].dump());
+            historicalDashboard->historicalListView->SetItem(integer, 3, robotJson["Efficiency"].dump());
 
             integer++;
         }
@@ -372,9 +364,9 @@ void MainFrame::deleteRobot(wxCommandEvent& event) {
             liveDashboard->robotListView->DeleteItem(itemIndex); // Delete the item
             historicalDashboard->historicalListView->DeleteItem(itemIndex);
             integer--;
-            wxMessageBox("Item with ID " + dialog.GetValue() + " deleted.", "Success");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " deleted.", "Success");
         } else {
-            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " not found.", "Error");
         }
     } 
 }
@@ -402,15 +394,15 @@ void MainFrame::fixRobot(wxCommandEvent& event) {
         if (itemIndex != -1) {
             int id = std::stoi(std::string((dialog.GetValue()).mb_str()));
             int number = simDriver.fixRobot(id);
-            wxMessageBox("Item with ID " + dialog.GetValue() + " is being fixed.", "Success");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " is being fixed.", "Success");
         } else {
-            wxMessageBox("Item with ID " + dialog.GetValue() + " not found.", "Error");
+            wxMessageBox("Robot with ID " + dialog.GetValue() + " not found.", "Error");
         }
     }
 }
 
 // Refresh robot list to reflect current status
-void MainFrame::refresh() {
+void MainFrame::refresh(std::vector<nlohmann::json> messages) {
     json robotFleet = simDriver.getFleet();
     for (int i = 0; i < robotFleet.size(); i++) {
         
@@ -437,9 +429,23 @@ void MainFrame::refresh() {
         // Historical Dashboard
         //wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
         historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Task attempted"].dump()); //tasks completed int -> wxstring
-        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Task completed"].dump());
+        historicalDashboard->historicalListView->SetItem(i, 2, robotFleet[i]["Tasks completed"].dump());
         //wxString mystring1 = wxString::Format(wxT("%f"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getEfficiency());
-        historicalDashboard->historicalListView->SetItem(i, 1, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
+        historicalDashboard->historicalListView->SetItem(i, 3, robotFleet[i]["Efficiency"].dump()); //efficiency int -> wxstring
+    }
+
+    // Messages Popups
+    for (nlohmann::json message : messages){
+        
+        if (message["Type"] == "Error"){
+            int i = errorDashboard->errorListView->GetItemCount();
+            errorDashboard->errorListView->InsertItem(i, message["ErrorNotes"].dump());
+            errorDashboard->errorListView->SetItem(i, 1, message["ID"].dump());
+            errorDashboard->errorListView->SetItem(i, 2, message["Location"].dump());
+            errorDashboard->errorListView->SetItem(i, 3, message["Time"].dump());
+        }
+
+        wxMessageBox(message["Message"].template get<std::string>(), message["Type"].template get<std::string>());
     }
 }
 

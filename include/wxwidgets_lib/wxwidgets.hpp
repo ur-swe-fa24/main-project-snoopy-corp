@@ -59,7 +59,7 @@ private:
     void addRobot( wxCommandEvent& event ); // Add robot information to list
     void deleteRobot( wxCommandEvent& event ); // Delete robot from list and simulation driver
     int findListItem( wxString id ); // Private helper function for deleteRobot
-    void refresh(); // Refresh robot list to reflect current status
+    void refresh(std::vector<nlohmann::json> messages); // Refresh robot list to reflect current status
     void assignTasks( wxCommandEvent& event );
     void viewHistoricalData(wxCommandEvent& event); // View removed robots
     void fixRobot(wxCommandEvent& event); // Fix robot when it gives error message

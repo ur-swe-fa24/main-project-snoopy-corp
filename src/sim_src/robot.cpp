@@ -66,7 +66,7 @@ using json = nlohmann::json;
         return battery_level;
     }
 
-    void Robot::incrementBatteryLevel(int amt){
+    void Robot::decrementBatteryLevel(int amt){
         battery_level -= amt;
     }
     float Robot::getRandom(){
@@ -168,7 +168,7 @@ using json = nlohmann::json;
             {"Progress Queue", progress_queue},
             {"Battery Level", battery_level},
             {"Tasks completed", tasks_completed},
-            {"Efficiency", getEfficiency()},
+            {"Efficiency", this->getEfficiency()},
             {"Queue", vec}};
         return j;
     }
