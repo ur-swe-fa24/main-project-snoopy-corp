@@ -1,4 +1,4 @@
-// Live Robot Dashboard Pop-Up Class
+// Error Dashboard Pop-Up Class
 #ifndef WXERRORDASHBOARD_HPP
 #define WXERRORDASHBOARD_HPP
 #include <wx/wx.h>
