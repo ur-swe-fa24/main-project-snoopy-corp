@@ -3,7 +3,8 @@
 WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Robot Dashboard", wxDefaultPosition, wxSize(860, 350)) {
     // Create a panel inside the dialog
     wxPanel* liveDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(860, 350));
-    // liveDashboard->SetBackgroundColour(wxColor(255, 204, 229));
+    wxColour pink(255, 204, 229);
+    liveDashboard->SetBackgroundColour(pink);
     robotListView = new wxListView(liveDashboard);
     
     // Create list to show robot items
