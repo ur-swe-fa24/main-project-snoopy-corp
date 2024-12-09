@@ -40,9 +40,9 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
         {"2", {{"Room", "Office"}, {"Cleaning Status", "8"}, {"FloorType", "Carpet"}}},
         {"3", {{"Room", "Bathroom"}, {"Cleaning Status", "5"}, {"FloorType", "Tile"}}},
         {"4", {{"Room", "Hallway"}, {"Cleaning Status", "3"}, {"FloorType", "Wood"}}},
-        {"5", {{"Room", "Foyer"}, {"Cleaning Status", "4"}, {"FloorType", "Wood"}}}
-        // {"6", {{"Room", "Bedroom1"}, {"Cleaning Status", "5"}, {"FloorType", "Carpet"}}},
-        // {"7", {{"Room", "Bedroom2"}, {"Cleaning Status", "5"}, {"FloorType", "Carpet"}}}
+        {"5", {{"Room", "Foyer"}, {"Cleaning Status", "4"}, {"FloorType", "Wood"}}},
+        {"6", {{"Room", "Bedroom1"}, {"Cleaning Status", "5"}, {"FloorType", "Carpet"}}},
+        {"7", {{"Room", "Bedroom2"}, {"Cleaning Status", "5"}, {"FloorType", "Carpet"}}}
     };
 
     static mongocxx::instance instance{};
@@ -53,7 +53,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     const auto f = [this](){
         while(!this->quitRequested){
             std::vector<nlohmann::json> messages = this->simDriver.update_all();
-            this->refresh(messages);
+            this->CallAfter([this, messages](){this->refresh(messages);});
             std::this_thread::sleep_for (std::chrono::seconds(4));
         }
         return;
