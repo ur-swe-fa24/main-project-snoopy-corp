@@ -3,7 +3,8 @@
 WxHistoricalData::WxHistoricalData(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Historical Dashboard", wxDefaultPosition, wxSize(500, 350)) {
     // Create a panel inside the dialog
     wxPanel* historicalDashboard = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(500, 350));
-    // historicalDashboard->SetBackgroundColour(wxColor(255, 204, 229));
+    wxColour pink(255, 204, 229);
+    historicalDashboard->SetBackgroundColour(pink);
     historicalListView = new wxListView(historicalDashboard);
     
     // Create list to show robot items

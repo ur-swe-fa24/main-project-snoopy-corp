@@ -4,7 +4,8 @@
 WxTaskbox::WxTaskbox(wxWindow* parent, Map map) : wxDialog(parent, wxID_ANY, "Robot Task Assignment", wxDefaultPosition, wxSize(300, 300)) {
     // Define panel
     wxPanel* taskPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300, 300));
-    // taskPanel->SetBackgroundColour(wxColor(255, 204, 229));
+    wxColour pink(255, 204, 229);
+    taskPanel->SetBackgroundColour(pink);
 
     // Sizer for entire panel
     wxBoxSizer* taskSizer = new wxBoxSizer(wxVERTICAL);
