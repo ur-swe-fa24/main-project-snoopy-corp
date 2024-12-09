@@ -6,6 +6,7 @@
 #include <wx/listctrl.h>
 #include "sim_lib/robot.hpp"
 #include "sim_lib/simulation_driver.hpp"
+#include "sim_lib/vacuum_robot.hpp"
 #include "sim_lib/shampoo_robot.hpp"
 #include "sim_lib/scrubber_robot.hpp"
 #include "sim_lib/robot.hpp"

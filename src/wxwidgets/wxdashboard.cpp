@@ -21,7 +21,9 @@ WxDashboard::WxDashboard(wxWindow* parent) : wxDialog(parent, wxID_ANY, "Live Ro
     robotListView->AppendColumn("Queue Length");
     robotListView->SetColumnWidth(5, 120);
     robotListView->AppendColumn("Current Room Status");
-    robotListView->SetColumnWidth(6, 180);
+    robotListView->SetColumnWidth(6, 120);
+    robotListView->AppendColumn("Special Notes");
+    robotListView->SetColumnWidth(7, 180);
 
     wxBoxSizer* robotViewSizer = new wxBoxSizer(wxVERTICAL);
     robotViewSizer->Add(robotListView, 1, wxALL | wxEXPAND, 10);

@@ -338,6 +338,11 @@ void MainFrame::addRobot(wxCommandEvent& event) {
                 liveDashboard->robotListView->SetItem(integer, 6, "N/A");
             else
                 liveDashboard->robotListView->SetItem(integer, 6, simDriver.getSelectedMap().getRoomCleanliness(robotJson["Location"].dump()));
+            std::string special = "";
+            for (auto& [key, value] : robotJson["Special"].items()) {
+                special = key + ": " + value.dump();
+            }
+            liveDashboard->robotListView->SetItem(integer, 7, special);
 
             // Historical Dashboard
             historicalDashboard->historicalListView->InsertItem(integer, robotJson["ID"].dump());
@@ -425,6 +430,11 @@ void MainFrame::refresh(std::vector<nlohmann::json> messages) {
                     liveDashboard->robotListView->SetItem(i, 6, "N/A");
         else
             liveDashboard->robotListView->SetItem(i, 6, simDriver.getSelectedMap().getRoomCleanliness(robotFleet[i]["Location"].dump()));
+        std::string special = "";
+        for (auto& [key, value] : robotFleet[i]["Special"].items()) {
+            special = key + ": " + value.dump();
+        }
+        liveDashboard->robotListView->SetItem(i, 7, special);
 
         // Historical Dashboard
         //wxString mystring = wxString::Format(wxT("%i"), simDriver.getRobot(stoi(robotFleet[i]["ID"].dump()))->getTC());
@@ -439,10 +449,10 @@ void MainFrame::refresh(std::vector<nlohmann::json> messages) {
         
         if (message["Type"] == "Error"){
             int i = errorDashboard->errorListView->GetItemCount();
-            errorDashboard->errorListView->InsertItem(i, message["ErrorNotes"].dump());
+            errorDashboard->errorListView->InsertItem(i, message["ErrorNotes"].get<std::string>());
             errorDashboard->errorListView->SetItem(i, 1, message["ID"].dump());
             errorDashboard->errorListView->SetItem(i, 2, message["Location"].dump());
-            errorDashboard->errorListView->SetItem(i, 3, message["Time"].dump());
+            errorDashboard->errorListView->SetItem(i, 3, message["Time"].get<std::string>());
         }
 
         wxMessageBox(message["Message"].template get<std::string>(), message["Type"].template get<std::string>());
