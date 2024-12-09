@@ -2,10 +2,7 @@
 #include "sim_lib/robot.hpp"
 #include "sim_lib/map.hpp"
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/catch_approx.hpp>
 #include <bsoncxx/document/view.hpp>
-#include <iostream>
 
 // Ensure only one instance of mongocxx::instance exists
 mongocxx::instance& getMongoInstance() {

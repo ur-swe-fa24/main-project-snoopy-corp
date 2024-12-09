@@ -3,7 +3,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/catch_approx.hpp>
-#include <iostream>
 #include <string>
 #include <queue>
 
@@ -36,7 +35,6 @@ TEST_CASE("Cleaning Unit Tests") {
     
         s.getRobot(0)->addTask(1);
         std::queue q = s.getRobot(0)->getQueue();
-        // std::cout << "Front: " << q.front() << "\n";
         s.getRobot(0)->addTask(3);
         s.getRobot(1)->addTask(2);
 
@@ -93,7 +91,6 @@ TEST_CASE("Cleaning Unit Tests") {
     SECTION("Ensure fail rates are correctly generated"){
         VacuumRobot r_5 = VacuumRobot(5);
         s.addRobot(r_5);
-        std::cout << s.getRobot(5)->getFailRate();
         bool valid = s.getRobot(5)->getFailRate() <= 0.01 || s.getRobot(5)->getFailRate() == Catch::Approx(0.1);
         REQUIRE(valid);
     }

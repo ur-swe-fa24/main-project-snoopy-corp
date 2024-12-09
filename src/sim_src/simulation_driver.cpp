@@ -9,19 +9,21 @@
 #include <set>
 
 
-    // Default constructor 
+    // Default constructor that sets mongo to null, start time, and initializes thread lock
     SimulationDriver::SimulationDriver() : mongo_wrapper(std::nullopt), start(std::chrono::system_clock::now()){
         if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
     }
 
+    // Constructor with map provided to set the map alongside default constructor information
     SimulationDriver::SimulationDriver(Map selectedMap) : selectedMap(selectedMap), mongo_wrapper(std::nullopt), start(std::chrono::system_clock::now()) {
             if (pthread_rwlock_init(&robotsLock, nullptr) != 0) {
                 throw std::runtime_error("Failed to initialize robotsLock");
             }
     }
 
+    // Add the given robot to the simulation
     void SimulationDriver::addRobot(Robot& robot)
     {
         pthread_rwlock_wrlock(&robotsLock);
@@ -38,6 +40,7 @@
         pthread_rwlock_unlock(&robotsLock);
     }
 
+    // Converts a given string to one of the robot type
     RobotType SimulationDriver::stringToRobotType(std::string type) {
         if (type == "Vacuum") {
             return RobotType::Vacuum;
@@ -48,9 +51,7 @@
         }
     }
 
-
-
-    // Needed = operator
+    // Remove robot from the simulation using the id provided
     Robot& SimulationDriver::removeRobot(int id){
         pthread_rwlock_wrlock(&robotsLock);
         int index = 0;
@@ -62,39 +63,19 @@
                 return r;
             }
             else index++;
-
-//     Robot SimulationDriver::removeRobot(int id){
-//         auto it = std::find_if(robots.begin(), robots.end(),
-//         [id](const Robot& r) { return r.getId() == id; });
-
-//         if (it != robots.end()) {
-//             Robot removedRobot = std::move(*it); // Create a copy of the robot being removed
-//             robots.erase(it);                   // Erase the robot from the vector
-//             pthread_rwlock_unlock(&robotsLock);
-//             return removedRobot;
         }
         pthread_rwlock_unlock(&robotsLock);
         return DEFAULT_ROBOT; // Return the default robot if not found
     }
 
-    void SimulationDriver::constructRobot(){
-        return;
-    }
-
+    // Clear the list of robots
     void SimulationDriver::clear(){
         pthread_rwlock_wrlock(&robotsLock);
         robots.clear();
         pthread_rwlock_unlock(&robotsLock);
     }
 
-    void SimulationDriver::toString(){
-        pthread_rwlock_rdlock(&robotsLock);
-        for (Robot& r : robots){
-            r.toString();
-        }
-        pthread_rwlock_unlock(&robotsLock);
-    }
-
+    // Assign the robot an available index
     int SimulationDriver::assignRobotIndex(){
         while (usedIds.find(robot_index) != usedIds.end()) {
             robot_index++;
@@ -103,7 +84,7 @@
         return robot_index;
     }
 
-    // Returns a given robot
+    // Return the specified robot with the requested id (purely for testing purposes)
     Robot* SimulationDriver::getRobot(int id) {
         pthread_rwlock_rdlock(&robotsLock);
         for(int i = 0; i < robots.size(); i++){
@@ -116,6 +97,7 @@
         return nullptr;
     }
 
+
     // Gets robot WITHOUT a read lock, only for use if called inside update_all
     Robot* SimulationDriver::internal_getRobot(int id) {
         for(int i = 0; i < robots.size(); i++){
@@ -126,7 +108,7 @@
         return nullptr;
     }
 
-    // Returns the currently loaded fleet of robots
+    // Converts all robots to JSON and puts all information in a vector to return
     std::vector<nlohmann::json> SimulationDriver::getFleet() {
         pthread_rwlock_rdlock(&robotsLock);
         std::vector<nlohmann::json> info;
@@ -137,8 +119,8 @@
         return info;
     };
 
-
-    // The method called by the thread, this updates each robot & handles mongoDB data upsertion
+    // Updates all robots by calling update on them, updating the mongodb, and returning the messages
+    // to be displayed to user after clearing the internal "queue" of messages
     std::vector<nlohmann::json> SimulationDriver::update_all(){
         std::cout << "update all called \n";
         pthread_rwlock_wrlock(&robotsLock);
@@ -160,9 +142,7 @@
         return messsages_copy;
     }
 
-
-    // The logic that dictates a robot's actions for any given 'tick'
-    // Cleaning, moving, etc.
+    // Given a robot, moves it forward one time tick in logic for cleaning based on its status, tasks, and other states
     void SimulationDriver::update(Robot& r){
         if(r.getStatus() == Status::Inactive)
         {
@@ -251,7 +231,6 @@
                     
                     if (r.getBatteryLevel() <= 0){
                         reportSimError(r.reportError(), "Robot Battery Died");
-                        r.setStatus(Status::Error);
                     }
                 }
                 r.decrementBatteryLevel(1);
@@ -271,36 +250,38 @@
         // pthread_rwlock_unlock(&robotsLock); 
     }
 
-// This method repairs a broken robot (is called via a button in GUI)
+// Method to start fixing of a given robot by setting its pauseticks
 int SimulationDriver::fixRobot(int id){
         pthread_rwlock_wrlock(&robotsLock);
         for(Robot& r : robots){
             if(r.getId() == id){
-                // pthread_rwlock_unlock(&robotsLock);
                 r.setStatus(Status::BeingFixed);
                 r.setBatteryLevel(60);
                 r.move(-1);
                 r.setPauseTicks(10);
+                pthread_rwlock_unlock(&robotsLock);
+                return 0;
             }
         }
         pthread_rwlock_unlock(&robotsLock);
         return 0;
 }           
 
-    void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
-        float time = (std::chrono::duration<float>(std::chrono::system_clock::now() - start)).count();
-        robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
-                      std::to_string((int)time % 60) + " seconds";
-        robotErr["ErrorNotes"] = errorNotes;
-        if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
-        robotErr["Message"] = "Error has occured for robot " + 
-                        std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + 
-                        selectedMap.getRoomName(std::to_string(std::stoi(robotErr["Location"].dump())))
-                        + " because " + errorNotes;
-        robotErr["Type"] = "Error";
-        messages.insert(messages.end(), robotErr);
-    }
-
+// Reports a given error from simulation adding time data to it given robot error in JSON and the details
+// of error as a string and also creates a message to be passed upwards to UI for the dialog box and error dashboard
+void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string errorNotes) {
+    float time = (std::chrono::duration<float>(std::chrono::system_clock::now() - start)).count();
+    robotErr["Time"] = std::to_string((int)time / 60) + " minutes and " + 
+                    std::to_string((int)time % 60) + " seconds";
+    robotErr["ErrorNotes"] = errorNotes;
+    if (mongo_wrapper) mongo_wrapper->get().logError(robotErr);
+    robotErr["Message"] = "Error has occured for robot " + 
+                    std::to_string(std::stoi(robotErr["ID"].dump())) + " at location " + 
+                    selectedMap.getRoomName(std::to_string(std::stoi(robotErr["Location"].dump())))
+                    + " because " + errorNotes;
+    robotErr["Type"] = "Error";
+    messages.insert(messages.end(), robotErr);
+}
 
 
 // The assignment algorithm takes a list of tasks & assigns them to valid robots 
@@ -351,8 +332,7 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     return unAssignedTasks;
 }
 
-
-// Used for when a robot crashes- its tasks are reassigned to available robots
+// Reassigns the tasks of a robot that has broken down
 std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
     std::cout << "Size of incoming: " << tasks.size() << "\n";
     std::vector<int> unAssignedTasks = {};
