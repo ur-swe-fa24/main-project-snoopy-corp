@@ -103,6 +103,7 @@
         return robot_index;
     }
 
+    // Returns a given robot
     Robot* SimulationDriver::getRobot(int id) {
         pthread_rwlock_rdlock(&robotsLock);
         for(int i = 0; i < robots.size(); i++){
@@ -115,6 +116,7 @@
         return nullptr;
     }
 
+    // Gets robot WITHOUT a read lock, only for use if called inside update_all
     Robot* SimulationDriver::internal_getRobot(int id) {
         for(int i = 0; i < robots.size(); i++){
             if(robots[i].getId()==id){
@@ -124,6 +126,7 @@
         return nullptr;
     }
 
+    // Returns the currently loaded fleet of robots
     std::vector<nlohmann::json> SimulationDriver::getFleet() {
         pthread_rwlock_rdlock(&robotsLock);
         std::vector<nlohmann::json> info;
@@ -134,6 +137,8 @@
         return info;
     };
 
+
+    // The method called by the thread, this updates each robot & handles mongoDB data upsertion
     std::vector<nlohmann::json> SimulationDriver::update_all(){
         std::cout << "update all called \n";
         pthread_rwlock_wrlock(&robotsLock);
@@ -155,6 +160,9 @@
         return messsages_copy;
     }
 
+
+    // The logic that dictates a robot's actions for any given 'tick'
+    // Cleaning, moving, etc.
     void SimulationDriver::update(Robot& r){
         if(r.getStatus() == Status::Inactive)
         {
@@ -204,7 +212,6 @@
                     r.decrementBatteryLevel(1);
                     r.setStatus(Status::Error);
                     std::queue<int> tempQueue = r.getQueue();
-                    // tempQueue.push(r.getLocation());
                     std::vector<int> reassignment = {};
                     std::cout << "To be potentially reassigned: ";
                     while (!tempQueue.empty()) {
@@ -212,20 +219,20 @@
                         std::cout << tempQueue.front() << ", ";
                         tempQueue.pop();
                     }
-                    std::cout << "\n";
+                    // std::cout << "\n";
                     std::vector<int> reassigned = re_assignmentModule(reassignment);
-                    std::cout << "Actually reassigned: ";
+                    // std::cout << "Actually reassigned: ";
                     if(reassigned.size() > 0){
                         for(int r : reassigned){
                             tempQueue.push(r);
-                            std::cout << r << ", ";
+                            // std::cout << r << ", ";
                         }
                     }
-                    std::cout << "\n" << "HERE ";
+                    // std::cout << "\n" << "HERE ";
                     r.setQueue(tempQueue);
                     // r.clearQueue();
                     int choice = rand() % 2;
-                    std::cout << "HERE3 ";
+                    // std::cout << "HERE3 ";
 
                     switch(choice){     // SEND ERROR TO MONGODB
                         case 1:
@@ -264,6 +271,7 @@
         // pthread_rwlock_unlock(&robotsLock); 
     }
 
+// This method repairs a broken robot (is called via a button in GUI)
 int SimulationDriver::fixRobot(int id){
         pthread_rwlock_wrlock(&robotsLock);
         for(Robot& r : robots){
@@ -295,6 +303,7 @@ int SimulationDriver::fixRobot(int id){
 
 
 
+// The assignment algorithm takes a list of tasks & assigns them to valid robots 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     pthread_rwlock_wrlock(&robotsLock);
     std::cout << "Size of incoming: " << tasks.size();
@@ -326,8 +335,6 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
             }
         }
         // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
-        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
-        // pthread_rwlock_wrlock(&robotsLock);
         if(min_robot_id == -1){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
@@ -344,6 +351,8 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     return unAssignedTasks;
 }
 
+
+// Used for when a robot crashes- its tasks are reassigned to available robots
 std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
     std::cout << "Size of incoming: " << tasks.size() << "\n";
     std::vector<int> unAssignedTasks = {};
