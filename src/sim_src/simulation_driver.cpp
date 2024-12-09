@@ -97,7 +97,8 @@
         return nullptr;
     }
 
-    // Get robot based on given id used without thread lock internally
+
+    // Gets robot WITHOUT a read lock, only for use if called inside update_all
     Robot* SimulationDriver::internal_getRobot(int id) {
         for(int i = 0; i < robots.size(); i++){
             if(robots[i].getId()==id){
@@ -191,7 +192,6 @@
                     r.decrementBatteryLevel(1);
                     r.setStatus(Status::Error);
                     std::queue<int> tempQueue = r.getQueue();
-                    // tempQueue.push(r.getLocation());
                     std::vector<int> reassignment = {};
                     std::cout << "To be potentially reassigned: ";
                     while (!tempQueue.empty()) {
@@ -199,20 +199,20 @@
                         std::cout << tempQueue.front() << ", ";
                         tempQueue.pop();
                     }
-                    std::cout << "\n";
+                    // std::cout << "\n";
                     std::vector<int> reassigned = re_assignmentModule(reassignment);
-                    std::cout << "Actually reassigned: ";
+                    // std::cout << "Actually reassigned: ";
                     if(reassigned.size() > 0){
                         for(int r : reassigned){
                             tempQueue.push(r);
-                            std::cout << r << ", ";
+                            // std::cout << r << ", ";
                         }
                     }
-                    std::cout << "\n" << "HERE ";
+                    // std::cout << "\n" << "HERE ";
                     r.setQueue(tempQueue);
                     // r.clearQueue();
                     int choice = rand() % 2;
-                    std::cout << "HERE3 ";
+                    // std::cout << "HERE3 ";
 
                     switch(choice){     // SEND ERROR TO MONGODB
                         case 1:
@@ -283,8 +283,8 @@ void SimulationDriver::reportSimError(nlohmann::json robotErr, std::string error
     messages.insert(messages.end(), robotErr);
 }
 
-// Assigns a vector of given tasks to available robots and returns tasks that may have remained
-// unassigned due to no available robots
+
+// The assignment algorithm takes a list of tasks & assigns them to valid robots 
 std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
     pthread_rwlock_wrlock(&robotsLock);
     std::cout << "Size of incoming: " << tasks.size();
@@ -316,8 +316,6 @@ std::vector<int> SimulationDriver::assignmentModule(std::vector<int> tasks){
             }
         }
         // std::cout << "gave task " << task << " to robot " << this->getRobot(min_robot_id)->getId() << " with type " 
-        // << this->getRobot(min_robot_id)->typeToString(this->getRobot(min_robot_id)->getType()) << "\n";
-        // pthread_rwlock_wrlock(&robotsLock);
         if(min_robot_id == -1){
             unAssignedTasks.push_back(task);
             // std::cout << "IMPOSSIBLE TASK! " << "\n";
