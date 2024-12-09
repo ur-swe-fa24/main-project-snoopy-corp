@@ -58,7 +58,7 @@ package "Robot Hierarchy" {
         + void addTask(int room)
         + void addTask(std::vector<int> rooms)
         + int getBatteryLevel()
-        + void incrementBatteryLevel(int amt)
+        + void decrementBatteryLevel(int amt)
         + void setBatteryLevel(int amt)
         + void update()
         + static std::string typeToString(RobotType type)
@@ -78,7 +78,7 @@ package "Robot Hierarchy" {
         + void setStatus(Status s)
         + void setId(int newId)
         + void setPauseTicks(int s)
-        + void incrementPauseTicks()
+        + void decrementPauseTicks()
         + int getPauseTicks()
         + void chargeRobot()
         + int timeRemaining()
@@ -142,13 +142,13 @@ package "Simulation and Map Management" {
         - Robot DEFAULT_ROBOT
         - std::set<int> alreadyAssigned
         - std::unordered_map<RobotType, std::vector<std::string>> type_mappings
+        - std::chrono::system_clock::time_point start
 
         + SimulationDriver()
         + SimulationDriver(Map selectedMap)
         + void addRobot(Robot& robot)
         + Robot& removeRobot(int id)
         + void clear()
-        + void toString()
         + int getRobotIndex()
         + int assignRobotIndex()
         + Map getSelectedMap()
@@ -161,10 +161,7 @@ package "Simulation and Map Management" {
         + int chargeRobot(int id)
         + std::vector<int> assignmentModule(std::vector<int> tasks)
         + void setMongoWrapper(MongoDBWrapper& wrapper)
-        - void constructRobot()
         - void reportSimError(nlohmann::json robotErr, std::string errorNotes)
-
-        + std::chrono::system_clock::time_point start
     }
 
     SimulationDriver ..> Robot
