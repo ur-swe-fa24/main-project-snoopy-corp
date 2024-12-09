@@ -3,6 +3,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 // Enum Class for defining the floor types
 enum class FloorType{
@@ -12,12 +13,12 @@ enum class FloorType{
 class Map{
     private:
         std::string name; // Name of map object
-        nlohmann::json rooms; // JSON representation of the rooms and the map
+        json rooms; // JSON representation of the rooms and the map
         int numRooms; // Number of rooms in the map
 
     public:
         Map();
-        Map(std::string name, nlohmann::json rooms);
+        Map(std::string name, json rooms);
 
         std::string getName() { return name; }; // Getter for name of the map
         void setName(std::string mapName) { name = mapName; }; // Setter for name of the map

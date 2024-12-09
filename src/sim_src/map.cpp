@@ -1,7 +1,7 @@
 #include "../../include/sim_lib/map.hpp"
 
 Map::Map(){}
-Map::Map(std::string name, nlohmann::json rooms) : name(name), rooms(rooms), numRooms(rooms.size()) {}
+Map::Map(std::string name, json rooms) : name(name), rooms(rooms), numRooms(rooms.size()) {}
 
 // Updates cleaning status of given room id and cleaning status
 void Map::updateRoomCleanliness(std::string roomId, std::string cleaningStatus) {
