@@ -17,3 +17,9 @@ void Map::updateRoomName(std::string roomId, std::string roomName) {
 bool Map::roomExists(const std::string& roomId) const {
     return rooms.contains(roomId); // Checks if the key exists in the JSON object
 }
+
+void Map::resetRoomCleanliness(){
+    for (nlohmann::json room : rooms){
+        room["Cleaning Status"] = 0;
+    }
+}

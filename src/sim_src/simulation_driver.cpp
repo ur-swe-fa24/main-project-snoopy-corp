@@ -382,3 +382,9 @@ std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
     return unAssignedTasks;
 }
 
+
+// Reset the rooms in the map to be clean
+void SimulationDriver::resetRooms(){
+    selectedMap.resetRoomCleanliness();
+}
+

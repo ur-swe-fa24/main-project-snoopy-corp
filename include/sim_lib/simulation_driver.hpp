@@ -37,6 +37,7 @@ class SimulationDriver{
         std::vector<int> assignmentModule(std::vector<int> tasks);
         std::vector<int> re_assignmentModule(std::vector<int> tasks);
         void setMongoWrapper(MongoDBWrapper& wrapper) {mongo_wrapper = wrapper;}
+        void resetRooms();
 
 
     private:
