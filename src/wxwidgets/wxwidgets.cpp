@@ -23,6 +23,7 @@ BEGIN_EVENT_TABLE ( MainFrame, wxFrame )
     EVT_BUTTON ( ID_ViewHistoricalData, MainFrame::viewHistoricalData )
     EVT_BUTTON ( ID_FixRobot, MainFrame::fixRobot )
     EVT_BUTTON ( ID_GoHome, MainFrame::goHome )
+    EVT_BUTTON ( ID_ResetRooms, MainFrame::resetRooms)
     EVT_BUTTON ( ID_Feedback, MainFrame::feedback )
     EVT_BUTTON ( ID_ToErrorDashboard, MainFrame::viewErrorDashboard )
     EVT_CLOSE( MainFrame::OnClose )
@@ -164,12 +165,15 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
     wxButton* goHome3 = new wxButton(seniorManagerPanel, ID_GoHome, "Home");
     wxButton* feedback = new wxButton(seniorManagerPanel, ID_Feedback, "Give Feedback");
+    wxButton* resetRooms = new wxButton(seniorManagerPanel, ID_ResetRooms, "Reset Rooms");
     wxBoxSizer* seniorManagerSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* horzSeniorManagerSizer = new wxBoxSizer(wxHORIZONTAL);
 
     horzSeniorManagerSizer->Add(viewHistorical, 1, wxALL, FromDIP(10));
     horzSeniorManagerSizer->AddStretchSpacer(1);
     horzSeniorManagerSizer->Add(goHome3, 0, wxALL, FromDIP(10));
+    horzSeniorManagerSizer->AddStretchSpacer(1);
+    horzSeniorManagerSizer->Add(resetRooms, 0, wxALL, FromDIP(10));
     seniorManagerSizer->Add(horzSeniorManagerSizer, 1, wxEXPAND | wxALL, FromDIP(10));
     seniorManagerSizer->Add(feedback, 0, wxTOP | wxALL, FromDIP(10));
     seniorManagerPanel->SetSizer(seniorManagerSizer);
@@ -264,6 +268,11 @@ void MainFrame::switchToSeniorManager(wxCommandEvent& event) {
 // Button function to open Live Dashboard Pop-Up
 void MainFrame::switchToLiveDashboard(wxCommandEvent& event) {
     liveDashboard->Show();
+}
+
+// Button to reset room cleanliness
+void MainFrame::resetRooms(wxCommandEvent& event){
+    simDriver.resetRooms();
 }
 
 // Button function to assign tasks to a robot
