@@ -3,6 +3,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include <random>
 using json = nlohmann::json;
 
 // Enum Class for defining the floor types
@@ -27,6 +28,7 @@ class Map{
         std::string getRoomCleanliness(std::string roomId) { return rooms[roomId]["Cleaning Status"]; } // Gets the cleaning status of the room
         
         void updateRoomName(std::string roomId, std::string roomName); // Updates name of given room
+        void resetRoomCleanliness(); // Reset cleanliness to 0 of all rooms
         std::string getRoomName(std::string roomId) { return rooms[roomId]["Room"]; } // Get the name of given room
         bool roomExists(const std::string& roomId) const;
 

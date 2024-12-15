@@ -64,6 +64,7 @@ private:
     void viewHistoricalData(wxCommandEvent& event); // View removed robots
     void fixRobot(wxCommandEvent& event); // Fix robot when it gives error message
     void feedback(wxCommandEvent& event); // Allows user to provide feedback
+    void resetRooms(wxCommandEvent& event); // Reset Rooms
 
 
     DECLARE_EVENT_TABLE()
@@ -84,6 +85,7 @@ enum {
     ID_FixRobot = 1010,
     ID_Feedback = 1011,
     ID_ToErrorDashboard = 1012,
+    ID_ResetRooms = 1013,
     ID_Exit = wxID_EXIT
 };
 
