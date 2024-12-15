@@ -57,6 +57,7 @@ class SimulationDriver{
         }; // Vector of robot type to room type
         std::chrono::system_clock::time_point start; // Start time of the simulation set during constructor
         std::vector<nlohmann::json> messages; // Messages to send to UI to pass to the user
+        bool resetFlag{false}; // flag to reset rooms inside update
 };
 
 

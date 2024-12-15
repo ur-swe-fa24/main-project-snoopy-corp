@@ -20,8 +20,10 @@ bool Map::roomExists(const std::string& roomId) const {
 
 #include <iostream>
 void Map::resetRoomCleanliness(){
+    std::mt19937 gen(std::random_device{}()); // Random generator with seed
+    std::uniform_int_distribution<int> distrib(0, 8); // Range [0, 8]
     for (nlohmann::json& room : rooms){
-        room["Cleaning Status"] = "0";
+        room["Cleaning Status"] = std::to_string(distrib(gen));
     }
     std::cout << rooms.dump(4) << std::endl;
 }

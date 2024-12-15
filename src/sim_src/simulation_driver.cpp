@@ -124,6 +124,17 @@
     std::vector<nlohmann::json> SimulationDriver::update_all(){
         std::cout << "update all called \n";
         pthread_rwlock_wrlock(&robotsLock);
+        if (resetFlag){
+            bool noCleaners = true;
+            for (Robot& r : robots) {noCleaners = noCleaners & (r.getStatus() != Status::Active);}
+            if (noCleaners){
+                selectedMap.resetRoomCleanliness();
+                alreadyAssigned.clear();
+                messages.insert(messages.end(), nlohmann::json{{"Type", "Rooms Reset"},{"Message", "All Rooms Cleanliness have been reset"}});
+                resetFlag = false;
+            }
+        }
+
         for(Robot& r : robots){
             update(r);
             std::cout << "updating: " << r.toString() << "\n";
@@ -385,6 +396,8 @@ std::vector<int> SimulationDriver::re_assignmentModule(std::vector<int> tasks){
 
 // Reset the rooms in the map to be clean
 void SimulationDriver::resetRooms(){
-    selectedMap.resetRoomCleanliness();
+    pthread_rwlock_rdlock(&robotsLock);
+    resetFlag = true;
+    pthread_rwlock_unlock(&robotsLock);
 }
 
