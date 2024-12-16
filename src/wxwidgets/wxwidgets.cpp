@@ -101,7 +101,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines engineer screen and its contents
     engineerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    engineerPanel->SetBackgroundColour(pink);
+    wxColour purple(201, 186, 230);
+    engineerPanel->SetBackgroundColour(purple);
     
     wxButton* goHome = new wxButton(engineerPanel, ID_GoHome, "Home");
     wxButton* toLiveDashboard = new wxButton(engineerPanel, ID_ToLiveDashboard, "Live Dashboard");
@@ -126,11 +127,13 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     // Defines manager screen and its contents
     managerPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    managerPanel->SetBackgroundColour(pink);    
+    wxColour yellow(220, 224, 180);
+    managerPanel->SetBackgroundColour(yellow);    
     
     wxButton* goHome1 = new wxButton(managerPanel, ID_GoHome, "Home");
     wxButton* assignTasks1 = new wxButton(managerPanel, ID_AssignTasks, "Assign Tasks");
     wxButton* toLiveDashboard1 = new wxButton(managerPanel, ID_ToLiveDashboard, "Live Dashboard");
+    wxButton* resetRooms = new wxButton(managerPanel, ID_ResetRooms, "Reset Rooms");
     wxBoxSizer* managerSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* horzManagerSizer = new wxBoxSizer(wxHORIZONTAL);
     
@@ -138,12 +141,14 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     horzManagerSizer->AddStretchSpacer(1);
     horzManagerSizer->Add(goHome1, 0, wxALL, FromDIP(10));
     managerSizer->Add(horzManagerSizer, 1, wxEXPAND | wxALL, FromDIP(10));
-    managerSizer->Add(assignTasks1, 1, wxALL, FromDIP(10));
+    managerSizer->Add(assignTasks1, 0, wxALL, FromDIP(10));
+    managerSizer->Add(resetRooms, 0, wxALL, FromDIP(10));
     managerPanel->SetSizer(managerSizer);
 
     // Defines staff screen and its contents
     staffPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(100, 200));
-    staffPanel->SetBackgroundColour(pink);    
+    wxColour green(186, 219, 190);
+    staffPanel->SetBackgroundColour(green);    
     
     wxButton* goHome2 = new wxButton(staffPanel, ID_GoHome, "Home");
     wxButton* assignTasks2 = new wxButton(staffPanel, ID_AssignTasks, "Assign Tasks");
@@ -155,7 +160,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     horzStaffSizer->AddStretchSpacer(1);
     horzStaffSizer->Add(goHome2, 0, wxALL, FromDIP(10));
     staffSizer->Add(horzStaffSizer, 1, wxEXPAND | wxALL, FromDIP(10));
-    staffSizer->Add(assignTasks2, 1, wxALL, FromDIP(10));
+    staffSizer->Add(assignTasks2, 0, wxALL, FromDIP(10));
     staffPanel->SetSizer(staffSizer);
 
     // Defines senior manager screen and its contents
@@ -165,15 +170,12 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxButton* viewHistorical = new wxButton(seniorManagerPanel, ID_ViewHistoricalData, "View Historical Data");
     wxButton* goHome3 = new wxButton(seniorManagerPanel, ID_GoHome, "Home");
     wxButton* feedback = new wxButton(seniorManagerPanel, ID_Feedback, "Give Feedback");
-    wxButton* resetRooms = new wxButton(seniorManagerPanel, ID_ResetRooms, "Reset Rooms");
     wxBoxSizer* seniorManagerSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* horzSeniorManagerSizer = new wxBoxSizer(wxHORIZONTAL);
 
     horzSeniorManagerSizer->Add(viewHistorical, 1, wxALL, FromDIP(10));
     horzSeniorManagerSizer->AddStretchSpacer(1);
     horzSeniorManagerSizer->Add(goHome3, 0, wxALL, FromDIP(10));
-    horzSeniorManagerSizer->AddStretchSpacer(1);
-    horzSeniorManagerSizer->Add(resetRooms, 0, wxALL, FromDIP(10));
     seniorManagerSizer->Add(horzSeniorManagerSizer, 1, wxEXPAND | wxALL, FromDIP(10));
     seniorManagerSizer->Add(feedback, 0, wxTOP | wxALL, FromDIP(10));
     seniorManagerPanel->SetSizer(seniorManagerSizer);
